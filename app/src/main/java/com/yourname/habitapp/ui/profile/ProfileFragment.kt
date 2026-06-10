@@ -290,20 +290,25 @@ class ProfileFragment : Fragment() {
 
     private fun resetEverything() {
         val context = requireContext()
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val lastEmail = prefs.getString("user_email", "")
+        
+        // Store last email in a persistent preference that won't be cleared now
+        context.getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
+            .edit().putString("last_logged_in_email", lastEmail).commit()
+
         FirebaseAuth.getInstance().signOut()
-        val prefs = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
-        prefs.forEach { context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
+        val prefsList = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
+        prefsList.forEach { context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
 
         lifecycleScope.launch {
-            try {
-                AppDatabase.getInstance(context).clearAllTables()
-                context.deleteDatabase("habit_app_database")
-            } catch (e: Exception) { }
-
+            // We don't delete the database here to allow "Keep History for same user" logic in Onboarding
+            // But we ensure the app restarts cleanly
             val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
             intent?.let {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
+                activity?.finish()
                 Runtime.getRuntime().exit(0)
             }
         }

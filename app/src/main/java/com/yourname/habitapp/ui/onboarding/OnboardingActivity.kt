@@ -267,7 +267,10 @@ class OnboardingActivity : AppCompatActivity() {
     private fun clearLocalData() {
         val prefsToClear = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
         prefsToClear.forEach { getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
-        try { AppDatabase.getInstance(this).clearAllTables() } catch (e: Exception) { }
+        try { 
+            AppDatabase.closeInstance()
+            deleteDatabase("habit_app_database")
+        } catch (e: Exception) { }
     }
 
     private fun handleEmailRegister(etE: EditText, etP: EditText, etN: EditText, rbM: RadioButton, sp: Spinner, cb: CheckBox) {
@@ -330,11 +333,18 @@ class OnboardingActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val user = auth.currentUser
                 if (user?.isEmailVerified == true) {
-                    val oldEmail = getSharedPreferences("user_prefs", Context.MODE_PRIVATE).getString("user_email", "")
+                    val lastUserEmail = getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
+                        .getString("last_logged_in_email", "")
+                    
                     lifecycleScope.launch {
-                        if (email != oldEmail) {
+                        // Clear data ONLY if the new user is different from the last logged in user
+                        if (email != lastUserEmail && lastUserEmail != "") {
                             clearLocalData()
                         }
+                        // Update persistent email
+                        getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
+                            .edit().putString("last_logged_in_email", email).apply()
+
                         fetchProfileAndGo(user.uid, user.email ?: "")
                     }
                 } else {
@@ -354,6 +364,10 @@ class OnboardingActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try { FirebaseAuth.getInstance().signOut() } catch (e: Exception) {}
             clearLocalData()
+            // Reset last logged in email when using Guest
+            getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
+                .edit().putString("last_logged_in_email", "guest").apply()
+            
             saveLocalAndGo(getString(R.string.guest_login), "guest@hibts.app", "Male", 0L, getString(R.string.app_purpose), "👤")
         }
     }
@@ -365,9 +379,16 @@ class OnboardingActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val user = auth.currentUser!!
                 val email = user.email ?: ""
-                val oldEmail = getSharedPreferences("user_prefs", Context.MODE_PRIVATE).getString("user_email", "")
+                val lastUserEmail = getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
+                    .getString("last_logged_in_email", "")
+
                 lifecycleScope.launch {
-                    if (email != oldEmail) clearLocalData()
+                    if (email != lastUserEmail && lastUserEmail != "") {
+                        clearLocalData()
+                    }
+                    getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
+                        .edit().putString("last_logged_in_email", email).apply()
+
                     db.collection("users").document(user.uid).get()
                         .addOnSuccessListener { doc ->
                             if (doc.exists()) {
