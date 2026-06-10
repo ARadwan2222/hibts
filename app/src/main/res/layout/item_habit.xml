@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardHabit"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="54dp"
     android:layout_marginHorizontal="4dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="2dp"
+    android:layout_marginVertical="3dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
     app:cardBackgroundColor="#F8BBD0">
 
     <LinearLayout
@@ -16,18 +16,16 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <!-- Vertical Priority Indicator Line -->
         <View
             android:id="@+id/viewPriorityIndicator"
-            android:layout_width="5dp"
-            android:layout_height="36dp"
+            android:layout_width="4dp"
+            android:layout_height="28dp"
             android:background="@color/brand_purple" />
 
-        <!-- Icon in circle -->
         <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="12dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="10dp"
             android:background="@drawable/bg_item_circle"
             android:backgroundTint="@color/bg_light_purple">
             <TextView
@@ -35,13 +33,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
         </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -50,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_dark"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -60,48 +58,57 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_gray"
-                android:textSize="13sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvStreak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="8dp"
             android:textColor="@color/accent_orange"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
-        <!-- Trash Icon for Delete -->
+        <ImageView
+            android:id="@+id/ivBell"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_notification"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
         <ImageButton
             android:id="@+id/btnDelete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="10dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/bg_item_circle"
             android:backgroundTint="#FFEBEE"
             android:src="@drawable/ic_delete"
-            android:padding="7dp"
+            android:padding="6dp"
             app:tint="#FF5252" />
 
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="10dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_edit"
-            android:padding="7dp"
+            android:padding="6dp"
             app:tint="@color/text_gray" />
 
         <CheckBox
             android:id="@+id/checkHabitDone"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="6dp"
             android:buttonTint="@color/brand_purple"
-            android:scaleX="1.1"
-            android:scaleY="1.1" />
+            android:scaleX="1.0"
+            android:scaleY="1.0" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

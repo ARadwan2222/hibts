@@ -19,7 +19,8 @@ import java.util.*
 class TodoAdapter(
     private val onCompleteClick: (TodoItem) -> Unit,
     private val onEditClick: (TodoItem) -> Unit,
-    private val onDeleteClick: (TodoItem) -> Unit
+    private val onDeleteClick: (TodoItem) -> Unit,
+    private val onMuteToggle: (TodoItem) -> Unit  // New parameter
 ) : ListAdapter<TodoItem, TodoAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -51,12 +52,17 @@ class TodoAdapter(
         }
         holder.indicator.setBackgroundColor(priorityColor)
         
-        // Bell icon logic (hearing reminders)
-        holder.ivBell.visibility = if (todo.reminderStart || todo.reminderEnd) View.VISIBLE else View.GONE
-        if (todo.reminderStart || todo.reminderEnd) {
-            val bellColor = if (todo.isCompleted || todo.isMissed) 0xFFBDBDBD.toInt() else 0xFFFFD600.toInt()
-            holder.ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+        // Bell icon logic (highlight yellow if active and NOT muted, gray otherwise)
+        val hasActiveReminder = todo.reminderStart || todo.reminderEnd || (todo.reminderBefore > 0)
+        holder.ivBell.visibility = View.VISIBLE
+        
+        val bellColor = if (hasActiveReminder && !todo.isCompleted && !todo.isMuted) {
+            0xFFFFD600.toInt() // Bright Yellow
+        } else {
+            0xFFBDBDBD.toInt() // Grayed out
         }
+        holder.ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+        holder.ivBell.setOnClickListener { onMuteToggle(todo) }
 
         if (todo.isMissed) {
             holder.tvTitle.setTextColor(0xFFD32F2F.toInt()) // Red color

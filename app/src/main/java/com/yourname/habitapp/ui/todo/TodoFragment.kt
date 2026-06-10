@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -61,16 +62,13 @@ class TodoFragment : Fragment() {
             val msg = if (nextMute) "تم كتم التنبيهات 🔇" else "تم تفعيل التنبيهات 🔔"
             android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_SHORT).show()
             
-            // Visual feedback for the button if needed (optional)
             val bellIcon = if (nextMute) R.drawable.ic_notification_off else R.drawable.ic_notification
             (it as? ImageButton)?.setImageResource(bellIcon)
         }
 
-        // Initial icon state
-        val isMuted = settingsPrefs.getBoolean("mute_notifications", false)
-        (btnNotifications as? ImageButton)?.setImageResource(if (isMuted) R.drawable.ic_notification_off else R.drawable.ic_notification)
+        val isMutedInitial = settingsPrefs.getBoolean("mute_notifications", false)
+        (btnNotifications as? ImageButton)?.setImageResource(if (isMutedInitial) R.drawable.ic_notification_off else R.drawable.ic_notification)
 
-        // Setup MediatorLiveData sources once
         combinedData.addSource(db.todoDao().getAllTodos()) { tasks ->
             combinedData.value = Pair(tasks ?: emptyList(), combinedData.value?.second ?: emptyList())
         }
@@ -82,20 +80,19 @@ class TodoFragment : Fragment() {
             loadFilteredItems(tasks, habits)
         }
 
-        // 1. Setup Day Ribbon
         recyclerDayStrip.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         recyclerDayStrip.adapter = DayStripAdapter { date ->
             selectedDate = date
             updateUI()
         }
 
-        // 2. Setup Tasks List
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = MyTasksAdapter(
             onTodoToggle = { todo -> onTodoToggle(todo) },
             onHabitToggle = { habit -> onHabitToggle(habit) },
             onEdit = { item -> editItem(item) },
-            onDelete = { item -> confirmDelete(item) }
+            onDelete = { item -> confirmDelete(item) },
+            onMuteToggle = { item -> toggleMute(item) }
         )
         recyclerView.adapter = adapter
 
@@ -124,7 +121,7 @@ class TodoFragment : Fragment() {
             updateUI()
         }
 
-        val onAddClick = View.OnClickListener {
+        btnTopAdd.setOnClickListener {
             val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(getString(R.string.add_options_title))
@@ -141,8 +138,6 @@ class TodoFragment : Fragment() {
                     }
                 }.show()
         }
-
-        btnTopAdd.setOnClickListener(onAddClick)
 
         updateUI()
     }
@@ -201,10 +196,6 @@ class TodoFragment : Fragment() {
         adapter.submitList(combined)
     }
 
-    private fun loadItems() {
-        // Redundant, removed
-    }
-
     private fun editItem(item: Any) {
         if (item is TodoItem) {
             AddTodoBottomSheet.newInstance(selectedDate.timeInMillis, item.id)
@@ -215,10 +206,25 @@ class TodoFragment : Fragment() {
         }
     }
 
+    private fun toggleMute(item: Any) {
+        lifecycleScope.launch {
+            if (item is TodoItem) {
+                val nextMuted = !item.isMuted
+                db.todoDao().update(item.copy(isMuted = nextMuted))
+                val msg = if (nextMuted) "تم كتم المهمة 🔇" else "تنبيهات المهمة مفعلة 🔔"
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            } else if (item is Habit) {
+                val nextMuted = !item.isMuted
+                db.habitDao().updateHabit(item.copy(isMuted = nextMuted))
+                val msg = if (nextMuted) "تم كتم العادة 🔇" else "تنبيهات العادة مفعلة 🔔"
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun onTodoToggle(todo: TodoItem) {
         lifecycleScope.launch {
             db.todoDao().update(todo.copy(isCompleted = !todo.isCompleted))
-            // Silence notifications
             com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), todo.id * 10 + 1)
             com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), todo.id * 10 + 2)
             com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), todo.id * 10 + 3)
@@ -231,7 +237,6 @@ class TodoFragment : Fragment() {
             val newStreak = if (newCompleted) habit.streak + 1 else Math.max(0, habit.streak - 1)
             val timestamp = if (newCompleted) System.currentTimeMillis() else null
             db.habitDao().updateHabitStreak(habit.id, newCompleted, newStreak, Math.max(habit.longestStreak, newStreak), timestamp)
-            
             if (newCompleted) {
                 com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), habit.name.hashCode())
             }

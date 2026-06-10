@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.Ringtone
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -13,10 +14,11 @@ import com.yourname.habitapp.ui.MainActivity
 
 object NotificationHelper {
 
+    private var activeRingtone: Ringtone? = null
+
     private fun getChannelId(base: String, context: Context): String {
         val settingsPrefs = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         val toneUri = settingsPrefs.getString("notification_tone", "default")
-        // Use a hash of the tone URI to create a new channel whenever the tone changes
         return "${base}_${toneUri.hashCode()}"
     }
 
@@ -93,6 +95,7 @@ object NotificationHelper {
 
     fun cancelNotification(context: Context, id: Int) {
         NotificationManagerCompat.from(context).cancel(id)
+        stopAllSounds()
     }
 
     fun showAchievementNotification(context: Context, achievementTitle: String, icon: String) {
@@ -109,11 +112,22 @@ object NotificationHelper {
                           else if (isStart) android.provider.Settings.System.DEFAULT_NOTIFICATION_URI 
                           else android.provider.Settings.System.DEFAULT_ALARM_ALERT_URI
             
+            stopAllSounds()
             val ringtone = android.media.RingtoneManager.getRingtone(context, toneUri)
+            activeRingtone = ringtone
             ringtone.play()
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun stopAllSounds() {
+        try {
+            activeRingtone?.let {
+                if (it.isPlaying) it.stop()
+            }
+            activeRingtone = null
+        } catch (e: Exception) {}
     }
 
     private fun show(context: Context, id: Int, channelId: String, title: String, message: String) {
@@ -132,6 +146,9 @@ object NotificationHelper {
         val doneIntent = Intent(context, NotificationActionReceiver::class.java).apply { putExtra("NOTIFICATION_ID", id) }
         val donePendingIntent = PendingIntent.getBroadcast(context, id + 10000, doneIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val deleteIntent = Intent(context, NotificationActionReceiver::class.java).apply { action = "ACTION_DISMISS" }
+        val deletePendingIntent = PendingIntent.getBroadcast(context, id + 20000, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
@@ -141,6 +158,7 @@ object NotificationHelper {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(pendingIntent)
+            .setDeleteIntent(deletePendingIntent) // Stop sound on swipe away
             .addAction(0, "تم", donePendingIntent)
             .setAutoCancel(true)
 
@@ -158,7 +176,6 @@ object NotificationHelper {
         }
 
         val notification = builder.build()
-        // Insistent flag repeats the sound until the notification is dismissed or clicked
         notification.flags = notification.flags or NotificationCompat.FLAG_INSISTENT
 
         try {

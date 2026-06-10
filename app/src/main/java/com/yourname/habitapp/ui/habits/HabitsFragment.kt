@@ -89,22 +89,26 @@ class HabitsFragment : Fragment() {
         taskAdapter = TodoAdapter(
             onCompleteClick = { todo -> onTodoToggle(todo) },
             onEditClick = { todo -> openEditTodo(todo) },
-            onDeleteClick = { todo -> showDeleteConfirmation(todo) }
+            onDeleteClick = { todo -> showDeleteConfirmation(todo) },
+            onMuteToggle = { todo -> toggleTodoMute(todo) }
         )
         dailyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
+            onMuteToggle = { habit -> toggleHabitMute(habit) }
         )
         weeklyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
+            onMuteToggle = { habit -> toggleHabitMute(habit) }
         )
         monthlyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
+            onMuteToggle = { habit -> toggleHabitMute(habit) }
         )
     }
 
@@ -224,7 +228,8 @@ class HabitsFragment : Fragment() {
                 
                 if (now < focusTask.startTime) {
                     tvInspo.text = "✨ " + getString(R.string.focus_next_goal) + " ✨"
-                    startFocusTimer(timer, focusTask.startTime)
+                    // Changed logic: Timer ONLY works at the start of the task, not when added
+                    timer.text = "--:--:--"; countDownTimer?.cancel()
                 } else if (now < effectiveEndTime) {
                     tvInspo.text = "🔥 " + getString(R.string.focus_in_progress) + " 🔥"
                     startFocusTimer(timer, effectiveEndTime)
@@ -237,7 +242,6 @@ class HabitsFragment : Fragment() {
                 timer.text = getString(R.string.focus_all_day); countDownTimer?.cancel() 
             }
         } else {
-            // All tasks are completed, regardless of habits
             tvInspo.text = getString(R.string.focus_hero); tvTitle.text = getString(R.string.focus_completed_all); timer.text = "00:00:00"; countDownTimer?.cancel()
         }
     }
@@ -287,12 +291,28 @@ class HabitsFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val item = adapter.currentList[position]
-                // Undo swipe UI temporarily
                 adapter.notifyItemChanged(position)
-                // Show confirmation
                 showDeleteConfirmation(item)
             }
         }).attachToRecyclerView(recyclerView)
+    }
+
+    private fun toggleTodoMute(todo: TodoItem) {
+        lifecycleScope.launch {
+            val nextMuted = !todo.isMuted
+            db.todoDao().update(todo.copy(isMuted = nextMuted))
+            val msg = if (nextMuted) "تم كتم المهمة 🔇" else "تنبيهات المهمة مفعلة 🔔"
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun toggleHabitMute(habit: Habit) {
+        lifecycleScope.launch {
+            val nextMuted = !habit.isMuted
+            db.habitDao().updateHabit(habit.copy(isMuted = nextMuted))
+            val msg = if (nextMuted) "تم كتم العادة 🔇" else "تنبيهات العادة مفعلة 🔔"
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun openEditTodo(todo: TodoItem) { AddTodoBottomSheet.newInstance(todo.targetDate, todo.id).show(parentFragmentManager, "EditTodo") }
@@ -300,7 +320,6 @@ class HabitsFragment : Fragment() {
     private fun onTodoToggle(todo: TodoItem) {
         lifecycleScope.launch {
             db.todoDao().update(todo.copy(isCompleted = !todo.isCompleted))
-            // Silence notifications for this task
             com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), todo.id * 10 + 1)
             com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), todo.id * 10 + 2)
             com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), todo.id * 10 + 3)
@@ -313,9 +332,7 @@ class HabitsFragment : Fragment() {
             val newS = if (newC) habit.streak + 1 else Math.max(0, habit.streak - 1)
             val timestamp = if (newC) System.currentTimeMillis() else null
             db.habitDao().updateHabitStreak(habit.id, newC, newS, Math.max(habit.longestStreak, newS), timestamp)
-            
             if (newC) {
-                // Silence any daily reminder or specific habit notification
                 com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), habit.name.hashCode())
             }
         }

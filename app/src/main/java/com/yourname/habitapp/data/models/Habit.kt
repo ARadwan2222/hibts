@@ -16,11 +16,12 @@ data class Habit(
     val category: HabitCategory = HabitCategory.OTHER,
     val icon: String = "⭐",
     val frequency: HabitFrequency = HabitFrequency.DAILY,
-    val specificDay: Int? = null,           // 1-7 for Weekly, 1-31 for Monthly
+    val specificDay: Int? = null,
     val isCompletedToday: Boolean = false,
     val streak: Int = 0,
     val longestStreak: Int = 0,
     val targetDate: Long? = null,
     val lastCompletedTimestamp: Long? = null,
+    val isMuted: Boolean = false,            // New field to mute reminders
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -14,7 +14,7 @@ data class TodoItem(
     val priority: Priority = Priority.MEDIUM,
     val type: TaskType = TaskType.DAILY,
     val isCompleted: Boolean = false,
-    val isMissed: Boolean = false,           // New field for tasks not done on time
+    val isMissed: Boolean = false,
     val durationMinutes: Int = 0,
     val startTime: Long? = null,
     val targetDate: Long = System.currentTimeMillis(),
@@ -22,5 +22,6 @@ data class TodoItem(
     val reminderStart: Boolean = false,
     val reminderEnd: Boolean = false,
     val reminderBefore: Int = 0,
+    val isMuted: Boolean = false,            // New field to mute reminders
     val createdAt: Long = System.currentTimeMillis()
 )

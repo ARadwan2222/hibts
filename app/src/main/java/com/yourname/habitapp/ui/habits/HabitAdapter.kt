@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,7 +16,8 @@ import com.yourname.habitapp.data.models.HabitFrequency
 class HabitAdapter(
     private val onCompleteClick: (Habit) -> Unit,
     private val onEditClick: (Habit) -> Unit,
-    private val onDeleteClick: (Habit) -> Unit
+    private val onDeleteClick: (Habit) -> Unit,
+    private val onMuteToggle: (Habit) -> Unit // New parameter
 ) : ListAdapter<Habit, HabitAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,6 +29,7 @@ class HabitAdapter(
         val btnEdit   : View = view.findViewById(R.id.btnEdit)
         val btnDelete : View = view.findViewById(R.id.btnDelete)
         val indicator : View = view.findViewById(R.id.viewPriorityIndicator)
+        val ivBell    : ImageView = view.findViewById(R.id.ivBell)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +45,11 @@ class HabitAdapter(
         holder.tvFreq.text   = getFrequencyText(habit)
         
         holder.indicator.setBackgroundColor(0xFFFFD166.toInt()) // Soft Yellow
+        
+        // Bell logic for habits (Grayed out if muted or no reminders, though habits use global schedule)
+        val bellColor = if (habit.isMuted) 0xFFBDBDBD.toInt() else 0xFFFFD600.toInt()
+        holder.ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+        holder.ivBell.setOnClickListener { onMuteToggle(habit) }
 
         holder.checkDone.setOnCheckedChangeListener(null)
         holder.checkDone.isChecked = habit.isCompletedToday

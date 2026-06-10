@@ -18,7 +18,8 @@ class MyTasksAdapter(
     private val onTodoToggle: (TodoItem) -> Unit,
     private val onHabitToggle: (Habit) -> Unit,
     private val onEdit: (Any) -> Unit,
-    private val onDelete: (Any) -> Unit
+    private val onDelete: (Any) -> Unit,
+    private val onMuteToggle: (Any) -> Unit // New parameter
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(DiffCallback()) {
 
     companion object {
@@ -47,11 +48,23 @@ class MyTasksAdapter(
         private val check = view.findViewById<CheckBox>(R.id.checkTodoDone)
         private val btnEdit = view.findViewById<ImageView>(R.id.btnEdit)
         private val btnDelete = view.findViewById<ImageView>(R.id.btnDelete)
+        private val ivBell = view.findViewById<ImageView>(R.id.ivBell)
 
         fun bind(todo: TodoItem) {
             title.text = todo.title
             val timeView = itemView.findViewById<TextView>(R.id.tvTodoTime)
             
+            // Bell icon logic (highlight yellow if active and NOT muted, gray otherwise)
+            val hasActiveReminder = todo.reminderStart || todo.reminderEnd || (todo.reminderBefore > 0)
+            ivBell.visibility = View.VISIBLE 
+            val bellColor = if (hasActiveReminder && !todo.isCompleted && !todo.isMuted) {
+                0xFFFFD600.toInt() // Bright Yellow
+            } else {
+                0xFFBDBDBD.toInt() // Grayed out
+            }
+            ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+            ivBell.setOnClickListener { onMuteToggle(todo) }
+
             if (todo.isMissed) {
                 title.setTextColor(0xFFD32F2F.toInt())
                 timeView.text = "⚠️ فات وقتها"
@@ -80,10 +93,16 @@ class MyTasksAdapter(
         private val check = view.findViewById<CheckBox>(R.id.checkHabitDone)
         private val btnEdit = view.findViewById<ImageView>(R.id.btnEdit)
         private val btnDelete = view.findViewById<ImageView>(R.id.btnDelete)
+        private val ivBell = view.findViewById<ImageView>(R.id.ivBell)
 
         fun bind(habit: Habit) {
             title.text = habit.name
             icon.text = habit.icon
+            
+            val bellColor = if (habit.isMuted) 0xFFBDBDBD.toInt() else 0xFFFFD600.toInt()
+            ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+            ivBell.setOnClickListener { onMuteToggle(habit) }
+
             check.visibility = View.VISIBLE
             check.setOnCheckedChangeListener(null)
             check.isChecked = habit.isCompletedToday

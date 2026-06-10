@@ -264,6 +264,12 @@ class OnboardingActivity : AppCompatActivity() {
         overlay.visibility = if (show) View.VISIBLE else View.GONE
     }
 
+    private fun clearLocalData() {
+        val prefsToClear = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
+        prefsToClear.forEach { getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
+        try { AppDatabase.getInstance(this).clearAllTables() } catch (e: Exception) { }
+    }
+
     private fun handleEmailRegister(etE: EditText, etP: EditText, etN: EditText, rbM: RadioButton, sp: Spinner, cb: CheckBox) {
         val email = etE.text.toString().trim()
         val pass = etP.text.toString().trim()
@@ -280,33 +286,31 @@ class OnboardingActivity : AppCompatActivity() {
 
         showLoading(true, getString(R.string.register))
 
-        // Clear local history when creating a brand new account
         lifecycleScope.launch {
-            try { AppDatabase.getInstance(this@OnboardingActivity).clearAllTables() } catch (e: Exception) {}
-        }
-
-        auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val user = auth.currentUser
-                user?.sendEmailVerification()
-                val profile = hashMapOf(
-                    "email" to email, "name" to name, "birthdate" to selectedBirthdate,
-                    "gender" to (if (rbM.isChecked) "Male" else "Female"),
-                    "purpose" to sp.selectedItem.toString(), "avatar" to selectedAvatarEmoji
-                )
-                db.collection("users").document(user!!.uid).set(profile)
-                    .addOnSuccessListener {
-                        showLoading(false)
-                        switchPage(findViewById(R.id.layoutVerification))
-                        findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verification_sent, email)
-                    }
-                    .addOnFailureListener {
-                        showLoading(false)
-                        Toast.makeText(this, "Profile save failed", Toast.LENGTH_SHORT).show()
-                    }
-            } else {
-                showLoading(false)
-                Toast.makeText(this, task.exception?.localizedMessage, Toast.LENGTH_LONG).show()
+            clearLocalData()
+            auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    user?.sendEmailVerification()
+                    val profile = hashMapOf(
+                        "email" to email, "name" to name, "birthdate" to selectedBirthdate,
+                        "gender" to (if (rbM.isChecked) "Male" else "Female"),
+                        "purpose" to sp.selectedItem.toString(), "avatar" to selectedAvatarEmoji
+                    )
+                    db.collection("users").document(user!!.uid).set(profile)
+                        .addOnSuccessListener {
+                            showLoading(false)
+                            switchPage(findViewById(R.id.layoutVerification))
+                            findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verification_sent, email)
+                        }
+                        .addOnFailureListener {
+                            showLoading(false)
+                            Toast.makeText(this@OnboardingActivity, "Profile save failed", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    showLoading(false)
+                    Toast.makeText(this@OnboardingActivity, task.exception?.localizedMessage, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -321,21 +325,18 @@ class OnboardingActivity : AppCompatActivity() {
         if (hasError) return
 
         showLoading(true, getString(R.string.login))
-        
-        // Save old email to check if user changed
-        val oldEmail = getSharedPreferences("user_prefs", Context.MODE_PRIVATE).getString("user_email", "")
 
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
                 if (user?.isEmailVerified == true) {
-                    if (oldEmail != email && oldEmail != "") {
-                        // User changed, clear local history for the new user session
-                        lifecycleScope.launch {
-                            try { AppDatabase.getInstance(this@OnboardingActivity).clearAllTables() } catch (e: Exception) {}
+                    val oldEmail = getSharedPreferences("user_prefs", Context.MODE_PRIVATE).getString("user_email", "")
+                    lifecycleScope.launch {
+                        if (email != oldEmail) {
+                            clearLocalData()
                         }
+                        fetchProfileAndGo(user.uid, user.email ?: "")
                     }
-                    fetchProfileAndGo(user.uid, user.email ?: "")
                 } else {
                     showLoading(false)
                     switchPage(findViewById(R.id.layoutVerification))
@@ -350,19 +351,9 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun handleGuestLogin() {
         showLoading(true, getString(R.string.guest_login))
-        val context = this
         lifecycleScope.launch {
-            // Force sign out from Firebase if any account was logged in
             try { FirebaseAuth.getInstance().signOut() } catch (e: Exception) {}
-
-            // Clear all data for guest login to ensure a fresh start from beginning
-            val prefsToClear = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
-            prefsToClear.forEach { getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
-            
-            try {
-                AppDatabase.getInstance(context).clearAllTables()
-            } catch (e: Exception) { }
-
+            clearLocalData()
             saveLocalAndGo(getString(R.string.guest_login), "guest@hibts.app", "Male", 0L, getString(R.string.app_purpose), "👤")
         }
     }
@@ -373,24 +364,29 @@ class OnboardingActivity : AppCompatActivity() {
         auth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser!!
-                db.collection("users").document(user.uid).get()
-                    .addOnSuccessListener { doc ->
-                        if (doc.exists()) {
-                            fetchProfileAndGo(user.uid, user.email ?: "")
-                        } else {
-                            val profile = hashMapOf(
-                                "email" to user.email, "name" to user.displayName, "birthdate" to 0L,
-                                "gender" to "Male", "purpose" to "", "avatar" to "👤"
-                            )
-                            db.collection("users").document(user.uid).set(profile).addOnSuccessListener {
-                                saveLocalAndGo(user.displayName ?: "User", user.email ?: "", "Male", 0L, "", "👤")
-                            }.addOnFailureListener { showLoading(false) }
+                val email = user.email ?: ""
+                val oldEmail = getSharedPreferences("user_prefs", Context.MODE_PRIVATE).getString("user_email", "")
+                lifecycleScope.launch {
+                    if (email != oldEmail) clearLocalData()
+                    db.collection("users").document(user.uid).get()
+                        .addOnSuccessListener { doc ->
+                            if (doc.exists()) {
+                                fetchProfileAndGo(user.uid, user.email ?: "")
+                            } else {
+                                val profile = hashMapOf(
+                                    "email" to user.email, "name" to user.displayName, "birthdate" to 0L,
+                                    "gender" to "Male", "purpose" to "", "avatar" to "👤"
+                                )
+                                db.collection("users").document(user.uid).set(profile).addOnSuccessListener {
+                                    saveLocalAndGo(user.displayName ?: "User", user.email ?: "", "Male", 0L, "", "👤")
+                                }.addOnFailureListener { showLoading(false) }
+                            }
                         }
-                    }
-                    .addOnFailureListener {
-                        showLoading(false)
-                        Toast.makeText(this, "Profile fetch failed", Toast.LENGTH_SHORT).show()
-                    }
+                        .addOnFailureListener {
+                            showLoading(false)
+                            Toast.makeText(this@OnboardingActivity, "Profile fetch failed", Toast.LENGTH_SHORT).show()
+                        }
+                }
             } else {
                 showLoading(false)
                 Toast.makeText(this, "Firebase Auth failed", Toast.LENGTH_SHORT).show()
@@ -402,11 +398,9 @@ class OnboardingActivity : AppCompatActivity() {
         showLoading(true)
         db.collection("users").document(uid).get().addOnSuccessListener { doc ->
             if (doc.exists()) {
-                // RESTORE CLOUD DATA ON LOGIN
                 FirebaseFirestore.getInstance().collection("backups").document(uid).get()
                     .addOnSuccessListener { backupDoc ->
                         if (backupDoc.exists()) {
-                            // History persists by restoring from cloud backup
                             Toast.makeText(this, "تم استعادة البيانات بنجاح ✅", Toast.LENGTH_SHORT).show()
                         }
                         saveLocalAndGo(doc.getString("name") ?: "User", email, doc.getString("gender") ?: "Male", 

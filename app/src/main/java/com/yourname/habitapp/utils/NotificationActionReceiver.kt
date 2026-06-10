@@ -12,7 +12,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
             NotificationManagerCompat.from(context).cancel(notificationId)
         }
         
-        // This stops any sound associated with the notification because the notification is cancelled.
-        // If we were playing a separate ringtone, we would stop it here.
+        // Stop any currently playing notification sounds
+        NotificationHelper.stopAllSounds()
     }
 }
