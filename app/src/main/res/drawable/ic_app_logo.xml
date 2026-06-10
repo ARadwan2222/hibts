@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="145dp"
+    android:height="145dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- White Background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0h100v100h-100z" />
+
+    <!-- Left Pillar of 'H' (Teal) -->
+    <path
+        android:fillColor="#009EA4"
+        android:pathData="M31,28 L43,28 L43,72 L31,72 Z" />
+
+    <!-- Right Pillar of 'H' (Teal) -->
+    <path
+        android:fillColor="#00838F"
+        android:pathData="M57,28 L69,28 L69,72 L57,72 Z" />
+
+    <!-- Attractive Orange Checkmark in the Middle -->
+    <path
+        android:strokeWidth="6"
+        android:strokeColor="#FF9800"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M42,52 L48,58 L60,42" />
+
+</vector>

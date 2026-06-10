@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Rounded Head -->
+    <path
+        android:strokeColor="#555555"
+        android:strokeWidth="3.5"
+        android:pathData="M50,42 m-18,0 a18,18 0 1,1 36,0 a18,18 0 1,1 -36,0" />
+    <!-- Curvy Shoulders -->
+    <path
+        android:strokeColor="#555555"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M25,78 C25,65 35,62 50,62 C65,62 75,65 75,78 C75,85 25,85 25,78 Z" />
+</vector>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#FFFFFF">
+
+    <!-- Full Screen Clipboard -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="24dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="12dp"
+        app:cardBackgroundColor="#FFB74D">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:gravity="center_vertical">
+
+                <!-- Row 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="40dp">
+                    <ImageView
+                        android:id="@+id/ivCheck1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_checkbox_outline"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_check_anim_unfilled"
+                        android:contentDescription="Check 1" />
+                    <View
+                        android:id="@+id/viewLine1"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginStart="16dp"
+                        android:background="#F5F5F5"
+                        android:alpha="0.2" />
+                </LinearLayout>
+
+                <!-- Row 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="40dp">
+                    <ImageView
+                        android:id="@+id/ivCheck2"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_checkbox_outline"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_check_anim_unfilled"
+                        android:contentDescription="Check 2" />
+                    <View
+                        android:id="@+id/viewLine2"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginStart="16dp"
+                        android:background="#F5F5F5"
+                        android:alpha="0.2" />
+                </LinearLayout>
+
+                <!-- Row 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="40dp">
+                    <ImageView
+                        android:id="@+id/ivCheck3"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_checkbox_outline"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_check_anim_unfilled"
+                        android:contentDescription="Check 3" />
+                    <View
+                        android:id="@+id/viewLine3"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginStart="16dp"
+                        android:background="#F5F5F5"
+                        android:alpha="0.2" />
+                </LinearLayout>
+
+                <!-- Row 4 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:id="@+id/ivCheck4"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_checkbox_outline"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_check_anim_unfilled"
+                        android:contentDescription="Check 4" />
+                    <View
+                        android:id="@+id/viewLine4"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginStart="16dp"
+                        android:background="#F5F5F5"
+                        android:alpha="0.2" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvSplashPhrase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/splash_phrase"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="48dp"
+                    android:layout_gravity="center"
+                    android:textColor="#333333"
+                    android:alpha="0" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

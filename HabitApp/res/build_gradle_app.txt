@@ -1,0 +1,85 @@
+// ملف: app/build.gradle
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'            // مطلوب لـ Room
+}
+
+android {
+    namespace 'com.yourname.habitapp'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.yourname.habitapp"
+        minSdk 24               // Android 7.0+
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding true         // اختياري — يسهّل الوصول للـ Views
+    }
+}
+
+dependencies {
+
+    // ─── Android Core ──────────────────────────────────────────────────────
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // ─── Material Design 3 ─────────────────────────────────────────────────
+    implementation 'com.google.android.material:material:1.11.0'
+
+    // ─── Room Database ─────────────────────────────────────────────────────
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    kapt "androidx.room:room-compiler:2.6.1"       // مهم: kapt وليس implementation
+
+    // ─── Lifecycle & LiveData ──────────────────────────────────────────────
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
+
+    // ─── Coroutines ────────────────────────────────────────────────────────
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+
+    // ─── WorkManager (التذكيرات في الخلفية) ──────────────────────────────
+    implementation "androidx.work:work-runtime-ktx:2.9.0"
+
+    // ─── Navigation Component ──────────────────────────────────────────────
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
+
+    // ─── الرسوم البيانية (الإحصاءات) ─────────────────────────────────────
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // ─── CardView ─────────────────────────────────────────────────────────
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    // ─── Tests ────────────────────────────────────────────────────────────
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}

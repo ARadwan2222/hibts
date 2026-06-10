@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.HabitApp" parent="Base.Theme.HabitApp">
+        <item name="android:windowBackground">#000000</item>
+    </style>
+
+    <!-- Gender Specific Themes (Night) -->
+    <style name="Theme.HabitApp.Male" parent="Theme.HabitApp">
+        <item name="colorPrimary">#90CAF9</item>
+        <item name="colorSurface">#0A0A0A</item>
+        <item name="colorSurfaceVariant">#121212</item>
+    </style>
+
+    <style name="Theme.HabitApp.Female" parent="Theme.HabitApp">
+        <item name="colorPrimary">#F48FB1</item>
+        <item name="colorSurface">#0A0A0A</item>
+        <item name="colorSurfaceVariant">#121212</item>
+    </style>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.HabitApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_purple</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brand_purple_light</item>
+        <item name="colorOnPrimaryContainer">@color/brand_purple_dark</item>
+
+        <item name="android:windowBackground">@color/bg_light_purple</item>
+
+        <!-- Global Rounded Corners -->
+        <item name="shapeAppearanceSmallComponent">@style/RoundedComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/RoundedComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/RoundedComponent</item>
+
+        <item name="alertDialogTheme">@style/PurpleAlertDialog</item>
+    </style>
+
+    <style name="PurpleAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_rounded_dialog</item>
+        <item name="colorAccent">@color/brand_purple</item>
+        <item name="colorPrimary">@color/brand_purple</item>
+        <item name="android:textColorPrimary">@color/text_dark</item>
+    </style>
+
+    <style name="Theme.HabitApp" parent="Base.Theme.HabitApp" />
+
+    <style name="RoundedComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="CircleImage" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Unified Purple Themes -->
+    <style name="Theme.HabitApp.Male" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/brand_purple</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorSurfaceVariant">@color/gray_light</item>
+    </style>
+
+    <style name="Theme.HabitApp.Female" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/brand_rose</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brand_rose_light</item>
+        <item name="colorOnPrimaryContainer">@color/brand_rose_dark</item>
+        <item name="android:windowBackground">@color/bg_light_rose</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorSurfaceVariant">@color/bg_light_rose</item>
+    </style>
+</resources>

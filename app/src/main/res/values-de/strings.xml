@@ -1,0 +1,287 @@
+<resources>
+    <string name="app_name">hibts</string>
+
+    <!-- Navigation -->
+    <string name="nav_habits">Gewohnheiten</string>
+    <string name="nav_todo">Meine Aufgaben</string>
+    <string name="nav_goals">Ziele</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_title">Willkommen bei hibts 👋</string>
+    <string name="onboarding_name_hint">Vollständiger Name</string>
+    <string name="onboarding_age_hint">Alter</string>
+    <string name="gender">Geschlecht</string>
+    <string name="male">Männlich</string>
+    <string name="female">Weiblich</string>
+    <string name="app_purpose">Hauptziel</string>
+    <string name="purpose_work">Arbeit &amp; Produktivität</string>
+    <string name="purpose_sport">Sport &amp; Fitness</string>
+    <string name="purpose_health">Gesundheit &amp; Wellness</string>
+    <string name="purpose_learning">Lernen &amp; Wachstum</string>
+    <string name="purpose_other">Andere</string>
+    <string name="get_started">Meine Reise beginnen</string>
+
+    <!-- Habits -->
+    <string name="daily_habits">Tägliche Gewohnheiten</string>
+    <string name="monthly_habits">Monatliche Gewohnheiten</string>
+    <string name="yearly_habits">Jährliche Gewohnheiten</string>
+    <string name="new_habit_title">Neue Gewohnheit</string>
+    <string name="habit_name_hint">Name der Gewohnheit</string>
+    <string name="frequency">Häufigkeit</string>
+    <string name="save">Speichern</string>
+    <string name="category_health">Gesundheit</string>
+    <string name="category_fitness">Fitness</string>
+    <string name="category_productivity">Produktivität</string>
+    <string name="category_learning">Lernen</string>
+    <string name="category_spiritual">Spirituell</string>
+    <string name="category_social">Sozial</string>
+    <string name="category_finance">Finanzen</string>
+    <string name="category_hobby">Hobby</string>
+    <string name="category_home">Haushalt</string>
+    <string name="category_self_improvement">Selbstverbesserung</string>
+    <string name="category_other">Sonstiges</string>
+    <string name="countdown">Endet in: %s</string>
+    <string name="habit_progress">%1$d / %2$d Abgeschlossen</string>
+
+    <!-- Goals -->
+    <string name="daily_goals">Tägliche Ziele</string>
+    <string name="weekly_goals">Wöchentliche Ziele</string>
+    <string name="monthly_goals">Monatliche Ziele</string>
+    <string name="yearly_goals">Jährliche Ziele</string>
+
+    <!-- Timer & Task -->
+    <string name="task_timer">Aufgaben-Timer</string>
+    <string name="start_timer">Timer starten</string>
+    <string name="stop_timer">Stopp</string>
+    <string name="duration_hint">Dauer (Minuten)</string>
+
+    <!-- Profile, Settings & Feedback -->
+    <string name="my_profile">Mein Profil</string>
+    <string name="user_name">Benutzer</string>
+    <string name="level_display">Level %1$d — %2$s</string>
+    <string name="total_xp">⚡ %1$d EP</string>
+    <string name="achievements_title">Erfolge</string>
+    <string name="settings">Einstellungen</string>
+    <string name="sound_enabled">Soundeffekte</string>
+    <string name="dark_mode">Dunkelmodus</string>
+    <string name="notifications_enabled">Benachrichtigungen</string>
+    <string name="language">Sprache</string>
+    <string name="feedback">Vorschläge &amp; Beschwerden</string>
+    <string name="feedback_title">Feedback senden</string>
+    <string name="feedback_hint">Wie können wir uns verbessern?</string>
+    <string name="send">Senden</string>
+    <string name="view_achievements">Meine Erfolge</string>
+    <string name="no_habits_today">Keine Gewohnheiten heute, füge eine neue hinzu!</string>
+    <string name="today_habits_tasks">Heutige Gewohnheiten &amp; Aufgaben</string>
+    <string name="weekly_habits">Wöchentliche Gewohnheiten</string>
+    <string name="help_center">Hilfezentrum</string>
+    <string name="help_title">Was ist der Unterschied?</string>
+    <string name="tasks_list">📝 Aktuelle Aufgaben</string>
+    <string name="daily_habits_title">🔄 Tägliche Gewohnheiten</string>
+    <string name="long_term_duties">Langfristige Pflichten</string>
+    <string name="splash_phrase">Jeder kleine Schritt ist der Beginn eines großen Erfolgs! ✨</string>
+    <string name="guide_title">Wie benutzt man hibts?</string>
+    <string name="guide_step1">1. Füge deine täglichen Gewohnheiten und Aufgaben hinzu.</string>
+    <string name="guide_step2">2. Beobachte den Fokus-Bildschirm; er sagt dir, was jetzt zu tun ist.</string>
+    <string name="guide_step3">3. Verdiene EP und schalte Erfolge frei, während du fortschreitest.</string>
+    <string name="skip_guide">Verstanden, fangen wir an!</string>
+
+    <!-- New Strings -->
+    <string name="terms_of_use">Nutzungsbedingungen</string>
+    <string name="contact_us">Kontaktieren Sie uns</string>
+    <string name="logout">Abmelden</string>
+    <string name="logout_confirm">Möchten Sie sich wirklich abmelden? Ihre lokalen Einstellungen werden zurückgesetzt.</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="terms_of_use_text"><b>hibts Globale Nutzungsbedingungen &amp; Datenschutz</b>\n\n1. <b>Zustimmung:</b> Durch die Nutzung von hibts stimmen Sie diesen globalen Bedingungen und unserem Datenschutzansatz zu.\n\n2. <b>DSGVO &amp; Datenschutz:</b> Für Nutzer in Deutschland und der EU halten wir uns an die DSGVO. Ihre Gewohnheitsdaten werden standardmäßig lokal auf Ihrem Gerät gespeichert. Cloud-Backups sind verschlüsselt und nur aktiv, wenn Sie die Synchronisierung wählen.\n\n3. <b>Berechtigung:</b> Das Mindestalter beträgt 16 Jahre für Einwohner der EU/EWR (DSGVO) und 13 Jahre für den Rest der Welt.\n\n4. <b>Haftungsausschluss:</b> hibts ist ein Produktivitätswerkzeug, kein medizinisches Gerät. Konsultieren Sie Fachleute für medizinische oder psychologische Beratung.\n\n5. <b>Haftung:</b> Wir stellen die App „wie besehen“ zur Verfügung und haften nicht für Datenverlust oder Ergebnisse persönlicher Ziele.</string>
+    <string name="i_agree_to_terms">Ich stimme den Nutzungsbedingungen zu</string>
+    <string name="error_empty_field">Dieses Feld darf nicht leer sein</string>
+    <string name="error_accept_terms">Bitte akzeptieren Sie die Nutzungsbedingungen, um fortzufahren</string>
+
+    <!-- Profile & Settings Extra -->
+    <string name="account_achievements">Konto &amp; Erfolge</string>
+    <string name="data_backup">Daten &amp; Backup</string>
+    <string name="achievements_and_rewards">Erfolge &amp; Auszeichnungen</string>
+    <string name="backup_to_cloud">In Cloud sichern</string>
+    <string name="restore_data">Daten wiederherstellen</string>
+    <string name="enable_notifications">Benachrichtigungen aktivieren</string>
+    <string name="vibration">Vibration</string>
+    <string name="notification_tone">Benachrichtigungston</string>
+    <string name="current_tone_default">Aktueller Ton: Standard</string>
+    <string name="support_and_help">Support &amp; Hilfe</string>
+    <string name="reset_app_data">Alle App-Daten löschen</string>
+
+    <!-- Todo Fragment -->
+    <string name="tasks_and_habits_title">Meine Aufgaben &amp; Gewohnheiten</string>
+    <string name="tasks_habits_subtitle">Alles an einem Ort verwalten</string>
+    <string name="today">Heute</string>
+    <string name="filter_day">Tag</string>
+    <string name="filter_week">Woche</string>
+    <string name="filter_month">Monat</string>
+    <string name="filter_all">Alle</string>
+    <string name="filter_tasks">Aufgaben</string>
+    <string name="filter_habits">Gewohnheiten</string>
+    <string name="add_new">Neu hinzufügen</string>
+
+    <!-- Year Goals Fragment -->
+    <string name="achieved">Erreicht</string>
+    <string name="days_remaining">Verbleibende Tage</string>
+    <string name="remaining">Verbleibend</string>
+    <string name="add_new_goal">Neues Ziel hinzufügen</string>
+
+    <!-- Add Todo Bottom Sheet -->
+    <string name="todo_hint">Was möchtest du erreichen?</string>
+    <string name="priority_high">Hoch</string>
+    <string name="priority_medium">Mittel</string>
+    <string name="priority_low">Niedrig</string>
+    <string name="choose_date">Datum wählen</string>
+    <string name="start">Start</string>
+    <string name="end">Ende</string>
+    <string name="reminders_label">Erinnerungen:</string>
+    <string name="reminder_start">Beginn</string>
+    <string name="reminder_end">Abschluss</string>
+    <string name="save_todo">Aufgabe speichern ✨</string>
+
+    <!-- Habits Fragment Extras -->
+    <string name="current_focus_title">⚡ AKTUELLER FOKUS ⚡</string>
+    <string name="next_task_name">Name der nächsten Aufgabe</string>
+    <string name="today_tasks_label"> Heutige Aufgaben</string>
+    <string name="daily_habits_label"> Tägliche Gewohnheiten</string>
+    <string name="long_term_duties_label">Langfristige Aufgaben</string>
+
+    <!-- Onboarding Extra -->
+    <string name="my_habits_onboarding">Meine Gewohnheiten</string>
+    <string name="habits_onboarding_desc">Erstellen Sie eine tägliche Gewohnheit und machen Sie sie zum Lebensstil.</string>
+    <string name="no_missed_tasks_onboarding">Verpassen Sie nie eine Aufgabe</string>
+    <string name="tasks_onboarding_desc">Organisieren Sie Ihren Tag intelligent mit Aufgaben-Timern und Erinnerungen.</string>
+    <string name="yearly_goals_onboarding">Ihre Jahresziele</string>
+    <string name="goals_onboarding_desc">Zerlegen Sie Ihre großen Träume in kleine Schritte.</string>
+    <string name="register_desc">Registrieren Sie sich, um Ihre Aktivitäten und Aufgaben zu sichern ✨</string>
+    <string name="verify_email_title">Bestätigen Sie Ihre E-Mail</string>
+    <string name="resend_link">Link erneut senden</string>
+    <string name="next_arrow">Weiter ➔</string>
+    <string name="guest_login">Als Gast anmelden</string>
+    <string name="guest_warning">* Warnung: Als Gast werden Ihre Daten nicht gespeichert und können verloren gehen, wenn Sie die App löschen.</string>
+    <string name="already_have_account">Bereits ein Konto? Anmelden</string>
+    <string name="dont_have_account">Kein Konto? Jetzt registrieren</string>
+    <string name="login">Anmelden</string>
+    <string name="register">Registrieren</string>
+    <string name="sign_in_google">Mit Google anmelden</string>
+    <string name="email">E-Mail</string>
+    <string name="password">Passwort</string>
+
+    <!-- Additional UI Strings -->
+    <string name="new_task">Neue Aufgabe</string>
+    <string name="new_habit">Neue Gewohnheit</string>
+    <string name="add_options_title">Was möchten Sie hinzufügen?</string>
+    <string name="delete_confirm_title">Löschen</string>
+    <string name="delete_confirm_msg">Möchten Sie dieses Element löschen?</string>
+    <string name="delete_task_title">Aufgabe löschen</string>
+    <string name="delete_habit_title">Gewohnheit löschen</string>
+    <string name="delete_task_msg">Sind Sie sicher, dass Sie diese Aufgabe löschen möchten?</string>
+    <string name="delete_habit_msg">Sind Sie sicher, dass Sie diese Gewohnheit löschen möchten?</string>
+    <string name="add_first_task">Füge deine erste Aufgabe hinzu</string>
+    <string name="focus_next_goal">Dein nächstes Ziel wartet</string>
+    <string name="focus_in_progress">Du bist auf dem Weg zum Erfolg</string>
+    <string name="focus_time_up">Die Zeit ist fast um</string>
+    <string name="focus_time_finished">Zeit abgelaufen</string>
+    <string name="focus_all_day">Den ganzen Tag</string>
+    <string name="focus_completed_all">Alle heutigen Aufgaben erledigt</string>
+    <string name="focus_hero">Du bist heute ein echter Held!</string>
+    <string name="edit_habit">Gewohnheit bearbeiten</string>
+    <string name="update">Aktualisieren</string>
+    <string name="select_category">Kategorie wählen</string>
+    <string name="habit_frequency">Gewohnheitshäufigkeit</string>
+    <string name="daily">Täglich</string>
+    <string name="weekly">Wöchentlich</string>
+    <string name="monthly">Monatlich</string>
+    <string name="select_weekday">Wochentag wählen</string>
+    <string name="select_monthday">Tag des Monats wählen</string>
+    <string name="day_of_month_label">Tag %d des Monats</string>
+    <string name="select_day">Tag wählen</string>
+    <string name="every_day">Jeden Tag</string>
+    <string name="every_weekday">Jeden %s</string>
+    <string name="habit_added_success">Gewohnheit erfolgreich hinzugefügt</string>
+    <string name="edit_goal">Ziel bearbeiten</string>
+    <string name="delete_goal">Ziel löschen</string>
+    <string name="delete_goal_msg">Möchten Sie dieses Ziel löschen?</string>
+    <string name="no_steps_yet">Noch keine Schritte definiert.</string>
+    <string name="goal_progress_msg">Fortschritt: %1$d%%\n\nSchritte:\n%2$s</string>
+    <string name="close">Schließen</string>
+    <string name="select_year">Jahr wählen</string>
+    <string name="year_label_text">Jahr: %d</string>
+    <string name="quarter_q1">Erstes Quartal</string>
+    <string name="quarter_q2">Zweites Quartal</string>
+    <string name="quarter_q3">Drittes Quartal</string>
+    <string name="quarter_q4">Viertes Quartal</string>
+    <string name="quarter_of_year">%1$s von %2$d</string>
+    <string name="full_year">Ganzes Jahr %d</string>
+    <string name="select_time">Zeit wählen</string>
+    <string name="days_left_msg">Verbleibend: %d Tage</string>
+    <string name="time_up_warning">⚠️ Zeit ist um</string>
+    <string name="login_title">Anmelden</string>
+    <string name="register_title">Neues Konto erstellen</string>
+    <string name="switch_to_register">Kein Konto? Jetzt registrieren</string>
+    <string name="switch_to_login">Bereits ein Konto? Anmelden</string>
+    <string name="age_error">Das Alter muss zwischen 6 und 100 liegen</string>
+    <string name="verification_sent">Wir haben einen Bestätigungslink an %s gesendet.\n\nBitte öffnen Sie Ihre E-Mail und klicken Sie auf den Link, um Ihr Konto zu aktivieren.</string>
+    <string name="verify_reminder">Ihre E-Mail (%s) wurde noch nicht bestätigt. Bitte überprüfen Sie Ihren Posteingang.</string>
+    <string name="verified_success">Konto erfolgreich bestätigt ✓</string>
+    <string name="back">Zurück</string>
+    <string name="loading">Laden…</string>
+
+    <!-- Achievement Titles -->
+    <string name="ach_first_habit_title">Reise beginnt</string>
+    <string name="ach_week_streak_title">Volle Woche</string>
+    <string name="ach_month_streak_title">Voller Monat</string>
+    <string name="ach_legend_streak_title">Legende</string>
+    <string name="ach_five_habits_title">Profi</string>
+    <string name="ach_ten_todos_title">Erfolgreich</string>
+    <string name="ach_fifty_todos_title">Aufgaben-Held</string>
+    <string name="ach_hundred_todos_title">Aufgaben-Legende</string>
+    <string name="ach_timed_todos_title">Zeit-Organisator</string>
+    <string name="ach_first_goal_title">Ziel erreicht</string>
+    <string name="ach_three_goals_title">Jahres-Erfolgreich</string>
+    <string name="ach_five_goals_title">Ziel-Öffner</string>
+    <string name="ach_first_share_title">Der Teilnehmer</string>
+    <string name="ach_ten_shares_title">Der Influencer</string>
+    <string name="ach_early_bird_title">Früher Vogel</string>
+    <string name="ach_night_owl_title">Nachteule</string>
+
+    <!-- Achievement Descriptions -->
+    <string name="ach_first_habit_desc">Füge deine erste Gewohnheit hinzu</string>
+    <string name="ach_week_streak_desc">7 Tage Streak in Folge</string>
+    <string name="ach_month_streak_desc">30 Tage Streak in Folge</string>
+    <string name="ach_legend_streak_desc">100 Tage Streak in Folge</string>
+    <string name="ach_five_habits_desc">Füge 5 Gewohnheiten hinzu</string>
+    <string name="ach_ten_todos_desc">Erledige 10 Aufgaben</string>
+    <string name="ach_fifty_todos_desc">Erledige 50 Aufgaben</string>
+    <string name="ach_hundred_todos_desc">Erledige 100 Aufgaben</string>
+    <string name="ach_timed_todos_desc">10 zeitgebundene Aufgaben</string>
+    <string name="ach_first_goal_desc">Schließe ein Jahresziel ab</string>
+    <string name="ach_three_goals_desc">Schließe 3 Jahresziele ab</string>
+    <string name="ach_five_goals_desc">Schließe 5 Jahresziele ab</string>
+    <string name="ach_first_share_desc">Teile zum ersten Mal einen Erfolg</string>
+    <string name="ach_ten_shares_desc">Teile 10 Erfolge</string>
+    <string name="ach_early_bird_desc">Erledige eine Aufgabe vor 8 Uhr morgens</string>
+    <string name="ach_night_owl_desc">Erledige eine Aufgabe nach 22 Uhr</string>
+
+    <!-- Levels -->
+    <string name="level_beginner">Anfänger 🥉</string>
+    <string name="level_learner">Lerner 🥈</string>
+    <string name="level_active">Aktiv 🥇</string>
+    <string name="level_committed">Engagiert ⭐</string>
+    <string name="level_persistent">Beharrlich 🌟</string>
+    <string name="level_professional">Profi 💫</string>
+    <string name="level_expert">Experte 🏆</string>
+    <string name="level_legend">Legende 👑</string>
+
+    <!-- Workers & Notifications -->
+    <string name="goal_reminder_title">Ziel-Erinnerung: %s</string>
+    <string name="birthday_congrats_title">Herzlichen Glückwunsch zum Geburtstag! 🎉</string>
+    <string name="birthday_congrats_msg">Wir wünschen dir ein Jahr voller Erfolge und Disziplin.</string>
+
+    <string name="daily_report_title">Tagesbericht: %s</string>
+    <string name="daily_report_desc">Du hast %1$d Aufgaben erledigt und %2$d Aufgaben verpasst.</string>
+</resources>

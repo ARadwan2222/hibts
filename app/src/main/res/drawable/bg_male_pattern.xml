@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="800dp"
+    android:viewportWidth="400"
+    android:viewportHeight="800">
+
+    <!-- Background Color -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M0,0h400v800h-400z" />
+
+    <!-- Scattered Icons (Alpha 0.1 for subtle look) -->
+    <!-- Car -->
+    <path
+        android:fillColor="#1E88E5"
+        android:fillAlpha="0.1"
+        android:pathData="M50,100 h30 v10 h-30z M55,110 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0 M70,110 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0" />
+
+    <!-- Ball -->
+    <path
+        android:fillColor="#1E88E5"
+        android:fillAlpha="0.1"
+        android:pathData="M150,50 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0" />
+
+    <!-- Gym Weight -->
+    <path
+        android:fillColor="#1E88E5"
+        android:fillAlpha="0.1"
+        android:pathData="M300,150 h10 v20 h-10z M340,150 h10 v20 h-10z M310,160 h30 v2h-30z" />
+
+    <!-- Bike (Circles) -->
+    <path
+        android:fillColor="#1E88E5"
+        android:fillAlpha="0.1"
+        android:pathData="M80,300 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 M120,300 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0" />
+
+    <!-- Rocket -->
+    <path
+        android:fillColor="#1E88E5"
+        android:fillAlpha="0.1"
+        android:pathData="M250,400 l10,-20 l10,20 z M255,400 v10 h10 v-10z" />
+
+    <!-- More scattered balls -->
+    <path android:fillColor="#1E88E5" android:fillAlpha="0.08" android:pathData="M350,500 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0" />
+    <path android:fillColor="#1E88E5" android:fillAlpha="0.08" android:pathData="M50,600 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0" />
+    <path android:fillColor="#1E88E5" android:fillAlpha="0.08" android:pathData="M200,700 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0" />
+
+    <!-- Trophy shape -->
+    <path
+        android:fillColor="#1E88E5"
+        android:fillAlpha="0.1"
+        android:pathData="M120,450 h20 v5 h-5 v10 h10 v2 h-20 v-2 h10 v-10 h-5z" />
+
+</vector>

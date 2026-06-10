@@ -1,0 +1,287 @@
+<resources>
+    <string name="app_name">Hibts</string>
+
+    <!-- Navigation -->
+    <string name="nav_habits">Habits</string>
+    <string name="nav_todo">My Tasks</string>
+    <string name="nav_goals">Goals</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_title">Welcome to hibts 👋</string>
+    <string name="onboarding_name_hint">Full Name</string>
+    <string name="onboarding_age_hint">Age</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="app_purpose">Main Purpose</string>
+    <string name="purpose_work">Work &amp; Productivity</string>
+    <string name="purpose_sport">Sport &amp; Fitness</string>
+    <string name="purpose_health">Health &amp; Wellness</string>
+    <string name="purpose_learning">Learning &amp; Growth</string>
+    <string name="purpose_other">Other</string>
+    <string name="get_started">Start My Journey</string>
+
+    <!-- Habits -->
+    <string name="daily_habits">Daily Habits</string>
+    <string name="monthly_habits">Monthly Habits</string>
+    <string name="yearly_habits">Yearly Habits</string>
+    <string name="new_habit_title">New Habit</string>
+    <string name="habit_name_hint">Habit Name</string>
+    <string name="frequency">Frequency</string>
+    <string name="save">Save</string>
+    <string name="category_health">Health</string>
+    <string name="category_fitness">Fitness</string>
+    <string name="category_productivity">Productivity</string>
+    <string name="category_learning">Learning</string>
+    <string name="category_spiritual">Spiritual</string>
+    <string name="category_social">Social</string>
+    <string name="category_finance">Finance</string>
+    <string name="category_hobby">Hobby</string>
+    <string name="category_home">Home</string>
+    <string name="category_self_improvement">Self Improvement</string>
+    <string name="category_other">Other</string>
+    <string name="countdown">Ends in: %s</string>
+    <string name="habit_progress">%1$d / %2$d Completed</string>
+
+    <!-- Goals -->
+    <string name="daily_goals">Daily Goals</string>
+    <string name="weekly_goals">Weekly Goals</string>
+    <string name="monthly_goals">Monthly Goals</string>
+    <string name="yearly_goals">Yearly Goals</string>
+
+    <!-- Timer & Task -->
+    <string name="task_timer">Task Timer</string>
+    <string name="start_timer">Start Timer</string>
+    <string name="stop_timer">Stop</string>
+    <string name="duration_hint">Duration (Minutes)</string>
+
+    <!-- Profile, Settings & Feedback -->
+    <string name="my_profile">My Profile</string>
+    <string name="user_name">Ahmed</string>
+    <string name="level_display">Level %1$d — %2$s</string>
+    <string name="total_xp">⚡ %1$d XP</string>
+    <string name="achievements_title">Achievements</string>
+    <string name="settings">Settings</string>
+    <string name="sound_enabled">Sound Effects</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="notifications_enabled">Notifications</string>
+    <string name="language">Language</string>
+    <string name="feedback">Suggestions &amp; Complaints</string>
+    <string name="feedback_title">Send Feedback</string>
+    <string name="feedback_hint">How can we improve?</string>
+    <string name="send">Send</string>
+    <string name="view_achievements">My Achievements</string>
+    <string name="no_habits_today">No habits today, add a new one!</string>
+    <string name="today_habits_tasks">Today\'s Habits &amp; Tasks</string>
+    <string name="weekly_habits">Weekly Habits</string>
+    <string name="help_center">Help Center</string>
+    <string name="help_title">What is the difference?</string>
+    <string name="tasks_list">📝 Current Tasks</string>
+    <string name="daily_habits_title">🔄 Daily Habits</string>
+    <string name="long_term_duties">Long-term Duties</string>
+    <string name="splash_phrase">Every small step is the beginning of great success! ✨</string>
+    <string name="guide_title">How to use hibts?</string>
+    <string name="guide_step1">1. Add your daily habits and tasks.</string>
+    <string name="guide_step2">2. Watch the Focus screen; it tells you what to do now.</string>
+    <string name="guide_step3">3. Earn XP and unlock achievements as you progress.</string>
+    <string name="skip_guide">Got it, let\'s start!</string>
+    <!-- New Strings -->
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirm">Are you sure you want to logout? Your local preferences will be reset.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="terms_of_use_text"><b>hibts Global Terms of Use &amp; Privacy</b>\n\n1. <b>Acceptance:</b> By using hibts, you agree to these global terms and our privacy approach.\n\n2. <b>GDPR &amp; Data Protection:</b> For users in Germany and the EU, we comply with GDPR. Your habit data is stored locally on your device by default. Cloud backups are encrypted and only active if you choose to sync.\n\n3. <b>Eligibility:</b> Minimum age is 16 for EU/EEA residents (GDPR) and 13 for the rest of the world.\n\n4. <b>Disclaimer:</b> hibts is a productivity tool, not a medical device. Consult professionals for health or mental health advice.\n\n5. <b>Liability:</b> We provide the app \"as-is\" and are not liable for data loss or personal goal outcomes.</string>
+    <string name="i_agree_to_terms">I agree to the Terms of Use</string>
+    <string name="error_empty_field">This field cannot be empty</string>
+    <string name="error_accept_terms">Please accept the Terms of Use to proceed</string>
+
+    <!-- Profile & Settings Extra -->
+    <string name="account_achievements">Account &amp; Achievements</string>
+    <string name="data_backup">Data &amp; Backup</string>
+    <string name="achievements_and_rewards">Achievements &amp; Rewards</string>
+    <string name="backup_to_cloud">Backup to Cloud</string>
+    <string name="restore_data">Restore Data</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="vibration">Vibration</string>
+    <string name="notification_tone">Notification Tone</string>
+    <string name="current_tone_default">Current Tone: Default</string>
+    <string name="support_and_help">Support &amp; Help</string>
+    <string name="reset_app_data">Delete All App Data</string>
+
+    <!-- Todo Fragment -->
+    <string name="tasks_and_habits_title">My Tasks &amp; Habits</string>
+    <string name="tasks_habits_subtitle">Manage everything in one place</string>
+    <string name="today">Today</string>
+    <string name="filter_day">Day</string>
+    <string name="filter_week">Week</string>
+    <string name="filter_month">Month</string>
+    <string name="filter_all">All</string>
+    <string name="filter_tasks">Tasks</string>
+    <string name="filter_habits">Habits</string>
+    <string name="add_new">Add New</string>
+
+    <!-- Year Goals Fragment -->
+    <string name="achieved">Achieved</string>
+    <string name="days_remaining">Days Left</string>
+    <string name="remaining">Remaining</string>
+    <string name="add_new_goal">Add New Goal</string>
+
+    <!-- Add Todo Bottom Sheet -->
+    <string name="todo_hint">What do you want to achieve?</string>
+    <string name="priority_high">High</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_low">Low</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="reminders_label">Reminders:</string>
+    <string name="reminder_start">Start</string>
+    <string name="reminder_end">Finish</string>
+    <string name="save_todo">Save Task ✨</string>
+
+    <!-- Habits Fragment Extras -->
+    <string name="current_focus_title">⚡ CURRENT FOCUS ⚡</string>
+    <string name="next_task_name">Next Task Name</string>
+    <string name="today_tasks_label"> Today Tasks</string>
+    <string name="daily_habits_label"> Daily Habits</string>
+    <string name="long_term_duties_label">Long-term Duties</string>
+
+    <!-- Onboarding Extra -->
+    <string name="my_habits_onboarding">My Habits</string>
+    <string name="habits_onboarding_desc">Create a daily habit and make it a lifestyle.</string>
+    <string name="no_missed_tasks_onboarding">Never miss a task</string>
+    <string name="tasks_onboarding_desc">Organize your day intelligently with task timers and reminders.</string>
+    <string name="yearly_goals_onboarding">Your Yearly Goals</string>
+    <string name="goals_onboarding_desc">Break your big dreams into small steps.</string>
+    <string name="register_desc">Register to keep your activities and tasks safe ✨</string>
+    <string name="verify_email_title">Verify Your Email</string>
+    <string name="resend_link">Resend Link</string>
+    <string name="next_arrow">Next ➔</string>
+    <string name="guest_login">Login as Guest</string>
+    <string name="guest_warning">* Warning: As a guest, your data won\'t be saved and might be lost if you delete the app.</string>
+    <string name="already_have_account">Already have an account? Login</string>
+    <string name="dont_have_account">Don\'t have an account? Register now</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!-- Additional UI Strings -->
+    <string name="new_task">New Task</string>
+    <string name="new_habit">New Habit</string>
+    <string name="add_options_title">What do you want to add?</string>
+    <string name="delete_confirm_title">Delete</string>
+    <string name="delete_confirm_msg">Do you want to delete this item?</string>
+    <string name="delete_task_title">Delete Task</string>
+    <string name="delete_habit_title">Delete Habit</string>
+    <string name="delete_task_msg">Are you sure you want to delete this task?</string>
+    <string name="delete_habit_msg">Are you sure you want to delete this habit?</string>
+    <string name="add_first_task">Add your first task</string>
+    <string name="focus_next_goal">Your next goal is waiting</string>
+    <string name="focus_in_progress">You are on the way to achievement</string>
+    <string name="focus_time_up">Time is almost up</string>
+    <string name="focus_time_finished">Time Finished</string>
+    <string name="focus_all_day">All Day</string>
+    <string name="focus_completed_all">You completed all tasks today</string>
+    <string name="focus_hero">You are a real hero today!</string>
+    <string name="edit_habit">Edit Habit</string>
+    <string name="update">Update</string>
+    <string name="select_category">Select Category</string>
+    <string name="habit_frequency">Habit Frequency</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="select_weekday">Select Weekday</string>
+    <string name="select_monthday">Select Day of Month</string>
+    <string name="day_of_month_label">Day %d of month</string>
+    <string name="select_day">Select Day</string>
+    <string name="every_day">Every day</string>
+    <string name="every_weekday">Every %s</string>
+    <string name="habit_added_success">Habit added successfully</string>
+    <string name="edit_goal">Edit Goal</string>
+    <string name="delete_goal">Delete Goal</string>
+    <string name="delete_goal_msg">Do you want to delete this goal?</string>
+    <string name="no_steps_yet">No steps defined yet.</string>
+    <string name="goal_progress_msg">Progress: %1$d%%\n\nSteps:\n%2$s</string>
+    <string name="close">Close</string>
+    <string name="select_year">Select Year</string>
+    <string name="year_label_text">Year: %d</string>
+    <string name="quarter_q1">First Quarter</string>
+    <string name="quarter_q2">Second Quarter</string>
+    <string name="quarter_q3">Third Quarter</string>
+    <string name="quarter_q4">Fourth Quarter</string>
+    <string name="quarter_of_year">%1$s of %2$d</string>
+    <string name="full_year">Full Year %d</string>
+    <string name="select_time">Select Time</string>
+    <string name="days_left_msg">Remaining: %d days</string>
+    <string name="time_up_warning">⚠️ Time is up</string>
+    <string name="login_title">Login</string>
+    <string name="register_title">Create New Account</string>
+    <string name="switch_to_register">Don\'t have an account? Register now</string>
+    <string name="switch_to_login">Already have an account? Login</string>
+    <string name="age_error">Age must be between 6 and 100</string>
+    <string name="verification_sent">We sent a verification link to %s.\n\nPlease open your email and click the link to activate your account.</string>
+    <string name="verify_reminder">Your email (%s) is not verified yet. Please check your inbox.</string>
+    <string name="verified_success">Account verified successfully ✓</string>
+    <string name="back">Back</string>
+    <string name="loading">Loading...</string>
+    <string name="default_web_client_id">418318586323-06e6j2jf35tb0qhpd4d0vjvc3tiim7q2.apps.googleusercontent.com</string>
+
+    <!-- Achievement Titles -->
+    <string name="ach_first_habit_title">Journey Begins</string>
+    <string name="ach_week_streak_title">Full Week</string>
+    <string name="ach_month_streak_title">Full Month</string>
+    <string name="ach_legend_streak_title">Legend</string>
+    <string name="ach_five_habits_title">Professional</string>
+    <string name="ach_ten_todos_title">Achiever</string>
+    <string name="ach_fifty_todos_title">Tasks Hero</string>
+    <string name="ach_hundred_todos_title">Tasks Legend</string>
+    <string name="ach_timed_todos_title">Time Organizer</string>
+    <string name="ach_first_goal_title">Goal Achieved</string>
+    <string name="ach_three_goals_title">Year Achiever</string>
+    <string name="ach_five_goals_title">Goal Opener</string>
+    <string name="ach_first_share_title">The Participator</string>
+    <string name="ach_ten_shares_title">The Influencer</string>
+    <string name="ach_early_bird_title">Early Bird</string>
+    <string name="ach_night_owl_title">Night Owl</string>
+
+    <!-- Achievement Descriptions -->
+    <string name="ach_first_habit_desc">Add your first habit</string>
+    <string name="ach_week_streak_desc">7 consecutive days streak</string>
+    <string name="ach_month_streak_desc">30 consecutive days streak</string>
+    <string name="ach_legend_streak_desc">100 consecutive days streak</string>
+    <string name="ach_five_habits_desc">Add 5 habits</string>
+    <string name="ach_ten_todos_desc">Complete 10 tasks</string>
+    <string name="ach_fifty_todos_desc">Complete 50 tasks</string>
+    <string name="ach_hundred_todos_desc">Complete 100 tasks</string>
+    <string name="ach_timed_todos_desc">10 tasks with specific time</string>
+    <string name="ach_first_goal_desc">Complete a yearly goal</string>
+    <string name="ach_three_goals_desc">Complete 3 yearly goals</string>
+    <string name="ach_five_goals_desc">Complete 5 yearly goals</string>
+    <string name="ach_first_share_desc">Share an achievement for the first time</string>
+    <string name="ach_ten_shares_desc">Share 10 achievements</string>
+    <string name="ach_early_bird_desc">Complete a task before 8 AM</string>
+    <string name="ach_night_owl_desc">Complete a task after 10 PM</string>
+
+    <!-- Levels -->
+    <string name="level_beginner">Beginner 🥉</string>
+    <string name="level_learner">Learner 🥈</string>
+    <string name="level_active">Active 🥇</string>
+    <string name="level_committed">Committed ⭐</string>
+    <string name="level_persistent">Persistent 🌟</string>
+    <string name="level_professional">Professional 💫</string>
+    <string name="level_expert">Expert 🏆</string>
+    <string name="level_legend">Legend 👑</string>
+
+    <!-- Workers & Notifications -->
+    <string name="goal_reminder_title">Goal Reminder: %s</string>
+    <string name="birthday_congrats_title">Happy Birthday! 🎉</string>
+    <string name="birthday_congrats_msg">We wish you a year full of achievements and commitment to habits.</string>
+
+    <string name="daily_report_title">Daily Report: %s</string>
+    <string name="daily_report_desc">You completed %1$d tasks and missed %2$d tasks.</string>
+</resources>

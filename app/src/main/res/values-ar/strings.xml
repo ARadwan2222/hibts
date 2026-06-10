@@ -1,0 +1,286 @@
+<resources>
+    <string name="app_name">hibts</string>
+
+    <!-- Navigation -->
+    <string name="nav_habits">العادات</string>
+    <string name="nav_todo">مهامي</string>
+    <string name="nav_goals">الأهداف</string>
+    <string name="nav_profile">الملف الشخصي</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_title">مرحباً بك في hibts 👋</string>
+    <string name="onboarding_name_hint">الاسم الكامل</string>
+    <string name="onboarding_age_hint">العمر</string>
+    <string name="gender">الجنس</string>
+    <string name="male">ذكر</string>
+    <string name="female">أنثى</string>
+    <string name="app_purpose">الهدف الرئيسي</string>
+    <string name="purpose_work">العمل والإنتاجية</string>
+    <string name="purpose_sport">الرياضة واللياقة</string>
+    <string name="purpose_health">الصحة والعافية</string>
+    <string name="purpose_learning">التعلم والنمو</string>
+    <string name="purpose_other">أخرى</string>
+    <string name="get_started">ابدأ رحلتي</string>
+
+    <!-- Habits -->
+    <string name="daily_habits">عادات يومية</string>
+    <string name="monthly_habits">عادات شهرية</string>
+    <string name="yearly_habits">عادات سنوية</string>
+    <string name="new_habit_title">عادة جديدة</string>
+    <string name="habit_name_hint">اسم العادة</string>
+    <string name="frequency">التكرار</string>
+    <string name="save">حفظ</string>
+    <string name="category_health">الصحة</string>
+    <string name="category_fitness">اللياقة البدنية</string>
+    <string name="category_productivity">الإنتاجية والعمل</string>
+    <string name="category_learning">التعلم والتطوير</string>
+    <string name="category_spiritual">الجانب الروحاني</string>
+    <string name="category_social">العلاقات الاجتماعية</string>
+    <string name="category_finance">المالية</string>
+    <string name="category_hobby">الهوايات</string>
+    <string name="category_home">المنزل</string>
+    <string name="category_self_improvement">تطوير الذات</string>
+    <string name="category_other">أخرى</string>
+    <string name="countdown">ينتهي خلال: %s</string>
+    <string name="habit_progress">تم إنجاز %1$d من %2$d</string>
+
+    <!-- Goals -->
+    <string name="daily_goals">أهداف يومية</string>
+    <string name="weekly_goals">أهداف أسبوعية</string>
+    <string name="monthly_goals">أهداف شهرية</string>
+    <string name="yearly_goals">أهداف سنوية</string>
+
+    <!-- Timer & Task -->
+    <string name="task_timer">مؤقت المهام</string>
+    <string name="start_timer">بدء المؤقت</string>
+    <string name="stop_timer">إيقاف</string>
+    <string name="duration_hint">المدة (بالدقائق)</string>
+
+    <!-- Profile, Settings & Feedback -->
+    <string name="my_profile">ملفي الشخصي</string>
+    <string name="user_name">أحمد</string>
+    <string name="level_display">المستوى %1$d — %2$s</string>
+    <string name="total_xp">⚡ %1$d نقطة خبرة</string>
+    <string name="achievements_title">الإنجازات</string>
+    <string name="settings">الإعدادات</string>
+    <string name="sound_enabled">تأثيرات صوتية</string>
+    <string name="dark_mode">الوضع الداكن</string>
+    <string name="notifications_enabled">التنبيهات</string>
+    <string name="language">اللغة</string>
+    <string name="feedback">الاقتراحات والشكاوى</string>
+    <string name="feedback_title">إرسال تعليق</string>
+    <string name="feedback_hint">كيف يمكننا التحسن؟</string>
+    <string name="send">إرسال</string>
+    <string name="view_achievements">إنجازاتي</string>
+    <string name="no_habits_today">لا يوجد عادات اليوم، أضف عادة جديدة!</string>
+    <string name="today_habits_tasks">مهام وعادات اليوم</string>
+    <string name="weekly_habits">عادات أسبوعية</string>
+    <string name="help_center">مركز المساعدة</string>
+    <string name="help_title">ما الفرق بينهما؟</string>
+    <string name="tasks_list">📝 قائمة المهام</string>
+    <string name="daily_habits_title">🔄 العادات اليومية</string>
+    <string name="long_term_duties">الواجبات بعيدة المدى</string>
+    <string name="splash_phrase">كل خطوة صغيرة هي بداية لنجاح كبير! ✨</string>
+    <string name="guide_title">كيف أستخدم hibts؟</string>
+    <string name="guide_step1">1. ابدأ بإضافة عاداتك اليومية ومهامك.</string>
+    <string name="guide_step2">2. راقب "شاشة التركيز"؛ فهي تخبرك بما يجب فعله الآن.</string>
+    <string name="guide_step3">3. اجمع نقاط XP وافتح الإنجازات أثناء تقدمك.</string>
+    <string name="skip_guide">فهمت، لنبدأ!</string>
+    <!-- New Strings -->
+    <string name="terms_of_use">شروط الاستخدام</string>
+    <string name="contact_us">اتصل بنا</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="logout_confirm">هل أنت متأكد من تسجيل الخروج؟ سيتم إعادة تعيين إعداداتك المحلية.</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="terms_of_use_text"><b>شروط الاستخدام والخصوصية العالمية لـ hibts</b>\n\n1. <b>القبول:</b> باستخدام hibts، فإنك توافق على هذه الشروط العالمية ونهج الخصوصية الخاص بنا.\n\n2. <b>حماية البيانات (GDPR):</b> للمستخدمين في ألمانيا والاتحاد الأوروبي، نحن نلتزم باللائحة العامة لحماية البيانات. يتم تخزين بيانات عاداتك محلياً بشكل افتراضي. النسخ الاحتياطي السحابي مشفر ولا يتم تفعيله إلا باختيارك.\n\n3. <b>الأهلية:</b> الحد الأدنى للسن هو 16 عاماً لسكان الاتحاد الأوروبي (حسب GDPR) و13 عاماً لبقية العالم.\n\n4. <b>إخلاء المسؤولية:</b> hibts هو أداة إنتاجية وليس جهازاً طبياً. استشر المختصين للنصائح الطبية أو النفسية.\n\n5. <b>المسؤولية:</b> يتم توفير التطبيق \"كما هو\" ونحن غير مسؤولين عن فقدان البيانات أو نتائج الأهداف الشخصية.</string>
+    <string name="i_agree_to_terms">أوافق على شروط الاستخدام</string>
+    <string name="error_empty_field">هذا الحقل لا يمكن أن يكون فارغاً</string>
+    <string name="error_accept_terms">يرجى الموافقة على شروط الاستخدام للمتابعة</string>
+
+    <!-- Profile & Settings Extra -->
+    <string name="account_achievements">الحساب والإنجازات</string>
+    <string name="data_backup">البيانات والنسخ الاحتياطي</string>
+    <string name="achievements_and_rewards">الإنجازات والجوائز</string>
+    <string name="backup_to_cloud">نسخ احتياطي للسحابة</string>
+    <string name="restore_data">استعادة البيانات</string>
+    <string name="enable_notifications">تفعيل التنبيهات</string>
+    <string name="vibration">الاهتزاز</string>
+    <string name="notification_tone">نغمة التنبيه</string>
+    <string name="current_tone_default">النغمة الحالية: الافتراضية</string>
+    <string name="support_and_help">الدعم والمساعدة</string>
+    <string name="reset_app_data">حذف جميع بيانات التطبيق</string>
+
+    <!-- Todo Fragment -->
+    <string name="tasks_and_habits_title">مهامي وعاداتي</string>
+    <string name="tasks_habits_subtitle">إدارة المهام والعادات في مكان واحد</string>
+    <string name="today">اليوم</string>
+    <string name="filter_day">يومي</string>
+    <string name="filter_week">أسبوعي</string>
+    <string name="filter_month">شهري</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_tasks">مهام</string>
+    <string name="filter_habits">عادات</string>
+    <string name="add_new">إضافة جديد</string>
+
+    <!-- Year Goals Fragment -->
+    <string name="achieved">محقق</string>
+    <string name="days_remaining">يوم متبقي</string>
+    <string name="remaining">متبقي</string>
+    <string name="add_new_goal">إضافة هدف جديد</string>
+
+    <!-- Add Todo Bottom Sheet -->
+    <string name="todo_hint">ماذا تريد أن تنجز؟</string>
+    <string name="priority_high">عالية</string>
+    <string name="priority_medium">متوسطة</string>
+    <string name="priority_low">منخفضة</string>
+    <string name="choose_date">اختر التاريخ</string>
+    <string name="start">البداية</string>
+    <string name="end">النهاية</string>
+    <string name="reminders_label">تنبيهات:</string>
+    <string name="reminder_start">البدء</string>
+    <string name="reminder_end">الانتهاء</string>
+    <string name="save_todo">حفظ المهمة ✨</string>
+
+    <!-- Habits Fragment Extras -->
+    <string name="current_focus_title">⚡ الـتـركـيـز الـحـالـي ⚡</string>
+    <string name="next_task_name">اسم المهمة القادمة</string>
+    <string name="today_tasks_label"> مهام اليوم</string>
+    <string name="daily_habits_label"> عادات يومية</string>
+    <string name="long_term_duties_label">الواجبات بعيدة المدى</string>
+
+    <!-- Onboarding Extra -->
+    <string name="my_habits_onboarding">عاداتي</string>
+    <string name="habits_onboarding_desc">اصنع عادة يومية واجعلها أسلوب حياة.</string>
+    <string name="no_missed_tasks_onboarding">لا تفوت أي مهمة</string>
+    <string name="tasks_onboarding_desc">نظم يومك بذكاء مع مؤقت المهام والتنبيهات.</string>
+    <string name="yearly_goals_onboarding">أهدافك السنوية</string>
+    <string name="goals_onboarding_desc">قسم أحلامك الكبيرة إلى خطوات صغيرة.</string>
+    <string name="register_desc">سجل للاحتفاظ بنشاطاتك ومهامك ✨</string>
+    <string name="verify_email_title">تحقق من بريدك الإلكتروني</string>
+    <string name="resend_link">إعادة إرسال الرابط</string>
+    <string name="next_arrow">التالي ➔</string>
+    <string name="guest_login">الدخول كزائر</string>
+    <string name="guest_warning">* تنبيه: عند الدخول كزائر لن يتم حفظ بياناتك، وقد تفقدها عند حذف التطبيق.</string>
+    <string name="already_have_account">لديك حساب بالفعل؟ سجل دخولك</string>
+    <string name="dont_have_account">ليس لديك حساب؟ سجل الآن</string>
+    <string name="login">دخول</string>
+    <string name="register">تسجيل</string>
+    <string name="sign_in_google">تسجيل الدخول بجوجل</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+
+    <!-- Additional UI Strings -->
+    <string name="new_task">مهمة جديدة</string>
+    <string name="new_habit">عادة جديدة</string>
+    <string name="add_options_title">ماذا تريد أن تضيف؟</string>
+    <string name="delete_confirm_title">حذف</string>
+    <string name="delete_confirm_msg">هل تريد حذف هذا العنصر؟</string>
+    <string name="delete_task_title">حذف المهمة</string>
+    <string name="delete_habit_title">حذف العادة</string>
+    <string name="delete_task_msg">هل أنت متأكد من حذف هذه المهمة؟</string>
+    <string name="delete_habit_msg">هل أنت متأكد من حذف هذه العادة؟</string>
+    <string name="add_first_task">أضف أول مهمة لك</string>
+    <string name="focus_next_goal">هـدفـك الـقـادم انـتـظـرك</string>
+    <string name="focus_in_progress">🔥 أنـت فـي طـريـق الـإنجـاز 🔥</string>
+    <string name="focus_time_up">🎯 الـوقـت انـتـهـى تـقـريـبـاً 🎯</string>
+    <string name="focus_time_finished">انتهى الوقت</string>
+    <string name="focus_all_day">طوال اليوم</string>
+    <string name="focus_completed_all">أتممت جميع مهام اليوم</string>
+    <string name="focus_hero">🏆 أنـت بـطـل حـقـيـقـي الـيـوم! 🏆</string>
+    <string name="edit_habit">تعديل العادة</string>
+    <string name="update">تحديث</string>
+    <string name="select_category">اختر الفئة</string>
+    <string name="habit_frequency">تكرار العادة</string>
+    <string name="daily">يومي</string>
+    <string name="weekly">أسبوعي</string>
+    <string name="monthly">شهري</string>
+    <string name="select_weekday">اختر يوم الأسبوع</string>
+    <string name="select_monthday">اختر يوم الشهر</string>
+    <string name="day_of_month_label">يوم %d في الشهر</string>
+    <string name="select_day">اختر اليوم</string>
+    <string name="every_day">كل يوم</string>
+    <string name="every_weekday">كل %s</string>
+    <string name="habit_added_success">تم إضافة العادة بنجاح</string>
+    <string name="edit_goal">تعديل الهدف</string>
+    <string name="delete_goal">حذف الهدف</string>
+    <string name="delete_goal_msg">هل تريد حذف هذا الهدف؟</string>
+    <string name="no_steps_yet">لا توجد خطوات محددة بعد.</string>
+    <string name="goal_progress_msg">التقدم: %1$d%%\n\nالخطوات:\n%2$s</string>
+    <string name="close">إغلاق</string>
+    <string name="select_year">اختر السنة</string>
+    <string name="year_label_text">السنة: %d</string>
+    <string name="quarter_q1">الربع الأول</string>
+    <string name="quarter_q2">الربع الثاني</string>
+    <string name="quarter_q3">الربع الثالث</string>
+    <string name="quarter_q4">الربع الرابع</string>
+    <string name="quarter_of_year">%1$s من سنة %2$d</string>
+    <string name="full_year">كامل سنة %d</string>
+    <string name="select_time">اختر الوقت</string>
+    <string name="days_left_msg">متبقي: %d يوم</string>
+    <string name="time_up_warning">⚠️ انتهى الوقت</string>
+    <string name="login_title">تسجيل الدخول</string>
+    <string name="register_title">إنشاء حساب جديد</string>
+    <string name="switch_to_register">ليس لديك حساب؟ سجل الآن</string>
+    <string name="switch_to_login">لديك حساب بالفعل؟ سجل دخولك</string>
+    <string name="age_error">العمر يجب أن يكون بين 6 و 100 سنة</string>
+    <string name="verification_sent">لقد أرسلنا رابط تفعيل إلى %s.\n\nيرجى فتح بريدك والضغط على الرابط لتفعيل حسابك.</string>
+    <string name="verify_reminder">بريدك (%s) لم يتم تأكيده بعد. تفقد صندوق الوارد.</string>
+    <string name="verified_success">لقد قمت بتفعيل الحساب ✓</string>
+    <string name="back">عودة</string>
+    <string name="loading">جاري التحميل…</string>
+
+    <!-- Achievement Titles -->
+    <string name="ach_first_habit_title">بداية الرحلة</string>
+    <string name="ach_week_streak_title">أسبوع كامل</string>
+    <string name="ach_month_streak_title">شهر كامل</string>
+    <string name="ach_legend_streak_title">أسطورة</string>
+    <string name="ach_five_habits_title">محترف</string>
+    <string name="ach_ten_todos_title">منجز</string>
+    <string name="ach_fifty_todos_title">بطل المهام</string>
+    <string name="ach_hundred_todos_title">أسطورة المهام</string>
+    <string name="ach_timed_todos_title">منظم الوقت</string>
+    <string name="ach_first_goal_title">هدف محقق</string>
+    <string name="ach_three_goals_title">منجز السنة</string>
+    <string name="ach_five_goals_title">فاتح الأهداف</string>
+    <string name="ach_first_share_title">المشارك</string>
+    <string name="ach_ten_shares_title">المؤثر</string>
+    <string name="ach_early_bird_title">الباكر</string>
+    <string name="ach_night_owl_title">الليلي</string>
+
+    <!-- Achievement Descriptions -->
+    <string name="ach_first_habit_desc">أضف أول عادة</string>
+    <string name="ach_week_streak_desc">7 أيام streak متتالية</string>
+    <string name="ach_month_streak_desc">30 يوم streak متتالية</string>
+    <string name="ach_legend_streak_desc">100 يوم streak متتالية</string>
+    <string name="ach_five_habits_desc">أضف 5 عادات</string>
+    <string name="ach_ten_todos_desc">أكمل 10 مهام</string>
+    <string name="ach_fifty_todos_desc">أكمل 50 مهمة</string>
+    <string name="ach_hundred_todos_desc">أكمل 100 مهمة</string>
+    <string name="ach_timed_todos_desc">10 مهام بوقت محدد</string>
+    <string name="ach_first_goal_desc">أكمل هدفاً سنوياً</string>
+    <string name="ach_three_goals_desc">أكمل 3 أهداف سنوية</string>
+    <string name="ach_five_goals_desc">أكمل 5 أهداف سنوية</string>
+    <string name="ach_first_share_desc">شارك إنجازاً لأول مرة</string>
+    <string name="ach_ten_shares_desc">شارك 10 إنجازات</string>
+    <string name="ach_early_bird_desc">أكمل مهمة قبل 8 صباحاً</string>
+    <string name="ach_night_owl_desc">أكمل مهمة بعد 10 مساءً</string>
+
+    <!-- Levels -->
+    <string name="level_beginner">مبتدئ 🥉</string>
+    <string name="level_learner">متعلم 🥈</string>
+    <string name="level_active">نشيط 🥇</string>
+    <string name="level_committed">ملتزم ⭐</string>
+    <string name="level_persistent">مثابر 🌟</string>
+    <string name="level_professional">محترف 💫</string>
+    <string name="level_expert">خبير 🏆</string>
+    <string name="level_legend">أسطورة 👑</string>
+
+    <!-- Workers & Notifications -->
+    <string name="goal_reminder_title">تذكير بهدفك: %s</string>
+    <string name="birthday_congrats_title">عيد ميلاد سعيد! 🎉</string>
+    <string name="birthday_congrats_msg">نتمنى لك عاماً مليئاً بالإنجازات والالتزام بالعادات.</string>
+
+    <string name="daily_report_title">تقرير يوم %s</string>
+    <string name="daily_report_desc">أنجزت %1$d مهمة وفاتتك %2$d مهمة.</string>
+</resources>

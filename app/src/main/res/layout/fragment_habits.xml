@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light_purple">
+
+    <!-- Compact Purple Header -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@drawable/bg_dashboard_header" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="140dp">
+
+            <!-- Top Profile Bar -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfilePicTop"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_profile_placeholder"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircleImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layoutPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_points_badge"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfilePicTop"
+                app:layout_constraintEnd_toStartOf="@id/btnNotifications"
+                app:layout_constraintTop_toTopOf="@id/ivProfilePicTop">
+                <TextView
+                    android:id="@+id/tvPointsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2,840"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="11sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="pts"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnNotifications"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_notification"
+                app:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfilePicTop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ivProfilePicTop" />
+
+            <TextView
+                android:id="@+id/tvGreeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="6dp"
+                android:text="Hello,"
+                android:textColor="#E0E0E0"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivProfilePicTop" />
+
+            <TextView
+                android:id="@+id/tvUserNameMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="User"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
+
+            <!-- Focus Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardFocus"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/brand_purple_dark"
+                app:layout_constraintTop_toBottomOf="@id/tvUserNameMain">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
+                    <TextView android:id="@+id/tvFocusInspiration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Focus" android:textColor="@color/white" android:textSize="18sp" android:textStyle="bold" android:gravity="center" />
+                    <TextView android:id="@+id/tvFocusTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="..." android:textColor="#E84393" android:textSize="22sp" android:textStyle="bold" android:gravity="center" />
+                    <TextView android:id="@+id/tvFocusTimer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="00:00:00" android:textColor="#CCFFFFFF" android:textSize="18sp" android:gravity="center" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/layoutBottomContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_floating_card"
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/cardFocus">
+
+                <TextView android:id="@+id/tvDateHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Date" android:textColor="@color/text_gray" android:textSize="14sp" android:layout_marginStart="8dp" android:layout_marginBottom="4dp" />
+
+                <!-- BLUE TASKS (Blue Theme) -->
+                <LinearLayout android:id="@+id/layoutTodayTasksHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="2dp">
+                    <TextView android:layout_width="32dp" android:layout_height="wrap_content" android:text="📝" android:textSize="20sp" android:gravity="center" />
+                    <TextView android:id="@+id/tvTodayTasksTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/today_tasks_label" android:textColor="#2196F3" android:textStyle="bold" android:textSize="16sp" android:layout_marginStart="8dp" />
+                    <ImageView android:id="@+id/ivTodayTasksArrow" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_arrow_down" app:tint="#2196F3" />
+                    <ImageButton android:id="@+id/btnAddTaskPlus" android:layout_width="36dp" android:layout_height="36dp" android:layout_marginStart="8dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_plus" app:tint="#2196F3" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerCurrentTasks" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" android:layout_marginTop="2dp" />
+
+                <!-- DAILY HABITS (Purple Theme) -->
+                <LinearLayout android:id="@+id/layoutDailyHabitsHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="2dp">
+                    <TextView android:layout_width="32dp" android:layout_height="wrap_content" android:text="🔄" android:textSize="20sp" android:gravity="center" />
+                    <TextView android:id="@+id/tvDailyHabitsTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/daily_habits_label" android:textColor="@color/brand_purple" android:textStyle="bold" android:textSize="16sp" android:layout_marginStart="8dp" />
+                    <ImageView android:id="@+id/ivDailyHabitsArrow" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_arrow_down" app:tint="@color/brand_purple" />
+                    <ImageButton android:id="@+id/btnAddHabitPlus" android:layout_width="36dp" android:layout_height="36dp" android:layout_marginStart="8dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_plus" app:tint="@color/brand_purple" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerDailyHabits" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/long_term_duties_label"
+                    android:textColor="@color/text_gray"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout android:id="@+id/layoutWeeklyHabitsHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="8dp" android:background="@drawable/bg_habit_item">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/weekly_habits" android:textColor="@color/text_dark" android:textStyle="bold" android:textSize="14sp" />
+                    <ImageView android:id="@+id/ivWeeklyHabitsArrow" android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_arrow_down" app:tint="@color/text_gray" />
+                    <ImageButton android:id="@+id/btnAddWeeklyPlus" android:layout_width="26dp" android:layout_height="26dp" android:layout_marginStart="8dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_plus" app:tint="@color/brand_purple" />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerWeeklyHabits" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" android:visibility="gone" android:layout_marginTop="2dp" />
+
+                <LinearLayout android:id="@+id/layoutMonthlyHabitsHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="center_vertical" android:padding="8dp" android:background="@drawable/bg_habit_item">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/monthly_habits" android:textColor="@color/text_dark" android:textStyle="bold" android:textSize="14sp" />
+                    <ImageView android:id="@+id/ivMonthlyHabitsArrow" android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_arrow_down" app:tint="@color/text_gray" />
+                    <ImageButton android:id="@+id/btnAddMonthlyPlus" android:layout_width="26dp" android:layout_height="26dp" android:layout_marginStart="8dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_plus" app:tint="@color/brand_purple" />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerMonthlyHabits" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" android:visibility="gone" android:layout_marginTop="2dp" />
+
+                <TextView android:id="@+id/tvProgress" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:gravity="center" android:text="0 / 0" android:textColor="@color/text_gray" android:textSize="18sp" android:textStyle="bold" />
+
+                <com.google.android.material.chip.ChipGroup android:id="@+id/chipGroupFilter" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone">
+                    <com.google.android.material.chip.Chip android:id="@+id/chipDay" android:layout_width="0dp" android:layout_height="0dp" />
+                    <com.google.android.material.chip.Chip android:id="@+id/chipWeek" android:layout_width="0dp" android:layout_height="0dp" />
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

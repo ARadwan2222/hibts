@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_habit_title"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="16dp" />
+
+        <!-- Suggestions Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="اقتراحات سريعة"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold"
+            android:textColor="#666666" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupSuggestions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true" />
+        </HorizontalScrollView>
+
+        <EditText
+            android:id="@+id/etHabitName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/habit_name_hint"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_input_field"
+            android:padding="16dp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="الفئة"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:textColor="#666666" />
+        <Button
+            android:id="@+id/btnSelectCategory"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="اختر الفئة"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            app:cornerRadius="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="تكرار العادة"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:textColor="#666666" />
+        <Button
+            android:id="@+id/btnSelectFrequency"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="يومي"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            app:cornerRadius="12dp" />
+
+        <!-- Specific Day Selection (Shown for Weekly/Monthly) -->
+        <LinearLayout
+            android:id="@+id/layoutSpecificDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tvSpecificDayTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="يوم التكرار"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                android:textColor="#666666" />
+            <Button
+                android:id="@+id/btnSelectSpecificDay"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:text="اختر اليوم"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSelectedIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_avatar_circle"
+            android:text="⭐"
+            android:textSize="40sp"
+            android:gravity="center"
+            android:layout_marginTop="32dp" />
+
+        <Button
+            android:id="@+id/btnSaveHabit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/save"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="24dp"
+            app:cornerRadius="16dp" />
+
+    </LinearLayout>
+</ScrollView>
