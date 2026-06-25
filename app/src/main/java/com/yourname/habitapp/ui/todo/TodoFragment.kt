@@ -22,6 +22,7 @@ import com.yourname.habitapp.data.models.HabitFrequency
 import com.yourname.habitapp.data.models.TodoItem
 import com.yourname.habitapp.ui.habits.AddHabitBottomSheet
 import androidx.lifecycle.MediatorLiveData
+import androidx.recyclerview.widget.ItemTouchHelper
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,6 +60,8 @@ class TodoFragment : Fragment() {
             val nextMute = !isMuted
             settingsPrefs.edit().putBoolean("mute_notifications", nextMute).apply()
             
+            if (nextMute) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
+            
             val msg = if (nextMute) "تم كتم التنبيهات 🔇" else "تم تفعيل التنبيهات 🔔"
             android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_SHORT).show()
             
@@ -95,6 +98,69 @@ class TodoFragment : Fragment() {
             onMuteToggle = { item -> toggleMute(item) }
         )
         recyclerView.adapter = adapter
+
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+            private var fromPosition: Int = -1
+            private var toPosition: Int = -1
+
+            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+                super.onSelectedChanged(viewHolder, actionState)
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    viewHolder?.itemView?.let {
+                        it.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
+                        it.elevation = 40f
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            it.foreground = android.graphics.drawable.ColorDrawable(0x4D000000) // 30% Darker
+                        }
+                    }
+                }
+            }
+
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                viewHolder.itemView.let {
+                    it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
+                    it.elevation = 2f
+                    it.isPressed = false
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        it.foreground = null
+                    }
+                }
+
+                if (fromPosition != -1 && toPosition != -1 && fromPosition != toPosition) {
+                    val list = adapter.currentList
+                    lifecycleScope.launch {
+                        val tasks = list.filterIsInstance<TodoItem>().mapIndexed { index, item -> item.copy(displayOrder = index) }
+                        val habits = list.filterIsInstance<Habit>().mapIndexed { index, item -> item.copy(displayOrder = index) }
+                        if (tasks.isNotEmpty()) db.todoDao().updateAll(tasks)
+                        if (habits.isNotEmpty()) db.habitDao().updateAllHabits(habits)
+                        Toast.makeText(requireContext(), "تم تحديث الترتيب بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                fromPosition = -1
+                toPosition = -1
+            }
+
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder): Boolean {
+                val from = vh.adapterPosition
+                val to = t.adapterPosition
+                if (fromPosition == -1) fromPosition = from
+                toPosition = to
+                
+                val list = adapter.currentList.toMutableList()
+                Collections.swap(list, from, to)
+                adapter.submitList(list)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.adapterPosition
+                val item = adapter.currentList[pos]
+                adapter.notifyItemChanged(pos)
+                confirmDelete(item)
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         btnSelectDate.setOnClickListener {
             DatePickerDialog(requireContext(), { _, y, m, d ->
@@ -193,7 +259,38 @@ class TodoFragment : Fragment() {
         if (currentCategory == "ALL" || currentCategory == "TASKS") combined.addAll(filteredTasks)
         if (currentCategory == "ALL" || currentCategory == "HABITS") combined.addAll(filteredHabits)
 
-        adapter.submitList(combined)
+        // Sort: Incomplete items first, then complete items.
+        // Within each group: respect the Manual displayOrder first, then priority, then time.
+        // Grouping: Tasks first, then Habits.
+        val sortedCombined = combined.sortedWith(compareBy<Any> {
+            when (it) {
+                is TodoItem -> it.isCompleted
+                is Habit -> it.isCompletedToday
+                else -> false
+            }
+        }.thenBy {
+            // Grouping: Tasks (0) then Habits (1)
+            if (it is TodoItem) 0 else 1
+        }.thenBy {
+            when (it) {
+                is TodoItem -> it.displayOrder
+                is Habit -> it.displayOrder
+                else -> 0
+            }
+        }.thenBy {
+            when (it) {
+                is TodoItem -> it.priority.ordinal
+                is Habit -> 1
+                else -> 2
+            }
+        }.thenBy {
+            when (it) {
+                is TodoItem -> it.startTime ?: Long.MAX_VALUE
+                else -> Long.MAX_VALUE
+            }
+        })
+
+        adapter.submitList(sortedCombined)
     }
 
     private fun editItem(item: Any) {
@@ -209,13 +306,21 @@ class TodoFragment : Fragment() {
     private fun toggleMute(item: Any) {
         lifecycleScope.launch {
             if (item is TodoItem) {
+                // If reminders were never enabled, show toast and don't toggle
+                if (!item.reminderStart && !item.reminderEnd) {
+                    Toast.makeText(requireContext(), "التنبيه غير مفعل لهذه المهمة", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
                 val nextMuted = !item.isMuted
                 db.todoDao().update(item.copy(isMuted = nextMuted))
+                if (nextMuted) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
                 val msg = if (nextMuted) "تم كتم المهمة 🔇" else "تنبيهات المهمة مفعلة 🔔"
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             } else if (item is Habit) {
                 val nextMuted = !item.isMuted
                 db.habitDao().updateHabit(item.copy(isMuted = nextMuted))
+                if (nextMuted) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
                 val msg = if (nextMuted) "تم كتم العادة 🔇" else "تنبيهات العادة مفعلة 🔔"
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             }

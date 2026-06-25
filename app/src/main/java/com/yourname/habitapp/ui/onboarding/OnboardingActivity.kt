@@ -48,17 +48,17 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        showLoading(false)
         if (result.resultCode == RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                showLoading(false)
-                Toast.makeText(this, "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Google Error: ${e.statusCode}", Toast.LENGTH_LONG).show()
             }
         } else {
-            showLoading(false)
+            Toast.makeText(this, "Sign-in cancelled (Result: ${result.resultCode})", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -89,6 +89,9 @@ class OnboardingActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        // Force sign out from Google as well when reaching onboarding to ensure chooser shows up next time
+        googleSignInClient.signOut()
 
         val onboardingDone = prefs.getBoolean("onboarding_done", false)
 

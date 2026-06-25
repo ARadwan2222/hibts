@@ -11,26 +11,33 @@ interface TodoDao {
     @Query("""
         SELECT * FROM todos 
         ORDER BY 
-            CASE priority WHEN 'HIGH' THEN 0 WHEN 'MEDIUM' THEN 1 ELSE 2 END,
             isCompleted ASC,
+            displayOrder ASC,
+            CASE priority WHEN 'HIGH' THEN 0 WHEN 'MEDIUM' THEN 1 ELSE 2 END,
+            startTime ASC,
             createdAt DESC
     """)
     fun getAllTodos(): LiveData<List<TodoItem>>
 
-    @Query("SELECT * FROM todos WHERE isCompleted = 0 ORDER BY createdAt DESC")
+    @Query("SELECT * FROM todos WHERE isCompleted = 0 ORDER BY displayOrder ASC, createdAt DESC")
     fun getPendingTodos(): LiveData<List<TodoItem>>
 
-    @Query("SELECT * FROM todos ORDER BY createdAt DESC")
+    @Query("SELECT * FROM todos ORDER BY displayOrder ASC, createdAt DESC")
     suspend fun getAllTodosSync(): List<TodoItem>
 
     @Query("""
         SELECT * FROM todos 
         WHERE targetDate >= :startOfDay AND targetDate <= :endOfDay
         ORDER BY 
+            isCompleted ASC,
+            displayOrder ASC,
             CASE priority WHEN 'HIGH' THEN 0 WHEN 'MEDIUM' THEN 1 ELSE 2 END,
-            isCompleted ASC
+            startTime ASC
     """)
     fun getTodosByDate(startOfDay: Long, endOfDay: Long): LiveData<List<TodoItem>>
+
+    @Update
+    suspend fun updateAll(todos: List<TodoItem>)
 
     @Query("SELECT * FROM todos WHERE (reminderStart = 1 OR reminderEnd = 1) AND isCompleted = 0 AND startTime > :now")
     suspend fun getReminders(now: Long): List<TodoItem>

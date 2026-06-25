@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -18,6 +20,7 @@ import com.yourname.habitapp.data.models.YearGoal
 import com.yourname.habitapp.utils.AchievementEngine
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Collections
 
 class YearGoalsFragment : Fragment() {
 
@@ -46,6 +49,70 @@ class YearGoalsFragment : Fragment() {
         )
         recyclerView.adapter = adapter
 
+        // Setup Drag & Drop and Swipe for Goals
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+            private var fromPosition: Int = -1
+            private var toPosition: Int = -1
+
+            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+                super.onSelectedChanged(viewHolder, actionState)
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    viewHolder?.itemView?.let {
+                        it.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
+                        it.elevation = 40f
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            it.foreground = android.graphics.drawable.ColorDrawable(0x4D000000)
+                        }
+                    }
+                }
+            }
+
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                viewHolder.itemView.let {
+                    it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
+                    it.elevation = 2f
+                    it.isPressed = false
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        it.foreground = null
+                    }
+                }
+
+                if (fromPosition != -1 && toPosition != -1 && fromPosition != toPosition) {
+                    val list = adapter.currentList
+                    lifecycleScope.launch {
+                        val updatedList = list.mapIndexed { index, item ->
+                            item.copy(displayOrder = index)
+                        }
+                        db.yearGoalDao().updateAllGoals(updatedList)
+                        Toast.makeText(requireContext(), "تم تحديث الترتيب بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                fromPosition = -1
+                toPosition = -1
+            }
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                val from = viewHolder.adapterPosition
+                val to = target.adapterPosition
+                if (fromPosition == -1) fromPosition = from
+                toPosition = to
+                
+                val list = adapter.currentList.toMutableList()
+                Collections.swap(list, from, to)
+                adapter.submitList(list)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.adapterPosition
+                val item = adapter.currentList[pos]
+                adapter.notifyItemChanged(pos)
+                confirmDelete(item)
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayoutGoals)
         setupYearTabs(tabLayout)
 
@@ -61,7 +128,7 @@ class YearGoalsFragment : Fragment() {
         tabLayout.removeAllTabs()
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         
-        // Range: -2 years back to +3 years forward
+        years.clear()
         for (i in -2..3) {
             val year = currentYear + i
             years.add(year)
@@ -90,13 +157,10 @@ class YearGoalsFragment : Fragment() {
     private fun updateHeader(goals: List<YearGoal>) {
         val achieved = goals.count { it.isCompleted }
         val total = goals.size
-        val missed = total - achieved
         
         val achievedPercent = if (total > 0) (achieved * 100 / total) else 0
-        val missedPercent = if (total > 0) (missed * 100 / total) else 0
 
         view?.findViewById<TextView>(R.id.tvAchievedPercent)?.text = "$achievedPercent%"
-        view?.findViewById<TextView>(R.id.tvMissedPercent)?.text = "$missedPercent%"
 
         val now = Calendar.getInstance()
         val currentYear = now.get(Calendar.YEAR)
@@ -142,14 +206,6 @@ class YearGoalsFragment : Fragment() {
     private fun editGoal(goal: YearGoal) {
         AddGoalBottomSheet.newInstance(goalId = goal.id)
             .show(parentFragmentManager, "EditGoal")
-    }
-
-    private fun onStepCompleted(goalId: Int, step: GoalStep) {
-        lifecycleScope.launch {
-            db.yearGoalDao().updateStep(step.copy(isCompleted = !step.isCompleted))
-            db.yearGoalDao().recalculateProgress(goalId)
-            AchievementEngine.addXP(requireContext(), 10)
-        }
     }
 
     private fun toggleGoalComplete(goal: YearGoal) {

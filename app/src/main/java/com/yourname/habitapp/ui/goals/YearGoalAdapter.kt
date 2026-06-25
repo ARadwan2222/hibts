@@ -46,6 +46,7 @@ class YearGoalAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_year_goal, parent, false)
+        // Ensure full width by removing horizontal margins in code if layout doesn't suffice
         return ViewHolder(view)
     }
 
@@ -72,13 +73,13 @@ class YearGoalAdapter(
         // Dynamic Background Color Logic with Translucency
         when {
             goal.isCompleted -> {
-                holder.container.setBackgroundColor(0x304CAF50) // Transparent Green (Achieved)
+                holder.container.setBackgroundColor(0x204CAF50) // More transparent Green
             }
             getTargetMillis(goal) < now -> {
-                holder.container.setBackgroundColor(0x30F44336) // Transparent Red (Overdue)
+                holder.container.setBackgroundColor(0x20F44336) // More transparent Red
             }
             else -> {
-                holder.container.setBackgroundColor(0x302196F3) // Transparent Blue (Future/Active)
+                holder.container.setBackgroundColor(0x00000000) // Transparent
             }
         }
 

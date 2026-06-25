@@ -74,6 +74,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/ivProfilePicTop" />
 
+
+
             <TextView
                 android:id="@+id/tvGreeting"
                 android:layout_width="wrap_content"
@@ -115,7 +117,7 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     android:padding="12dp">
-                    <TextView android:id="@+id/tvFocusInspiration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Focus" android:textColor="@color/white" android:textSize="18sp" android:textStyle="bold" android:gravity="center" />
+                    <TextView android:id="@+id/tvFocusInspiration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Focus" android:textColor="@color/white" android:textSize="18sp" android:textStyle="bold" android:gravity="center" android:maxLines="1" android:ellipsize="end" />
                     <TextView android:id="@+id/tvFocusTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="..." android:textColor="#E84393" android:textSize="22sp" android:textStyle="bold" android:gravity="center" />
                     <TextView android:id="@+id/tvFocusTimer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="00:00:00" android:textColor="#CCFFFFFF" android:textSize="18sp" android:gravity="center" />
                 </LinearLayout>

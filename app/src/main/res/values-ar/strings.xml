@@ -52,7 +52,7 @@
 
     <!-- Timer & Task -->
     <string name="task_timer">مؤقت المهام</string>
-    <string name="start_timer">بدء المؤقت</string>
+    <string name="start_timer">ابدأ المؤقت ✨</string>
     <string name="stop_timer">إيقاف</string>
     <string name="duration_hint">المدة (بالدقائق)</string>
 
@@ -181,13 +181,13 @@
     <string name="delete_task_msg">هل أنت متأكد من حذف هذه المهمة؟</string>
     <string name="delete_habit_msg">هل أنت متأكد من حذف هذه العادة؟</string>
     <string name="add_first_task">أضف أول مهمة لك</string>
-    <string name="focus_next_goal">هـدفـك الـقـادم انـتـظـرك</string>
-    <string name="focus_in_progress">🔥 أنـت فـي طـريـق الـإنجـاز 🔥</string>
-    <string name="focus_time_up">🎯 الـوقـت انـتـهـى تـقـريـبـاً 🎯</string>
-    <string name="focus_time_finished">انتهى الوقت</string>
-    <string name="focus_all_day">طوال اليوم</string>
-    <string name="focus_completed_all">أتممت جميع مهام اليوم</string>
-    <string name="focus_hero">🏆 أنـت بـطـل حـقـيـقـي الـيـوم! 🏆</string>
+    <string name="focus_next_goal">الهدف القادم 🚀</string>
+    <string name="focus_in_progress">جاري الإنجاز 🔥💪</string>
+    <string name="focus_time_up">انتهى الوقت تقريباً 🎯⏰</string>
+    <string name="focus_time_finished">انتهى الوقت 🏁</string>
+    <string name="focus_all_day">طوال اليوم ⚡</string>
+    <string name="focus_completed_all">تمت جميع المهام ✅</string>
+    <string name="focus_hero">أنت بطل اليوم! 🏆🎉</string>
     <string name="edit_habit">تعديل العادة</string>
     <string name="update">تحديث</string>
     <string name="select_category">اختر الفئة</string>
@@ -229,6 +229,7 @@
     <string name="verified_success">لقد قمت بتفعيل الحساب ✓</string>
     <string name="back">عودة</string>
     <string name="loading">جاري التحميل…</string>
+    <string name="error_max_words">4 كلمات فقط كحد أقصى</string>
 
     <!-- Achievement Titles -->
     <string name="ach_first_habit_title">بداية الرحلة</string>

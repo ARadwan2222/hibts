@@ -13,14 +13,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yourname.habitapp.R
 import com.yourname.habitapp.data.models.Habit
 import com.yourname.habitapp.data.models.TodoItem
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MyTasksAdapter(
     private val onTodoToggle: (TodoItem) -> Unit,
     private val onHabitToggle: (Habit) -> Unit,
     private val onEdit: (Any) -> Unit,
     private val onDelete: (Any) -> Unit,
-    private val onMuteToggle: (Any) -> Unit // New parameter
+    private val onMuteToggle: (Any) -> Unit
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(DiffCallback()) {
+
+    private val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    private fun formatTime(millis: Long): String {
+        return timeFormatter.format(Date(millis))
+    }
 
     companion object {
         private const val TYPE_TASK = 1
@@ -54,15 +62,13 @@ class MyTasksAdapter(
             title.text = todo.title
             val timeView = itemView.findViewById<TextView>(R.id.tvTodoTime)
             
-            // Bell icon logic (highlight yellow if active and NOT muted, gray otherwise)
-            val hasActiveReminder = todo.reminderStart || todo.reminderEnd || (todo.reminderBefore > 0)
-            ivBell.visibility = View.VISIBLE 
-            val bellColor = if (hasActiveReminder && !todo.isCompleted && !todo.isMuted) {
-                0xFFFFD600.toInt() // Bright Yellow
-            } else {
-                0xFFBDBDBD.toInt() // Grayed out
-            }
-            ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+            // Bell logic: Lit ONLY if a reminder is active and NOT muted
+            val reminderOn = todo.reminderStart || todo.reminderEnd
+            val showLit = reminderOn && !todo.isMuted && !todo.isCompleted
+            
+            ivBell.visibility = View.VISIBLE
+            ivBell.setImageResource(if (showLit) R.drawable.ic_notification else R.drawable.ic_notification_off)
+            ivBell.imageTintList = android.content.res.ColorStateList.valueOf(if (showLit) 0xFFFFD600.toInt() else 0xFFBDBDBD.toInt())
             ivBell.setOnClickListener { onMuteToggle(todo) }
 
             if (todo.isMissed) {
@@ -71,7 +77,14 @@ class MyTasksAdapter(
                 timeView.visibility = View.VISIBLE
             } else {
                 title.setTextColor(0xFF333333.toInt())
-                timeView.visibility = if (todo.startTime != null) View.VISIBLE else View.GONE
+                if (todo.startTime != null) {
+                    val start = formatTime(todo.startTime)
+                    val end = todo.endTime?.let { " - ${formatTime(it)}" } ?: ""
+                    timeView.text = "$start$end"
+                    timeView.visibility = View.VISIBLE
+                } else {
+                    timeView.visibility = View.GONE
+                }
             }
 
             check.visibility = View.VISIBLE
@@ -81,6 +94,8 @@ class MyTasksAdapter(
             
             title.paintFlags = if (todo.isCompleted) title.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG 
                                else title.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+
+            itemView.alpha = if (todo.isCompleted) 0.6f else 1.0f
             
             btnEdit.setOnClickListener { onEdit(todo) }
             btnDelete.setOnClickListener { onDelete(todo) }
@@ -93,15 +108,10 @@ class MyTasksAdapter(
         private val check = view.findViewById<CheckBox>(R.id.checkHabitDone)
         private val btnEdit = view.findViewById<ImageView>(R.id.btnEdit)
         private val btnDelete = view.findViewById<ImageView>(R.id.btnDelete)
-        private val ivBell = view.findViewById<ImageView>(R.id.ivBell)
 
         fun bind(habit: Habit) {
             title.text = habit.name
             icon.text = habit.icon
-            
-            val bellColor = if (habit.isMuted) 0xFFBDBDBD.toInt() else 0xFFFFD600.toInt()
-            ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
-            ivBell.setOnClickListener { onMuteToggle(habit) }
 
             check.visibility = View.VISIBLE
             check.setOnCheckedChangeListener(null)
@@ -110,6 +120,8 @@ class MyTasksAdapter(
             
             title.paintFlags = if (habit.isCompletedToday) title.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG 
                                else title.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+
+            itemView.alpha = if (habit.isCompletedToday) 0.6f else 1.0f
             
             btnEdit.setOnClickListener { onEdit(habit) }
             btnDelete.setOnClickListener { onDelete(habit) }

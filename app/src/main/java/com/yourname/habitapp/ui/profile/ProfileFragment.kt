@@ -90,6 +90,15 @@ class ProfileFragment : Fragment() {
         
         val btnLogoutRow = view.findViewById<View>(R.id.btnLogoutRow)
         val btnResetAppRow = view.findViewById<View>(R.id.btnResetAppRow)
+        val tvVersion = view.findViewById<TextView>(R.id.tvVersionName)
+
+        // Set Version Name
+        try {
+            val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            tvVersion.text = "Version ${pInfo.versionName}"
+        } catch (e: Exception) {
+            tvVersion.text = "Version 1.0.5"
+        }
 
         // User Data Display
         val name = prefs.getString("user_name", "User")

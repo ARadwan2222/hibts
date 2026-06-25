@@ -17,6 +17,7 @@ data class YearGoal(
     val progress: Int = 0,
     val isCompleted: Boolean = false,
     val targetDate: Long? = null,
+    val displayOrder: Int = 0,               // Added for manual sorting
     val createdAt: Long = System.currentTimeMillis()
 )
 

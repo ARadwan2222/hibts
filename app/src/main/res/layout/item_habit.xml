@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardHabit"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="56dp"
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="2dp"
     app:cardCornerRadius="10dp"
@@ -23,8 +23,8 @@
             android:background="@color/brand_purple" />
 
         <FrameLayout
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_item_circle"
             android:backgroundTint="@color/bg_light_purple">
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </FrameLayout>
 
         <LinearLayout
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_dark"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_gray"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
@@ -70,45 +70,33 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/ivBell"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+        <ImageButton
+            android:id="@+id/btnEdit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginEnd="6dp"
-            android:src="@drawable/ic_notification"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:src="@drawable/ic_edit"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#1976D2"
+            android:padding="6dp"
+            android:scaleType="fitCenter" />
 
         <ImageButton
             android:id="@+id/btnDelete"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/bg_item_circle"
-            android:backgroundTint="#FFEBEE"
             android:src="@drawable/ic_delete"
-            android:padding="5dp"
-            app:tint="#FF5252" />
-
-        <ImageButton
-            android:id="@+id/btnEdit"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_marginEnd="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_edit"
-            android:padding="5dp"
-            app:tint="@color/text_gray" />
+            app:tint="#D32F2F"
+            android:padding="6dp"
+            android:scaleType="fitCenter" />
 
         <CheckBox
             android:id="@+id/checkHabitDone"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_marginEnd="4dp"
-            android:buttonTint="@color/brand_purple"
-            android:scaleX="0.9"
-            android:scaleY="0.9" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

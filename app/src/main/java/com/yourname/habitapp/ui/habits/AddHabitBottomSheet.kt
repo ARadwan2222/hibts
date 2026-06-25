@@ -171,6 +171,12 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
             val name = etName.text.toString().trim()
             if (name.isEmpty()) { etName.error = "أدخل اسم العادة"; return@setOnClickListener }
 
+            val wordCount = name.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
+            if (wordCount > 4) {
+                etName.error = getString(R.string.error_max_words)
+                return@setOnClickListener
+            }
+
             if (selectedFrequency != HabitFrequency.DAILY && selectedSpecificDay == null) {
                 Toast.makeText(requireContext(), "يرجى اختيار يوم التكرار", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -202,7 +208,10 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                     return@launch
                 }
 
-                if (editingHabit != null) dao.updateHabit(habit) else dao.insertHabit(habit)
+                val minOrder = allHabits.minOfOrNull { it.displayOrder } ?: 0
+                val habitToSave = if (editingHabit != null) habit else habit.copy(displayOrder = minOrder - 1)
+
+                if (editingHabit != null) dao.updateHabit(habitToSave) else dao.insertHabit(habitToSave)
                 
                 if (editingHabit == null) {
                     val count = dao.getHabitCount()

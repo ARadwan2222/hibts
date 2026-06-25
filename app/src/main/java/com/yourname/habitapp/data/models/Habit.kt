@@ -23,5 +23,6 @@ data class Habit(
     val targetDate: Long? = null,
     val lastCompletedTimestamp: Long? = null,
     val isMuted: Boolean = false,            // New field to mute reminders
+    val displayOrder: Int = 0,               // Field for manual sorting
     val createdAt: Long = System.currentTimeMillis()
 )

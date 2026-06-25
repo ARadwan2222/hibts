@@ -290,6 +290,16 @@
                     android:textColor="@color/brand_purple"
                     android:textSize="13sp" />
 
+                <TextView
+                    android:id="@+id/tvVersionName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="Version 1.0.5"
+                    android:textColor="@color/text_gray"
+                    android:textSize="11sp" />
+
                 <!-- Hidden Logic IDs -->
                 <View android:id="@+id/btnRestoreRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
                 <View android:id="@+id/btnHelpCenterRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />

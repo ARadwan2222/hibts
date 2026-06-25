@@ -8,7 +8,7 @@ import com.yourname.habitapp.data.models.YearGoal
 @Dao
 abstract class YearGoalDao {
 
-    @Query("SELECT * FROM year_goals WHERE year = :year ORDER BY isCompleted ASC, targetDate ASC, createdAt DESC")
+    @Query("SELECT * FROM year_goals WHERE year = :year ORDER BY isCompleted ASC, displayOrder ASC, targetDate ASC, createdAt DESC")
     abstract fun getGoalsByYear(year: Int): LiveData<List<YearGoal>>
 
     @Query("SELECT * FROM year_goals WHERE isCompleted = 0 ORDER BY targetDate ASC")
@@ -34,6 +34,9 @@ abstract class YearGoalDao {
 
     @Update
     abstract suspend fun updateGoal(goal: YearGoal)
+
+    @Update
+    abstract suspend fun updateAllGoals(goals: List<YearGoal>)
 
     @Update
     abstract suspend fun updateStep(step: GoalStep)

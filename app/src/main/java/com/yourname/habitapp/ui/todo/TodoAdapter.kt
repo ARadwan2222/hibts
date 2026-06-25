@@ -20,13 +20,12 @@ class TodoAdapter(
     private val onCompleteClick: (TodoItem) -> Unit,
     private val onEditClick: (TodoItem) -> Unit,
     private val onDeleteClick: (TodoItem) -> Unit,
-    private val onMuteToggle: (TodoItem) -> Unit  // New parameter
+    private val onMuteToggle: (TodoItem) -> Unit 
 ) : ListAdapter<TodoItem, TodoAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTitle      : TextView = view.findViewById(R.id.tvTodoTitle)
         val tvTime       : TextView = view.findViewById(R.id.tvTodoTime)
-        val tvPriority   : TextView = view.findViewById(R.id.tvPriority)
         val checkDone    : CheckBox = view.findViewById(R.id.checkTodoDone)
         val btnEdit      : View = view.findViewById(R.id.btnEdit)
         val btnDelete    : View = view.findViewById(R.id.btnDelete)
@@ -46,31 +45,29 @@ class TodoAdapter(
         holder.tvTitle.text = todo.title
 
         val priorityColor = when(todo.priority) {
-            Priority.HIGH -> 0xFFE84393.toInt() // Pinkish-Red
-            Priority.MEDIUM -> 0xFF6C5CE7.toInt() // Purple
-            Priority.LOW -> 0xFF00CEC9.toInt() // Teal
+            Priority.HIGH -> 0xFFE84393.toInt() 
+            Priority.MEDIUM -> 0xFF6C5CE7.toInt()
+            Priority.LOW -> 0xFF00CEC9.toInt()
         }
         holder.indicator.setBackgroundColor(priorityColor)
         
-        // Bell icon logic (highlight yellow if active and NOT muted, gray otherwise)
-        val hasActiveReminder = todo.reminderStart || todo.reminderEnd || (todo.reminderBefore > 0)
-        holder.ivBell.visibility = View.VISIBLE
+        // Bell logic: Lit ONLY if a reminder is active and NOT muted
+        val reminderOn = todo.reminderStart || todo.reminderEnd
+        val showLit = reminderOn && !todo.isMuted && !todo.isCompleted
         
-        val bellColor = if (hasActiveReminder && !todo.isCompleted && !todo.isMuted) {
-            0xFFFFD600.toInt() // Bright Yellow
-        } else {
-            0xFFBDBDBD.toInt() // Grayed out
-        }
-        holder.ivBell.imageTintList = android.content.res.ColorStateList.valueOf(bellColor)
+        holder.ivBell.visibility = View.VISIBLE
+        holder.ivBell.setImageResource(if (showLit) R.drawable.ic_notification else R.drawable.ic_notification_off)
+        holder.ivBell.imageTintList = android.content.res.ColorStateList.valueOf(if (showLit) 0xFFFFD600.toInt() else 0xFFBDBDBD.toInt())
         holder.ivBell.setOnClickListener { onMuteToggle(todo) }
 
         if (todo.isMissed) {
-            holder.tvTitle.setTextColor(0xFFD32F2F.toInt()) // Red color
+            holder.tvTitle.setTextColor(0xFFD32F2F.toInt())
             holder.tvTime.text = "⚠️ فات وقتها"
             holder.tvTime.visibility = View.VISIBLE
         } else if (todo.startTime != null) {
             val start = timeFormat.format(Date(todo.startTime))
-            holder.tvTime.text = "⏰ $start"
+            val end = todo.endTime?.let { " - ${timeFormat.format(Date(it))}" } ?: ""
+            holder.tvTime.text = "⏰ $start$end"
             holder.tvTime.visibility = View.VISIBLE
             holder.tvTitle.setTextColor(0xFF333333.toInt())
         } else {

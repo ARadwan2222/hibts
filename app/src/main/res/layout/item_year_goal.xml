@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
-    android:layout_marginVertical="6dp"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="3dp">
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="2dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="1dp">
 
     <LinearLayout
         android:id="@+id/layoutGoalContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="14dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🎯"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:layout_marginStart="4dp" />
 
             <LinearLayout
@@ -46,7 +46,7 @@
                     android:id="@+id/tvGoalTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="#333333" />
                 <TextView
@@ -54,14 +54,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="متبقي: 10 أيام"
-                    android:textSize="11sp"
+                    android:textSize="13sp"
                     android:textColor="#666666" />
             </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btnEditGoal"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_edit"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="#1976D2"
@@ -70,8 +70,8 @@
 
             <ImageButton
                 android:id="@+id/btnDeleteGoalAction"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_delete"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="#D32F2F"
@@ -83,7 +83,7 @@
             android:id="@+id/progressBarGoal"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="8dp"
+            android:layout_height="10dp"
             android:layout_marginTop="8dp"
             android:max="100"
             android:progressDrawable="@drawable/bg_progress_custom"
@@ -96,7 +96,7 @@
             android:layout_marginTop="8dp"
             android:background="#10000000"
             android:orientation="vertical"
-            android:padding="8dp"
+            android:padding="10dp"
             android:visibility="gone">
 
             <TextView

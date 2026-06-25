@@ -1,6 +1,5 @@
 package com.yourname.habitapp.ui
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,6 +54,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         super.onCreate(savedInstanceState)
+        
+        // Stop any notification sounds when app is opened
+        com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(this)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

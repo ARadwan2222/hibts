@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -26,7 +27,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ListAdapter
 import com.google.android.material.chip.ChipGroup
-import android.view.animation.ScaleAnimation
 import com.yourname.habitapp.utils.AchievementEngine
 import com.yourname.habitapp.R
 import com.yourname.habitapp.data.AppDatabase
@@ -36,7 +36,6 @@ import com.yourname.habitapp.data.models.TodoItem
 import com.yourname.habitapp.ui.todo.AddTodoBottomSheet
 import com.yourname.habitapp.ui.todo.TodoAdapter
 import kotlinx.coroutines.launch
-import java.util.*
 
 class HabitsFragment : Fragment() {
 
@@ -49,6 +48,8 @@ class HabitsFragment : Fragment() {
     private lateinit var dailyAdapter: HabitAdapter
     private lateinit var weeklyAdapter: HabitAdapter
     private lateinit var monthlyAdapter: HabitAdapter
+    
+    private val combinedData = MediatorLiveData<Pair<List<TodoItem>, List<Habit>>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_habits, container, false)
@@ -95,20 +96,17 @@ class HabitsFragment : Fragment() {
         dailyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
-            onMuteToggle = { habit -> toggleHabitMute(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
         )
         weeklyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
-            onMuteToggle = { habit -> toggleHabitMute(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
         )
         monthlyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
-            onMuteToggle = { habit -> toggleHabitMute(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
         )
     }
 
@@ -128,7 +126,6 @@ class HabitsFragment : Fragment() {
         val tvHabitsTitle = view.findViewById<TextView>(R.id.tvDailyHabitsTitle)
         val tvPoints = view.findViewById<TextView>(R.id.tvPointsCount)
 
-        val combinedData = MediatorLiveData<Pair<List<TodoItem>, List<Habit>>>()
         combinedData.addSource(db.todoDao().getAllTodos()) { tasks -> combinedData.value = Pair(tasks ?: emptyList(), combinedData.value?.second ?: emptyList()) }
         combinedData.addSource(db.habitDao().getAllHabits()) { habits -> combinedData.value = Pair(combinedData.value?.first ?: emptyList(), habits ?: emptyList()) }
 
@@ -150,7 +147,15 @@ class HabitsFragment : Fragment() {
             val endOfDay = now.apply { set(Calendar.HOUR_OF_DAY, 23); set(Calendar.MINUTE, 59); set(Calendar.SECOND, 59) }.timeInMillis
             
             val todayTasks = tasks.filter { it.targetDate in startOfDay..endOfDay }
+                .sortedWith(compareBy<TodoItem> { it.isCompleted }
+                .thenBy { it.displayOrder }
+                .thenBy { it.priority.ordinal }
+                .thenBy { it.startTime ?: Long.MAX_VALUE })
+
             val dailyHabits = habits.filter { it.frequency == HabitFrequency.DAILY }
+                .sortedWith(compareBy<Habit> { it.isCompletedToday }
+                .thenBy { it.displayOrder }
+                .thenBy { it.createdAt })
             
             taskAdapter.submitList(todayTasks)
             dailyAdapter.submitList(dailyHabits)
@@ -185,9 +190,24 @@ class HabitsFragment : Fragment() {
         view.findViewById<View>(R.id.btnAddHabitPlus).setOnClickListener { openAddHabit(HabitFrequency.DAILY) }
         view.findViewById<View>(R.id.btnAddWeeklyPlus).setOnClickListener { openAddHabit(HabitFrequency.WEEKLY) }
         view.findViewById<View>(R.id.btnAddMonthlyPlus).setOnClickListener { openAddHabit(HabitFrequency.MONTHLY) }
-        view.findViewById<View>(R.id.btnNotifications).setOnClickListener {
-            Toast.makeText(requireContext(), "تم إرسال التنبيهات بنجاح ✅", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(requireContext(), com.yourname.habitapp.ui.achievements.AchievementsActivity::class.java))
+        
+        val btnNotify = view.findViewById<ImageButton>(R.id.btnNotifications)
+        val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        
+        fun updateNotifyIcon(isMuted: Boolean) {
+            btnNotify?.setImageResource(if (isMuted) R.drawable.ic_notification_off else R.drawable.ic_notification)
+        }
+        
+        updateNotifyIcon(settingsPrefs.getBoolean("mute_notifications", false))
+        
+        btnNotify?.setOnClickListener {
+            val isMuted = settingsPrefs.getBoolean("mute_notifications", false)
+            val nextMute = !isMuted
+            settingsPrefs.edit().putBoolean("mute_notifications", nextMute).apply()
+            if (nextMute) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
+            updateNotifyIcon(nextMute)
+            val msg = if (nextMute) "تم كتم التنبيهات 🔇" else "تم تفعيل التنبيهات 🔔"
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -215,30 +235,41 @@ class HabitsFragment : Fragment() {
         tvProgress.text = "$completedTasks / ${tasks.size} " + getString(R.string.achieved)
 
         val pendingTasks = tasks.filter { !it.isCompleted }
-        val pendingHabits = habits.filter { !it.isCompletedToday }
 
         if (tasks.isEmpty()) {
-            tvInspo.text = "★ " + getString(R.string.start_timer) + " ★"; tvTitle.text = getString(R.string.add_first_task); timer.text = "--:--:--"; countDownTimer?.cancel()
+            tvInspo.text = getString(R.string.start_timer); tvTitle.text = getString(R.string.add_first_task); timer.text = "--:--:--"; countDownTimer?.cancel()
         } else if (pendingTasks.isNotEmpty()) {
-            val focusTask = pendingTasks.sortedWith(compareBy({ it.priority.ordinal }, { it.startTime ?: Long.MAX_VALUE })).first()
+            val now = System.currentTimeMillis()
+            
+            val activeTask = pendingTasks.firstOrNull { 
+                val startTime = it.startTime ?: return@firstOrNull false
+                val effectiveEndTime = it.endTime ?: (startTime + (it.durationMinutes.coerceAtLeast(1) * 60 * 1000L))
+                now >= startTime && now < effectiveEndTime
+            }
+            
+            val soonTask = pendingTasks.filter { it.startTime != null && it.startTime!! > now }
+                .minByOrNull { it.startTime!! }
+                
+            val manualFirstTask = pendingTasks.minByOrNull { it.displayOrder }
+
+            val focusTask = activeTask ?: soonTask ?: manualFirstTask!!
+            
             tvTitle.text = focusTask.title
             if (focusTask.startTime != null) {
-                val now = System.currentTimeMillis()
-                val effectiveEndTime = focusTask.endTime ?: (focusTask.startTime + (focusTask.durationMinutes * 60 * 1000L))
+                val effectiveEndTime = focusTask.endTime ?: (focusTask.startTime!! + (focusTask.durationMinutes * 60 * 1000L))
                 
-                if (now < focusTask.startTime) {
-                    tvInspo.text = "✨ " + getString(R.string.focus_next_goal) + " ✨"
-                    // Changed logic: Timer ONLY works at the start of the task, not when added
+                if (now < focusTask.startTime!!) {
+                    tvInspo.text = getString(R.string.focus_next_goal)
                     timer.text = "--:--:--"; countDownTimer?.cancel()
                 } else if (now < effectiveEndTime) {
-                    tvInspo.text = "🔥 " + getString(R.string.focus_in_progress) + " 🔥"
+                    tvInspo.text = getString(R.string.focus_in_progress)
                     startFocusTimer(timer, effectiveEndTime)
                 } else {
-                    tvInspo.text = "🎯 " + getString(R.string.focus_time_up) + " 🎯"
+                    tvInspo.text = getString(R.string.focus_time_up)
                     timer.text = getString(R.string.focus_time_finished); countDownTimer?.cancel()
                 }
             } else { 
-                tvInspo.text = "✨ " + getString(R.string.focus_next_goal) + " ✨"
+                tvInspo.text = getString(R.string.focus_next_goal)
                 timer.text = getString(R.string.focus_all_day); countDownTimer?.cancel() 
             }
         } else {
@@ -249,13 +280,23 @@ class HabitsFragment : Fragment() {
     private fun startFocusTimer(timer: TextView, targetTime: Long) {
         countDownTimer?.cancel()
         val duration = targetTime - System.currentTimeMillis()
-        if (duration <= 0) { timer.text = "00:00:00"; return }
+        if (duration <= 0) { 
+            timer.text = "00:00:00"
+            return 
+        }
+        
         countDownTimer = object : CountDownTimer(duration, 1000) {
             override fun onTick(ms: Long) {
-                val h = ms / 3600000; val m = (ms % 3600000) / 60000; val s = (ms % 60000) / 1000
+                val h = ms / 3600000
+                val m = (ms % 3600000) / 60000
+                val s = (ms % 60000) / 1000
                 timer.text = String.format(Locale.getDefault(), "%02d:%02d:%02d", h, m, s)
             }
-            override fun onFinish() { timer.text = "00:00:00" }
+            override fun onFinish() { 
+                timer.text = "00:00:00" 
+                // Refresh dashboard to show next task by forcing a refresh of the current data
+                combinedData.value = combinedData.value
+            }
         }.start()
     }
 
@@ -286,21 +327,87 @@ class HabitsFragment : Fragment() {
     }
 
     private fun setupSwipeDelete(recyclerView: RecyclerView, adapter: ListAdapter<out Any, *>) {
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
+        val callback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+            private var fromPosition: Int = -1
+            private var toPosition: Int = -1
+
+            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+                super.onSelectedChanged(viewHolder, actionState)
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    viewHolder?.itemView?.let {
+                        it.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
+                        it.elevation = 40f
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            it.foreground = android.graphics.drawable.ColorDrawable(0x4D000000) // 30% Darker
+                        }
+                    }
+                }
+            }
+
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                viewHolder.itemView.let {
+                    it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
+                    it.elevation = 2f
+                    it.isPressed = false
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        it.foreground = null
+                    }
+                }
+                
+                if (fromPosition != -1 && toPosition != -1 && fromPosition != toPosition) {
+                    val list = adapter.currentList
+                    lifecycleScope.launch {
+                        if (list.all { it is TodoItem }) {
+                            val updated = list.filterIsInstance<TodoItem>().mapIndexed { index, item -> item.copy(displayOrder = index) }
+                            db.todoDao().updateAll(updated)
+                        } else if (list.all { it is Habit }) {
+                            val updated = list.filterIsInstance<Habit>().mapIndexed { index, item -> item.copy(displayOrder = index) }
+                            db.habitDao().updateAllHabits(updated)
+                        }
+                    }
+                }
+                fromPosition = -1
+                toPosition = -1
+            }
+
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder): Boolean {
+                val from = vh.adapterPosition
+                val to = t.adapterPosition
+                if (fromPosition == -1) fromPosition = from
+                toPosition = to
+
+                val list = adapter.currentList.toMutableList() as MutableList<Any>
+                Collections.swap(list, from, to)
+                
+                when (adapter) {
+                    is TodoAdapter -> adapter.submitList(list.filterIsInstance<TodoItem>())
+                    is HabitAdapter -> adapter.submitList(list.filterIsInstance<Habit>())
+                    else -> (adapter as? ListAdapter<Any, *>)?.submitList(list)
+                }
+                return true
+            }
+
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val item = adapter.currentList[position]
                 adapter.notifyItemChanged(position)
                 showDeleteConfirmation(item)
             }
-        }).attachToRecyclerView(recyclerView)
+        }
+        ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
     }
 
     private fun toggleTodoMute(todo: TodoItem) {
         lifecycleScope.launch {
+            if (!todo.reminderStart && !todo.reminderEnd) {
+                Toast.makeText(requireContext(), "التنبيه غير مفعل لهذه المهمة", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
             val nextMuted = !todo.isMuted
             db.todoDao().update(todo.copy(isMuted = nextMuted))
+            if (nextMuted) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext(), todo.id)
             val msg = if (nextMuted) "تم كتم المهمة 🔇" else "تنبيهات المهمة مفعلة 🔔"
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }

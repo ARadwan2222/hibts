@@ -171,6 +171,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                         }
                     }
                 } else {
+                    val minOrder = allTodos.minOfOrNull { it.displayOrder } ?: 0
                     val todo = TodoItem(
                         title          = title,
                         priority       = priority,
@@ -181,6 +182,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                         reminderStart  = cbReminderStart.isChecked,
                         reminderEnd    = cbReminderEnd.isChecked,
                         reminderBefore = 10,
+                        displayOrder   = minOrder - 1,
                         createdAt      = System.currentTimeMillis()
                     )
                     val id = db.todoDao().insert(todo)

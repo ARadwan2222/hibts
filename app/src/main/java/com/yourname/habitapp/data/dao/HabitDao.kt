@@ -9,11 +9,14 @@ interface HabitDao {
 
     // ─── قراءة ──────────────────────────────────────────────────────────────
 
-    @Query("SELECT * FROM habits ORDER BY createdAt DESC")
+    @Query("SELECT * FROM habits ORDER BY isCompletedToday ASC, displayOrder ASC, createdAt DESC")
     fun getAllHabits(): LiveData<List<Habit>>
 
-    @Query("SELECT * FROM habits ORDER BY createdAt DESC")
+    @Query("SELECT * FROM habits ORDER BY displayOrder ASC, createdAt DESC")
     suspend fun getAllHabitsSync(): List<Habit>       // للاستخدام في Workers
+
+    @Update
+    suspend fun updateAllHabits(habits: List<Habit>)
 
     @Query("SELECT * FROM habits WHERE id = :id")
     suspend fun getHabitById(id: Int): Habit?
