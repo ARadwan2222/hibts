@@ -169,7 +169,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
 
         btnSave.setOnClickListener {
             val name = etName.text.toString().trim()
-            if (name.isEmpty()) { etName.error = "أدخل اسم العادة"; return@setOnClickListener }
+            if (name.isEmpty()) { etName.error = getString(R.string.error_empty_field); return@setOnClickListener }
 
             val wordCount = name.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
             if (wordCount > 4) {
@@ -178,7 +178,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
             }
 
             if (selectedFrequency != HabitFrequency.DAILY && selectedSpecificDay == null) {
-                Toast.makeText(requireContext(), "يرجى اختيار يوم التكرار", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.select_day), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

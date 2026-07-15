@@ -219,6 +219,12 @@
     <string name="select_time">اختر الوقت</string>
     <string name="days_left_msg">متبقي: %d يوم</string>
     <string name="time_up_warning">⚠️ انتهى الوقت</string>
+    <string name="goal_title_hint">عنوان الهدف (مثلاً: تعلم لغة جديدة)</string>
+    <string name="goal_steps_label">خطوات التنفيذ (اختياري)</string>
+    <string name="add_step_hint">أضف خطوة…</string>
+    <string name="year_label">السنة: %d</string>
+    <string name="time_label">الوقت</string>
+    <string name="date_label">موعد</string>
     <string name="login_title">تسجيل الدخول</string>
     <string name="register_title">إنشاء حساب جديد</string>
     <string name="switch_to_register">ليس لديك حساب؟ سجل الآن</string>

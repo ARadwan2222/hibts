@@ -38,6 +38,8 @@ class TodoFragment : Fragment() {
 
     private val combinedData = MediatorLiveData<Pair<List<TodoItem>, List<Habit>>>()
 
+    fun getSelectedDateMillis(): Long = selectedDate.timeInMillis
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_todo, container, false)
     }

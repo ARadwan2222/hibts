@@ -128,7 +128,13 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
 
         btnSave.setOnClickListener {
             val title = etTitle.text.toString().trim()
-            if (title.isEmpty()) { etTitle.error = "أدخل عنوان المهمة"; return@setOnClickListener }
+            if (title.isEmpty()) { etTitle.error = getString(R.string.error_empty_field); return@setOnClickListener }
+
+            val wordCount = title.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
+            if (wordCount > 4) {
+                etTitle.error = getString(R.string.error_max_words)
+                return@setOnClickListener
+            }
 
             val priority = when (chipGroupPri.checkedChipId) {
                 R.id.chipHigh -> Priority.HIGH

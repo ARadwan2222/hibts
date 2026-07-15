@@ -1,128 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:background="@drawable/bg_rounded_dialog"
-    android:backgroundTint="#E3F2FD">
-
-    <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:background="#E0E0E0" />
-
-    <TextView
-        android:id="@+id/tvSheetTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="هدف سنوي جديد"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:gravity="center"
-        android:layout_marginBottom="16dp" />
-
-    <EditText
-        android:id="@+id/etGoalTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="عنوان الهدف (مثلاً: تعلم لغة جديدة)"
-        android:background="@drawable/bg_input_field"
-        android:padding="14dp"
-        android:textSize="16sp"
-        android:inputType="textPersonName" />
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:background="@drawable/bg_floating_card"
+        android:elevation="16dp">
 
-        <Button
-            android:id="@+id/btnSelectYear"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="السنة: 2026"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_marginEnd="4dp"
-            android:textSize="12sp" />
+        <!-- Handle Bar -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:background="@color/gray_light" />
 
-        <Button
-            android:id="@+id/btnSelectQuarter"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="الوقت"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_marginHorizontal="2dp"
-            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tvSheetTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_habit_title"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/text_gray" />
 
-        <Button
-            android:id="@+id/btnSelectTargetDate"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="موعد"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_marginStart="4dp"
-            android:textSize="12sp"
-            app:icon="@drawable/ic_calendar"
-            app:iconSize="14dp" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="خطوات التنفيذ (اختياري)"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:textColor="#555555" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
         <EditText
-            android:id="@+id/etNewStep"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:hint="أضف خطوة تنفيذية..."
-            android:background="@drawable/bg_input_field"
-            android:paddingHorizontal="16dp"
-            android:textSize="15sp"
-            android:inputType="text" />
+            android:id="@+id/etGoalTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/goal_title_hint"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:paddingVertical="12dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_dark"
+            android:inputType="textPersonName" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_light" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSelectYear"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="@string/year_label"
+                android:layout_marginEnd="4dp"
+                android:textSize="12sp"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSelectQuarter"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="@string/time_label"
+                android:layout_marginHorizontal="2dp"
+                android:textSize="12sp"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSelectTargetDate"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="@string/date_label"
+                android:layout_marginStart="4dp"
+                android:textSize="12sp"
+                app:icon="@drawable/ic_calendar"
+                app:iconSize="14dp"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/goal_steps_label"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/text_dark" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical">
+            <EditText
+                android:id="@+id/etNewStep"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:hint="@string/add_step_hint"
+                android:background="@drawable/bg_habit_item"
+                android:paddingHorizontal="16dp"
+                android:textSize="14sp"
+                android:textColor="@color/text_dark"
+                android:inputType="text" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddStep"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="8dp"
+                android:text="+"
+                android:textSize="20sp"
+                app:cornerRadius="12dp"
+                android:padding="0dp"
+                android:backgroundTint="@color/brand_purple" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerStepsEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAddStep"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:text="+"
-            android:textSize="24sp"
-            app:cornerRadius="12dp"
-            android:padding="0dp" />
+            android:id="@+id/btnSaveGoal"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/save"
+            android:textSize="16sp"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/brand_purple"
+            android:textColor="@color/white"
+            app:cornerRadius="16dp" />
+
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerStepsEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:maxHeight="200dp" />
-
-    <Button
-        android:id="@+id/btnSaveGoal"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="حفظ الهدف 🎯"
-        android:layout_marginTop="24dp"
-        app:cornerRadius="12dp" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

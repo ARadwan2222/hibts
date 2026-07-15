@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.onboarding.OnboardingActivity" android:exported="false" />
-        <activity android:name=".ui.MainActivity" android:exported="false" />
-        <activity android:name=".ui.achievements.AchievementsActivity" />
-        <activity android:name=".ui.habits.AddHabitActivity" />
-        <activity android:name=".ui.profile.FeedbackActivity" />
-        <activity android:name=".ui.profile.HelpActivity" />
+        <activity android:name=".ui.onboarding.OnboardingActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.MainActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.achievements.AchievementsActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.habits.AddHabitActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.profile.FeedbackActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.profile.HelpActivity" android:windowSoftInputMode="adjustResize" />
 
         <receiver android:name=".utils.NotificationActionReceiver" android:exported="false" />
         <service android:name=".utils.SoundService" android:exported="false" />

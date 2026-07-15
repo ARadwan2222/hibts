@@ -9,6 +9,7 @@ import com.yourname.habitapp.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.yourname.habitapp.ui.todo.AddTodoBottomSheet
 import com.yourname.habitapp.ui.habits.AddHabitBottomSheet
+import com.yourname.habitapp.ui.goals.AddGoalBottomSheet
 import androidx.appcompat.app.AlertDialog
 import com.yourname.habitapp.databinding.ActivityMainBinding
 import com.yourname.habitapp.ui.habits.HabitsFragment
@@ -73,16 +74,38 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabAddMain.setOnClickListener {
-            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.add_options_title))
-                .setItems(options) { _, which ->
-                    if (which == 0) {
-                        AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(supportFragmentManager, "AddTodo")
-                    } else {
-                        AddHabitBottomSheet.newInstance(-1, null, false).show(supportFragmentManager, "AddHabit")
-                    }
-                }.show()
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            when (currentFragment) {
+                is YearGoalsFragment -> {
+                    AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
+                }
+                is TodoFragment -> {
+                    val dateMillis = (currentFragment as TodoFragment).getSelectedDateMillis()
+                    val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+                    AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                        .setTitle(getString(R.string.add_options_title))
+                        .setItems(options) { _, which ->
+                            if (which == 0) {
+                                AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+                            } else {
+                                AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
+                            }
+                        }.show()
+                }
+                else -> {
+                    val dateMillis = System.currentTimeMillis()
+                    val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+                    AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                        .setTitle(getString(R.string.add_options_title))
+                        .setItems(options) { _, which ->
+                            if (which == 0) {
+                                AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+                            } else {
+                                AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
+                            }
+                        }.show()
+                }
+            }
         }
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->

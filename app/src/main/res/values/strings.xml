@@ -219,6 +219,12 @@
     <string name="select_time">Select Time</string>
     <string name="days_left_msg">Remaining: %d days</string>
     <string name="time_up_warning">⚠️ Time is up</string>
+    <string name="goal_title_hint">Goal Title (e.g. Learn a new language)</string>
+    <string name="goal_steps_label">Steps (Optional)</string>
+    <string name="add_step_hint">Add a step...</string>
+    <string name="year_label">Year: %d</string>
+    <string name="time_label">Time</string>
+    <string name="date_label">Date</string>
     <string name="login_title">Login</string>
     <string name="register_title">Create New Account</string>
     <string name="switch_to_register">Don\'t have an account? Register now</string>

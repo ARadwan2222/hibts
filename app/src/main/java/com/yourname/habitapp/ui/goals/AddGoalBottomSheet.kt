@@ -29,6 +29,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
     private var selectedQuarter: Int? = null
     private var selectedTargetDate: Long? = null
     private var editingGoal: YearGoal? = null
+    private var editingStepIndex: Int = -1
 
     companion object {
         private const val ARG_GOAL_ID = "goal_id"
@@ -68,11 +69,8 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
             onEdit = { index, step ->
                 etStep.setText(step.title)
                 etStep.requestFocus()
-                // We keep it in the list until they save or re-add
-                // Actually, let's keep it simple: remove but maybe add a "cancel edit" if needed.
-                // For now, I'll just make sure the title isn't empty.
-                steps.removeAt(index)
-                updateStepsUI(recyclerStepsEdit)
+                editingStepIndex = index
+                btnAddStep.text = "✓"
             },
             onDelete = { index ->
                 steps.removeAt(index)
@@ -92,7 +90,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
                     selectedYear = it.year
                     selectedQuarter = it.quarter
                     selectedTargetDate = it.targetDate
-                    btnYear.text = getString(R.string.year_label_text).format(selectedYear)
+                    btnYear.text = getString(R.string.year_label).format(selectedYear)
                     btnQuarter.text = if (it.quarter != null) {
                         val qNames = arrayOf("", getString(R.string.quarter_q1), getString(R.string.quarter_q2), getString(R.string.quarter_q3), getString(R.string.quarter_q4))
                         getString(R.string.quarter_of_year).format(qNames[it.quarter], it.year)
@@ -106,29 +104,25 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
                     val existingSteps = dao.getStepsForGoalSync(it.id)
                     steps.clear()
                     steps.addAll(existingSteps)
-                    stepsAdapter.submitList(steps.toList())
+                    updateStepsUI(recyclerStepsEdit)
                 }
             }
-        } else if (intentYear != -1) {
-            selectedYear = intentYear
+        } else {
+            if (intentYear != -1) selectedYear = intentYear
+            tvSheetTitle.text = getString(R.string.add_new_goal)
+            btnYear.text = getString(R.string.year_label).format(selectedYear)
+            btnQuarter.text = getString(R.string.full_year).format(selectedYear)
         }
-        btnYear.text = getString(R.string.year_label_text).format(selectedYear)
-        btnQuarter.text = getString(R.string.full_year).format(selectedYear)
 
         btnYear.setOnClickListener {
             val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-            val years = (-2..3).map { (currentYear + it).toString() }.toTypedArray()
+            val yearsArr = (-2..3).map { (currentYear + it).toString() }.toTypedArray()
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(getString(R.string.select_year))
-                .setItems(years) { _, which ->
-                    selectedYear = years[which].toInt()
-                    btnYear.text = getString(R.string.year_label_text).format(selectedYear)
-                    if (selectedQuarter == null) {
-                        btnQuarter.text = getString(R.string.full_year).format(selectedYear)
-                    } else {
-                        val qNames = arrayOf("", getString(R.string.quarter_q1), getString(R.string.quarter_q2), getString(R.string.quarter_q3), getString(R.string.quarter_q4))
-                        btnQuarter.text = getString(R.string.quarter_of_year).format(qNames[selectedQuarter!!], selectedYear)
-                    }
+                .setItems(yearsArr) { _, which ->
+                    selectedYear = yearsArr[which].toInt()
+                    btnYear.text = getString(R.string.year_label).format(selectedYear)
+                    updateQuarterText(btnQuarter)
                 }.show()
         }
 
@@ -162,7 +156,14 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
         btnAddStep.setOnClickListener {
             val stepTitle = etStep.text.toString().trim()
             if (stepTitle.isNotEmpty()) {
-                steps.add(GoalStep(goalId = editingGoal?.id ?: 0, title = stepTitle))
+                if (editingStepIndex != -1) {
+                    // Update only the edited step, maintain position
+                    steps[editingStepIndex] = steps[editingStepIndex].copy(title = stepTitle)
+                    editingStepIndex = -1
+                    btnAddStep.text = "+"
+                } else {
+                    steps.add(GoalStep(goalId = editingGoal?.id ?: 0, title = stepTitle))
+                }
                 etStep.text.clear()
                 updateStepsUI(recyclerStepsEdit)
             }
@@ -170,7 +171,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
 
         btnSave.setOnClickListener {
             val title = etTitle.text.toString().trim()
-            if (title.isEmpty()) { etTitle.error = "أدخل عنوان الهدف"; return@setOnClickListener }
+            if (title.isEmpty()) { etTitle.error = getString(R.string.error_empty_field); return@setOnClickListener }
 
             lifecycleScope.launch {
                 val db = AppDatabase.getInstance(requireContext())
@@ -214,6 +215,15 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    private fun updateQuarterText(btn: Button) {
+        if (selectedQuarter == null) {
+            btn.text = getString(R.string.full_year).format(selectedYear)
+        } else {
+            val qNames = arrayOf("", getString(R.string.quarter_q1), getString(R.string.quarter_q2), getString(R.string.quarter_q3), getString(R.string.quarter_q4))
+            btn.text = getString(R.string.quarter_of_year).format(qNames[selectedQuarter!!], selectedYear)
+        }
+    }
+
     private fun updateStepsUI(recycler: RecyclerView) {
         val adapter = recycler.adapter as? EditStepsAdapter
         adapter?.submitList(steps.toList())
@@ -245,7 +255,7 @@ class EditStepsAdapter(
     }
 
     class DiffCallback : DiffUtil.ItemCallback<GoalStep>() {
-        override fun areItemsTheSame(a: GoalStep, b: GoalStep) = a.id == b.id && a.title == b.title
+        override fun areItemsTheSame(a: GoalStep, b: GoalStep) = a.id == b.id && a.id != 0
         override fun areContentsTheSame(a: GoalStep, b: GoalStep) = a == b
     }
 }
