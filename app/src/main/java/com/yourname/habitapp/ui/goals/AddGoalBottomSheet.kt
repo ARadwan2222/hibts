@@ -56,6 +56,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
         val intentYear = arguments?.getInt(ARG_SELECTED_YEAR) ?: -1
 
         val etTitle             = view.findViewById<EditText>(R.id.etGoalTitle)
+        val etNotes             = view.findViewById<EditText>(R.id.etGoalNotes)
         val btnYear             = view.findViewById<Button>(R.id.btnSelectYear)
         val btnQuarter          = view.findViewById<Button>(R.id.btnSelectQuarter)
         val btnDate             = view.findViewById<Button>(R.id.btnSelectTargetDate)
@@ -87,6 +88,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
                 editingGoal?.let {
                     tvSheetTitle.text = getString(R.string.edit_goal)
                     etTitle.setText(it.title)
+                    etNotes.setText(it.notes)
                     selectedYear = it.year
                     selectedQuarter = it.quarter
                     selectedTargetDate = it.targetDate
@@ -99,6 +101,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
                         btnDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(date))
                     }
                     btnSave.text = getString(R.string.update)
+                    btnSave.setBackgroundColor(0xFFC2185B.toInt()) // Deep Pink
 
                     // Load existing steps
                     val existingSteps = dao.getStepsForGoalSync(it.id)
@@ -171,6 +174,7 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
 
         btnSave.setOnClickListener {
             val title = etTitle.text.toString().trim()
+            val notes = etNotes.text.toString().trim()
             if (title.isEmpty()) { etTitle.error = getString(R.string.error_empty_field); return@setOnClickListener }
 
             lifecycleScope.launch {
@@ -178,11 +182,13 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
                 val dao = db.yearGoalDao()
                 val goal = editingGoal?.copy(
                     title = title,
+                    notes = notes,
                     year = selectedYear,
                     quarter = selectedQuarter,
                     targetDate = selectedTargetDate
                 ) ?: YearGoal(
                     title = title,
+                    notes = notes,
                     year = selectedYear,
                     quarter = selectedQuarter,
                     targetDate = selectedTargetDate,

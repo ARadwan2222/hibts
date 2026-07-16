@@ -225,6 +225,13 @@
     <string name="year_label">Year: %d</string>
     <string name="time_label">Time</string>
     <string name="date_label">Date</string>
+    <string name="achievements_button">🏆 Achievements</string>
+    <string name="app_theme_label">App Theme</string>
+    <string name="how_to_use_label">How to Use hibts</string>
+    <string name="logout_keep_data">Do you want to logout? Your data will remain on this device.</string>
+    <string name="reset_app_warning">All local data will be permanently deleted. Are you sure?</string>
+    <string name="version_prefix">Version %s</string>
+    <string name="notes_label">Notes (Optional)</string>
     <string name="login_title">Login</string>
     <string name="register_title">Create New Account</string>
     <string name="switch_to_register">Don\'t have an account? Register now</string>

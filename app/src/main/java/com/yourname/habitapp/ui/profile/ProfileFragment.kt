@@ -40,20 +40,68 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private val pickCover = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            val prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putString("user_cover", it.toString()).apply()
+            view?.findViewById<ImageView>(R.id.ivProfileCover)?.setImageURI(it)
+        }
+    }
+
+    private var tonePickerRequestCode = -1
+
     private val pickRingtone = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri = result.data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
             uri?.let {
                 val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-                settingsPrefs.edit().putString("notification_tone", it.toString()).apply()
-                
-                // Refresh channels to apply new sound
-                NotificationHelper.createNotificationChannels(requireContext())
-                
-                val ringtone = RingtoneManager.getRingtone(requireContext(), it)
-                view?.findViewById<TextView>(R.id.tvSelectedToneName)?.text = getString(R.string.notification_tone) + ": ${ringtone.getTitle(requireContext())}"
+                val key = when(tonePickerRequestCode) {
+                    1 -> "tone_start_task"
+                    2 -> "tone_end_task"
+                    3 -> "tone_achievement"
+                    4 -> "tone_year_goal"
+                    5 -> "tone_habit"
+                    6 -> "tone_birthday"
+                    else -> "notification_tone"
+                }
+                settingsPrefs.edit().putString(key, it.toString()).apply()
+                updateToneNameUI(key, it)
             }
         }
+    }
+
+    private fun updateToneNameUI(key: String, uri: Uri) {
+        val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
+        val title = ringtone.getTitle(requireContext())
+        when(key) {
+            "tone_start_task" -> view?.findViewById<TextView>(R.id.tvToneStartTask)?.text = title
+            "tone_end_task" -> view?.findViewById<TextView>(R.id.tvToneEndTask)?.text = title
+            "tone_achievement" -> view?.findViewById<TextView>(R.id.tvToneAchievement)?.text = title
+            "tone_year_goal" -> view?.findViewById<TextView>(R.id.tvToneYearGoal)?.text = title
+            "tone_habit" -> view?.findViewById<TextView>(R.id.tvToneHabit)?.text = title
+            "tone_birthday" -> view?.findViewById<TextView>(R.id.tvToneBirthday)?.text = title
+        }
+    }
+
+    private fun startTonePicker(code: Int) {
+        tonePickerRequestCode = code
+        val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        val key = when(code) {
+            1 -> "tone_start_task"
+            2 -> "tone_end_task"
+            3 -> "tone_achievement"
+            4 -> "tone_year_goal"
+            5 -> "tone_habit"
+            6 -> "tone_birthday"
+            else -> "notification_tone"
+        }
+        val currentUri = settingsPrefs.getString(key, null)?.let { Uri.parse(it) }
+        
+        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone")
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
+        pickRingtone.launch(intent)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -70,11 +118,12 @@ class ProfileFragment : Fragment() {
         val tvXP = view.findViewById<TextView>(R.id.tvProfileXP)
         val ivAvatarPlaceholder = view.findViewById<View>(R.id.tvAvatar)
         val ivProfilePic = view.findViewById<ImageView>(R.id.ivProfilePic)
+        val ivProfileCover = view.findViewById<ImageView>(R.id.ivProfileCover)
+        val btnEditCover = view.findViewById<View>(R.id.btnEditCover)
         val tvBirthdateCountdown = view.findViewById<TextView>(R.id.tvBirthdateCountdown)
         
         val btnAchievementsRow = view.findViewById<View>(R.id.btnViewAchievementsRow)
         val btnBackupRow = view.findViewById<View>(R.id.btnBackupRow)
-        val btnRestoreRow = view.findViewById<View>(R.id.btnRestoreRow)
         
         val switchNotifications = view.findViewById<CompoundButton>(R.id.switchNotifications)
         val switchSound = view.findViewById<CompoundButton>(R.id.switchSound)
@@ -83,21 +132,52 @@ class ProfileFragment : Fragment() {
         val btnChooseToneRow = view.findViewById<View>(R.id.btnChooseToneRow)
         val tvToneName = view.findViewById<TextView>(R.id.tvSelectedToneName)
         val spinnerLang = view.findViewById<Spinner>(R.id.spinnerLanguage)
+        val spinnerTheme = view.findViewById<Spinner>(R.id.spinnerTheme)
         
         val btnHelpCenterRow = view.findViewById<View>(R.id.btnHelpCenterRow)
         val btnTermsRow = view.findViewById<View>(R.id.btnTermsRow)
-        val btnContactRow = view.findViewById<View>(R.id.btnContactRow)
-        
         val btnLogoutRow = view.findViewById<View>(R.id.btnLogoutRow)
         val btnResetAppRow = view.findViewById<View>(R.id.btnResetAppRow)
         val tvVersion = view.findViewById<TextView>(R.id.tvVersionName)
 
+        // Tone Rows
+        view.findViewById<View>(R.id.btnToneStartTask)?.setOnClickListener { startTonePicker(1) }
+        view.findViewById<View>(R.id.btnToneEndTask)?.setOnClickListener { startTonePicker(2) }
+        view.findViewById<View>(R.id.btnToneAchievement)?.setOnClickListener { startTonePicker(3) }
+        view.findViewById<View>(R.id.btnToneYearGoal)?.setOnClickListener { startTonePicker(4) }
+        view.findViewById<View>(R.id.btnToneHabit)?.setOnClickListener { startTonePicker(5) }
+        view.findViewById<View>(R.id.btnToneBirthday)?.setOnClickListener { startTonePicker(6) }
+
+        // Initial Tone Names
+        lifecycleScope.launch {
+            val keys = listOf("tone_start_task", "tone_end_task", "tone_achievement", "tone_year_goal", "tone_habit", "tone_birthday")
+            keys.forEach { key ->
+                settingsPrefs.getString(key, null)?.let { updateToneNameUI(key, Uri.parse(it)) }
+            }
+        }
+
+        // Theme Selector
+        val themes = listOf("Male", "Female", "Cats", "Dogs", "Travel", "Nature", "Ocean", "Sunset", "Space", "Coffee", "Tech", "Minimal", "Pastel", "Vintage", "Gold", "Classic")
+        spinnerTheme?.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, themes)
+        val currentTheme = settingsPrefs.getString("app_theme", "Male")
+        spinnerTheme?.setSelection(themes.indexOf(currentTheme))
+        spinnerTheme?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
+                val selected = themes[pos]
+                if (selected != currentTheme) {
+                    settingsPrefs.edit().putString("app_theme", selected).apply()
+                    activity?.recreate()
+                }
+            }
+            override fun onNothingSelected(p: AdapterView<*>?) {}
+        }
+
         // Set Version Name
         try {
             val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            tvVersion.text = "Version ${pInfo.versionName}"
+            tvVersion.text = getString(R.string.version_prefix).format(pInfo.versionName)
         } catch (e: Exception) {
-            tvVersion.text = "Version 1.0.5"
+            tvVersion.text = getString(R.string.version_prefix).format("1.2.0")
         }
 
         // User Data Display
@@ -107,13 +187,12 @@ class ProfileFragment : Fragment() {
         
         if (isGuest) {
             btnBackupRow.isEnabled = false
-            btnRestoreRow.isEnabled = false
             btnBackupRow.alpha = 0.5f
-            btnRestoreRow.alpha = 0.5f
             Toast.makeText(requireContext(), "بعض المميزات (مثل النسخ السحابي) معطلة في وضع الضيف", Toast.LENGTH_LONG).show()
         }
 
         val imageUriString = prefs.getString("user_image", null)
+        val coverUriString = prefs.getString("user_cover", null)
         val birthdateMillis = prefs.getLong("user_birthdate", 0)
         
         val xp = AchievementEngine.getTotalXP(requireContext())
@@ -147,12 +226,24 @@ class ProfileFragment : Fragment() {
             ivAvatarPlaceholder.visibility = View.VISIBLE
         }
 
+        if (coverUriString != null) {
+            try {
+                ivProfileCover.setImageURI(Uri.parse(coverUriString))
+            } catch (e: Exception) {}
+        }
+
         ivProfilePic.setOnClickListener { pickImage.launch("image/*") }
         ivAvatarPlaceholder.setOnClickListener { pickImage.launch("image/*") }
+        btnEditCover?.setOnClickListener { pickCover.launch("image/*") }
 
         btnAchievementsRow.setOnClickListener { startActivity(Intent(requireContext(), AchievementsActivity::class.java)) }
+        
         btnHelpCenterRow.setOnClickListener { 
-            Toast.makeText(requireContext(), "Help Center coming soon", Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+                .setTitle(getString(R.string.how_to_use_label))
+                .setMessage(getString(R.string.terms_of_use_text)) 
+                .setPositiveButton("OK", null)
+                .show()
         }
 
         // Terms of Use
@@ -164,37 +255,32 @@ class ProfileFragment : Fragment() {
                 .show()
         }
 
-        // Contact Us
-        btnContactRow.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:apphabits6@gmail.com")
-                putExtra(Intent.EXTRA_SUBJECT, "Feedback for hibts app")
-            }
-            try {
-                startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "No email app found", Toast.LENGTH_SHORT).show()
-            }
-        }
-
         // Backup Data
         btnBackupRow.setOnClickListener { performBackup() }
-        btnRestoreRow.setOnClickListener { performRestore() }
 
-        // Logout
+        // Logout - Keep Local Data
         btnLogoutRow.setOnClickListener {
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(R.string.logout)
-                .setMessage(R.string.logout_confirm)
-                .setPositiveButton(R.string.yes) { _, _ -> resetEverything() }
+                .setMessage(getString(R.string.logout_keep_data))
+                .setPositiveButton(R.string.yes) { _, _ -> 
+                    FirebaseAuth.getInstance().signOut()
+                    val intent = requireContext().packageManager.getLaunchIntentForPackage(requireContext().packageName)
+                    intent?.let {
+                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(it)
+                        activity?.finish()
+                    }
+                }
                 .setNegativeButton(R.string.no, null)
                 .show()
         }
 
+        // Reset App - Delete Local Data
         btnResetAppRow.setOnClickListener {
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(getString(R.string.reset_app_data))
-                .setMessage(getString(R.string.delete_confirm_msg))
+                .setMessage(getString(R.string.reset_app_warning))
                 .setPositiveButton(getString(R.string.yes)) { _, _ -> resetEverything() }
                 .setNegativeButton(getString(R.string.no), null)
                 .show()
@@ -213,23 +299,6 @@ class ProfileFragment : Fragment() {
             AppCompatDelegate.setDefaultNightMode(if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
         }
         switchVibration.setOnCheckedChangeListener { _, isChecked -> settingsPrefs.edit().putBoolean("vibration", isChecked).apply() }
-
-        // Initial tone name
-        val currentToneUriString = settingsPrefs.getString("notification_tone", null)
-        if (currentToneUriString != null) {
-            try {
-                val ringtone = RingtoneManager.getRingtone(requireContext(), Uri.parse(currentToneUriString))
-                tvToneName.text = getString(R.string.notification_tone) + ": ${ringtone.getTitle(requireContext())}"
-            } catch (e: Exception) {}
-        }
-
-        btnChooseToneRow.setOnClickListener {
-            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "اختر نغمة التنبيه")
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentToneUriString?.let { Uri.parse(it) })
-            pickRingtone.launch(intent)
-        }
 
         // Language Spinner
         val languages = listOf("English", "العربية", "Deutsch")
@@ -282,27 +351,11 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun performRestore() {
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) return
-
-        FirebaseFirestore.getInstance().collection("backups").document(user.uid).get()
-            .addOnSuccessListener { doc ->
-                if (doc.exists()) {
-                    // Restore logic here (to be implemented: clear local and insert from doc)
-                    Toast.makeText(requireContext(), "تم العثور على نسخة، جاري الاستعادة...", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "لا توجد نسخة احتياطية محفوظة لهذا الحساب", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
-
     private fun resetEverything() {
         val context = requireContext()
         val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val lastEmail = prefs.getString("user_email", "")
         
-        // Store last email in a persistent preference that won't be cleared now
         context.getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
             .edit().putString("last_logged_in_email", lastEmail).commit()
 
@@ -311,12 +364,10 @@ class ProfileFragment : Fragment() {
         prefsList.forEach { context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
 
         lifecycleScope.launch {
-            // We don't delete the database here to allow "Keep History for same user" logic in Onboarding
-            // But we ensure the app restarts cleanly
             val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
             intent?.let {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(intent)
+                startActivity(it)
                 activity?.finish()
                 Runtime.getRuntime().exit(0)
             }

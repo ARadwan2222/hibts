@@ -5,11 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg_light_purple">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:background="@drawable/bg_dashboard_header" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,35 +15,65 @@
             android:layout_height="wrap_content"
             android:paddingBottom="120dp">
 
+            <!-- Profile Cover Image -->
+            <ImageView
+                android:id="@+id/ivProfileCover"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_dashboard_header"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/viewCoverOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="#40000000"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btnEditCover"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/bg_item_circle"
+                android:backgroundTint="#80FFFFFF"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/layoutAvatarCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                app:cardCornerRadius="50dp"
-                app:cardElevation="6dp"
-                app:layout_constraintTop_toTopOf="parent"
+                app:cardCornerRadius="55dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="3dp"
+                app:strokeColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@id/ivProfileCover"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfileCover"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <FrameLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     android:background="@drawable/bg_avatar_circle">
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivProfilePic"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/CircleImage"
                         android:clickable="true"
                         android:focusable="true" />
                     <TextView
                         android:id="@+id/tvAvatar"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
                         android:gravity="center"
-                        android:textSize="50sp"
+                        android:textSize="55sp"
                         android:clickable="true"
                         android:focusable="true" />
                 </FrameLayout>
@@ -58,8 +83,8 @@
                 android:id="@+id/tvProfileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/white"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/text_dark"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/layoutAvatarCard"
@@ -71,21 +96,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="#E0E0E0"
-                android:textSize="13sp"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/tvProfileName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Achievements Row in Profile Area -->
+            <LinearLayout
+                android:id="@+id/btnViewAchievementsRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:background="@drawable/bg_points_badge"
+                android:backgroundTint="@color/brand_rose"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@id/tvProfileXP"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/achievements_button"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/bg_floating_card"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp"
                 android:paddingTop="32dp"
-                app:layout_constraintTop_toBottomOf="@id/tvProfileXP">
+                app:layout_constraintTop_toBottomOf="@id/btnViewAchievementsRow">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -96,28 +147,22 @@
                     android:textSize="18sp"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Achievements -->
+                <!-- Theme Selector -->
                 <LinearLayout
-                    android:id="@+id/btnViewAchievementsRow"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground">
+                    android:gravity="center_vertical">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/achievements_and_rewards"
+                        android:text="@string/app_theme_label"
                         android:textColor="@color/text_dark"
                         android:textSize="15sp" />
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_arrow_down"
-                        android:rotation="-90"
-                        app:tint="@color/text_gray" />
+                    <Spinner
+                        android:id="@+id/spinnerTheme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
@@ -202,6 +247,169 @@
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
 
+                <!-- Tone Selection Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notification Sounds"
+                    android:textColor="@color/text_dark"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Start Task Tone -->
+                <LinearLayout
+                    android:id="@+id/btnToneStartTask"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Start Task Tone"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvToneStartTask"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="@color/brand_purple"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- End Task Tone -->
+                <LinearLayout
+                    android:id="@+id/btnToneEndTask"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="End Task Tone"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvToneEndTask"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="@color/brand_purple"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Achievement Tone -->
+                <LinearLayout
+                    android:id="@+id/btnToneAchievement"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="New Achievement Tone"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvToneAchievement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="@color/brand_purple"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Year Goal Tone -->
+                <LinearLayout
+                    android:id="@+id/btnToneYearGoal"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Year Goal Tone"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvToneYearGoal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="@color/brand_purple"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Habit Reminder Tone -->
+                <LinearLayout
+                    android:id="@+id/btnToneHabit"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Habit Reminder Tone"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvToneHabit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="@color/brand_purple"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Birthday Tone -->
+                <LinearLayout
+                    android:id="@+id/btnToneBirthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Birthday Tone"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvToneBirthday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="@color/brand_purple"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
+
                 <!-- Language -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -218,6 +426,46 @@
                         android:id="@+id/spinnerLanguage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
+
+                <!-- Help Center / How to Use -->
+                <LinearLayout
+                    android:id="@+id/btnHelpCenterRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/how_to_use_label"
+                        android:textColor="@color/text_dark"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
+
+                <!-- Terms of Use -->
+                <LinearLayout
+                    android:id="@+id/btnTermsRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/terms_of_use"
+                        android:textColor="@color/text_dark"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
@@ -296,14 +544,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
-                    android:text="Version 1.0.5"
                     android:textColor="@color/text_gray"
                     android:textSize="11sp" />
 
                 <!-- Hidden Logic IDs -->
                 <View android:id="@+id/btnRestoreRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-                <View android:id="@+id/btnHelpCenterRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-                <View android:id="@+id/btnTermsRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
                 <View android:id="@+id/btnContactRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
                 <View android:id="@+id/btnChooseToneRow" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
                 <TextView android:id="@+id/tvSelectedToneName" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />

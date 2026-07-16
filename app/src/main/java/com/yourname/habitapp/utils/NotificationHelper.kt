@@ -32,25 +32,26 @@ object NotificationHelper {
 
     fun showTodoStartNotification(context: Context, todoId: Int, title: String) {
         show(context, todoId * 10 + 1, getChannelId(context), "🚀 حان وقت المهمة!", title, todoId)
-        startSoundService(context, todoId, true)
+        startSoundService(context, todoId, "tone_start_task")
     }
 
     fun showTodoEndNotification(context: Context, todoId: Int, title: String) {
         show(context, todoId * 10 + 2, getChannelId(context), "🏁 انتهى وقت المهمة", "هل أكملت: $title ؟", todoId)
-        startSoundService(context, todoId, false)
+        startSoundService(context, todoId, "tone_end_task")
     }
 
     fun showTodoBeforeNotification(context: Context, todoId: Int, title: String, minutes: Int) {
         show(context, todoId * 10 + 3, getChannelId(context), "⏰ تنبيه مسبق", "\"$title\" تبدأ خلال $minutes دقيقة", todoId)
+        startSoundService(context, todoId, "tone_start_task")
     }
 
-    private fun startSoundService(context: Context, todoId: Int, isStart: Boolean) {
+    private fun startSoundService(context: Context, todoId: Int, toneKey: String) {
         val settingsPrefs = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         if (settingsPrefs.getBoolean("mute_notifications", false)) return
 
-        val customToneUriString = settingsPrefs.getString("notification_tone", null)
+        val customToneUriString = settingsPrefs.getString(toneKey, null)
         val toneUri = if (customToneUriString != null) customToneUriString 
-                      else if (isStart) android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString() 
+                      else if (toneKey == "tone_start_task") android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString()
                       else android.provider.Settings.System.DEFAULT_RINGTONE_URI.toString()
 
         val intent = Intent(context, SoundService::class.java).apply {
@@ -108,11 +109,29 @@ object NotificationHelper {
         manager.notify(id, builder.build())
     }
 
-    // Unused compatibility placeholders
-    fun showHabitCompleteNotification(c: Context, n: String, s: Int) {}
+    // Placeholders with actual tone support
+    fun showHabitCompleteNotification(context: Context, name: String, streak: Int) {
+        show(context, 200, getChannelId(context), "🔥 عادة مكتملة!", "أحسنت! واصل الاستمرار في $name", -1)
+        startSoundService(context, -1, "tone_habit")
+    }
+
+    fun showAchievementNotification(context: Context, title: String, info: String) {
+        show(context, 300, getChannelId(context), "🏆 إنجاز جديد!", "$title: $info", -1)
+        startSoundService(context, -1, "tone_achievement")
+    }
+
+    fun showBirthdayNotification(context: Context) {
+        show(context, 400, getChannelId(context), "🎂 عيد ميلاد سعيد!", "نتمنى لك عاماً مليئاً بالإنجازات", -1)
+        startSoundService(context, -1, "tone_birthday")
+    }
+
+    fun showYearGoalNotification(context: Context, title: String) {
+        show(context, 500, getChannelId(context), "🎯 تذكير بالهدف", "لا تنسى هدفك السنوي: $title", -1)
+        startSoundService(context, -1, "tone_year_goal")
+    }
+
     fun showStreakMilestoneNotification(c: Context, n: String, s: Int) {}
     fun showDailyReminderNotification(c: Context, count: Int) {}
-    fun showAchievementNotification(c: Context, t: String, i: String) {}
     fun cancelNotification(context: Context, id: Int) {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(id)
         stopAllSounds(context)

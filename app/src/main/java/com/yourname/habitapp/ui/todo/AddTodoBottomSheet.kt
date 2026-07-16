@@ -70,15 +70,19 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
         btnToggleSugg?.visibility = View.GONE
         chipTemplates?.visibility = View.GONE
 
+        val etNotes             = view.findViewById<EditText>(R.id.etTodoNotes)
+
         if (editingTodoId != -1) {
             lifecycleScope.launch {
                 val todo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(editingTodoId)
                 todo?.let {
                     etTitle.setText(it.title)
+                    etNotes.setText(it.notes)
                     selectedStartTime = it.startTime
                     selectedEndTime = it.endTime
                     selectedDate.timeInMillis = it.targetDate
                     btnSave.text = getString(R.string.update)
+                    btnSave.setBackgroundColor(0xFFC2185B.toInt()) // Deep Pink for clear visibility
                     btnDate.text = formatDate(it.targetDate)
                     if (it.startTime != null) btnStartTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.start), formatTime(it.startTime))
                     if (it.endTime != null) btnEndTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.end), formatTime(it.endTime))
@@ -128,6 +132,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
 
         btnSave.setOnClickListener {
             val title = etTitle.text.toString().trim()
+            val notes = etNotes.text.toString().trim()
             if (title.isEmpty()) { etTitle.error = getString(R.string.error_empty_field); return@setOnClickListener }
 
             val wordCount = title.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
@@ -161,6 +166,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                     val original = db.todoDao().getTodoById(editingTodoId)
                     val updated = original?.copy(
                         title = title,
+                        notes = notes,
                         priority = priority,
                         startTime = selectedStartTime,
                         endTime = selectedEndTime,
@@ -180,6 +186,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                     val minOrder = allTodos.minOfOrNull { it.displayOrder } ?: 0
                     val todo = TodoItem(
                         title          = title,
+                        notes          = notes,
                         priority       = priority,
                         startTime      = selectedStartTime,
                         targetDate     = selectedDate.timeInMillis,

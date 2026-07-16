@@ -50,7 +50,7 @@ class TodoFragment : Fragment() {
 
         val btnSelectDate = view.findViewById<ImageButton>(R.id.btnSelectDate)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerTodos)
-        val btnTopAdd = view.findViewById<View>(R.id.btnTopAdd)
+
         val recyclerDayStrip = view.findViewById<RecyclerView>(R.id.recyclerDayStrip)
         val chipGroupFilter = view.findViewById<ChipGroup>(R.id.chipGroupFilter)
         val chipGroupCategory = view.findViewById<ChipGroup>(R.id.chipGroupCategory)
@@ -97,7 +97,8 @@ class TodoFragment : Fragment() {
             onHabitToggle = { habit -> onHabitToggle(habit) },
             onEdit = { item -> editItem(item) },
             onDelete = { item -> confirmDelete(item) },
-            onMuteToggle = { item -> toggleMute(item) }
+            onMuteToggle = { item -> toggleMute(item) },
+            onNotesClick = { item -> showNotes(item) }
         )
         recyclerView.adapter = adapter
 
@@ -189,23 +190,7 @@ class TodoFragment : Fragment() {
             updateUI()
         }
 
-        btnTopAdd.setOnClickListener {
-            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-            AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.add_options_title))
-                .setItems(options) { _, which ->
-                    if (which == 0) {
-                        AddTodoBottomSheet.newInstance(selectedDate.timeInMillis)
-                            .show(parentFragmentManager, "AddTodo")
-                    } else {
-                        val isFuture = selectedDate.timeInMillis > Calendar.getInstance().apply { 
-                            set(Calendar.HOUR_OF_DAY, 23); set(Calendar.MINUTE, 59); set(Calendar.SECOND, 59) 
-                        }.timeInMillis
-                        AddHabitBottomSheet.newInstance(showFreqBtn = isFuture, targetDate = selectedDate.timeInMillis)
-                            .show(parentFragmentManager, "AddHabit")
-                    }
-                }.show()
-        }
+
 
         updateUI()
     }
@@ -303,6 +288,19 @@ class TodoFragment : Fragment() {
             AddHabitBottomSheet.newInstance(item.id, item.frequency, item.frequency != HabitFrequency.DAILY)
                 .show(parentFragmentManager, "EditHabit")
         }
+    }
+
+    private fun showNotes(item: Any) {
+        val (title, notes) = when(item) {
+            is TodoItem -> Pair(item.title, item.notes)
+            is Habit -> Pair(item.name, item.notes)
+            else -> return
+        }
+        AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+            .setTitle(title)
+            .setMessage(notes)
+            .setPositiveButton(getString(R.string.close), null)
+            .show()
     }
 
     private fun toggleMute(item: Any) {

@@ -28,4 +28,34 @@
     <!-- Item Backgrounds -->
     <color name="item_task_bg">#BBDEFB</color>
     <color name="item_habit_bg">#F8BBD0</color>
+
+    <!-- 15 Themes Palette -->
+    <color name="theme_cats_primary">#FFB74D</color>
+    <color name="theme_cats_bg">#FFF3E0</color>
+    <color name="theme_dogs_primary">#8D6E63</color>
+    <color name="theme_dogs_bg">#EFEBE9</color>
+    <color name="theme_travel_primary">#4FC3F7</color>
+    <color name="theme_travel_bg">#E1F5FE</color>
+    <color name="theme_nature_primary">#81C784</color>
+    <color name="theme_nature_bg">#E8F5E9</color>
+    <color name="theme_ocean_primary">#00ACC1</color>
+    <color name="theme_ocean_bg">#E0F7FA</color>
+    <color name="theme_sunset_primary">#FF7043</color>
+    <color name="theme_sunset_bg">#FBE9E7</color>
+    <color name="theme_space_primary">#5C6BC0</color>
+    <color name="theme_space_bg">#E8EAF6</color>
+    <color name="theme_coffee_primary">#A1887F</color>
+    <color name="theme_coffee_bg">#F4F1F0</color>
+    <color name="theme_tech_primary">#78909C</color>
+    <color name="theme_tech_bg">#ECEFF1</color>
+    <color name="theme_minimal_primary">#424242</color>
+    <color name="theme_minimal_bg">#F5F5F5</color>
+    <color name="theme_pastel_primary">#F06292</color>
+    <color name="theme_pastel_bg">#FCE4EC</color>
+    <color name="theme_vintage_primary">#D4E157</color>
+    <color name="theme_vintage_bg">#F9FBE7</color>
+    <color name="theme_gold_primary">#FBC02D</color>
+    <color name="theme_gold_bg">#FFF9C4</color>
+    <color name="theme_classic_primary">#1E88E5</color>
+    <color name="theme_classic_bg">#E3F2FD</color>
 </resources>

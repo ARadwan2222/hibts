@@ -24,5 +24,6 @@ data class TodoItem(
     val reminderBefore: Int = 0,
     val isMuted: Boolean = false,            // New field to mute reminders
     val displayOrder: Int = 0,               // Field for manual sorting
+    val notes: String = "",                  // Added for task notes
     val createdAt: Long = System.currentTimeMillis()
 )

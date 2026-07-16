@@ -96,17 +96,20 @@ class HabitsFragment : Fragment() {
         dailyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
+            onNotesClick = { habit -> showNotes(habit) }
         )
         weeklyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
+            onNotesClick = { habit -> showNotes(habit) }
         )
         monthlyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
             onEditClick = { habit -> openEditHabit(habit) },
-            onDeleteClick = { habit -> showDeleteConfirmation(habit) }
+            onDeleteClick = { habit -> showDeleteConfirmation(habit) },
+            onNotesClick = { habit -> showNotes(habit) }
         )
     }
 
@@ -307,6 +310,14 @@ class HabitsFragment : Fragment() {
                 view.startAnimation(anim); flashHandler.postDelayed(this, 10 * 60 * 1000)
             }
         }; flashHandler.post(flashRunnable!!)
+    }
+
+    private fun showNotes(habit: Habit) {
+        AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+            .setTitle(habit.name)
+            .setMessage(habit.notes)
+            .setPositiveButton(getString(R.string.close), null)
+            .show()
     }
 
     private fun showDeleteConfirmation(item: Any) {

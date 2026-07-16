@@ -225,6 +225,13 @@
     <string name="year_label">السنة: %d</string>
     <string name="time_label">الوقت</string>
     <string name="date_label">موعد</string>
+    <string name="achievements_button">🏆 الإنجازات</string>
+    <string name="app_theme_label">ثيم التطبيق</string>
+    <string name="how_to_use_label">طريقة استخدام hibts</string>
+    <string name="logout_keep_data">هل تريد تسجيل الخروج؟ ستبقى بياناتك محفوظة على الهاتف.</string>
+    <string name="reset_app_warning">سيتم حذف جميع البيانات المحلية نهائياً. هل أنت متأكد؟</string>
+    <string name="version_prefix">إصدار %s</string>
+    <string name="notes_label">ملاحظات (اختياري)</string>
     <string name="login_title">تسجيل الدخول</string>
     <string name="register_title">إنشاء حساب جديد</string>
     <string name="switch_to_register">ليس لديك حساب؟ سجل الآن</string>

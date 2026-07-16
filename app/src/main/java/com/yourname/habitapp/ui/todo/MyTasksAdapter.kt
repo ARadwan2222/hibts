@@ -21,7 +21,8 @@ class MyTasksAdapter(
     private val onHabitToggle: (Habit) -> Unit,
     private val onEdit: (Any) -> Unit,
     private val onDelete: (Any) -> Unit,
-    private val onMuteToggle: (Any) -> Unit
+    private val onMuteToggle: (Any) -> Unit,
+    private val onNotesClick: (Any) -> Unit
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(DiffCallback()) {
 
     private val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -57,11 +58,15 @@ class MyTasksAdapter(
         private val btnEdit = view.findViewById<ImageView>(R.id.btnEdit)
         private val btnDelete = view.findViewById<ImageView>(R.id.btnDelete)
         private val ivBell = view.findViewById<ImageView>(R.id.ivBell)
+        private val ivNotes = view.findViewById<ImageView>(R.id.ivNotes)
 
         fun bind(todo: TodoItem) {
             title.text = todo.title
             val timeView = itemView.findViewById<TextView>(R.id.tvTodoTime)
             
+            ivNotes.visibility = if (todo.notes?.isNotEmpty() == true) View.VISIBLE else View.GONE
+            ivNotes.setOnClickListener { onNotesClick(todo) }
+
             // Bell logic: Lit ONLY if a reminder is active and NOT muted
             val reminderOn = todo.reminderStart || todo.reminderEnd
             val showLit = reminderOn && !todo.isMuted && !todo.isCompleted
@@ -108,10 +113,14 @@ class MyTasksAdapter(
         private val check = view.findViewById<CheckBox>(R.id.checkHabitDone)
         private val btnEdit = view.findViewById<ImageView>(R.id.btnEdit)
         private val btnDelete = view.findViewById<ImageView>(R.id.btnDelete)
+        private val ivNotes = view.findViewById<ImageView>(R.id.ivNotes)
 
         fun bind(habit: Habit) {
             title.text = habit.name
             icon.text = habit.icon
+
+            ivNotes.visibility = if (habit.notes.isNotEmpty()) View.VISIBLE else View.GONE
+            ivNotes.setOnClickListener { onNotesClick(habit) }
 
             check.visibility = View.VISIBLE
             check.setOnCheckedChangeListener(null)

@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
 import com.yourname.habitapp.R
 import com.yourname.habitapp.ui.onboarding.OnboardingActivity
@@ -67,7 +68,12 @@ class SplashActivity : AppCompatActivity() {
                 val auth = FirebaseAuth.getInstance()
                 val user = auth.currentUser
                 val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
                 val onboardingDone = prefs.getBoolean("onboarding_done", false)
+
+                // Apply saved theme/dark mode settings on splash
+                val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
+                AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
 
                 if (user != null) {
                     if (user.isEmailVerified && onboardingDone) {

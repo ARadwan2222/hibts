@@ -18,6 +18,7 @@ data class YearGoal(
     val isCompleted: Boolean = false,
     val targetDate: Long? = null,
     val displayOrder: Int = 0,               // Added for manual sorting
+    val notes: String = "",                  // Added for goal notes
     val createdAt: Long = System.currentTimeMillis()
 )
 

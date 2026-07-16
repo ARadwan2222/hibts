@@ -116,11 +116,6 @@ class YearGoalsFragment : Fragment() {
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayoutGoals)
         setupYearTabs(tabLayout)
 
-        view.findViewById<View>(R.id.btnTopAddGoal).setOnClickListener {
-            AddGoalBottomSheet.newInstance(selectedYear = selectedYear)
-                .show(parentFragmentManager, "AddGoal")
-        }
-
         observeGoals()
     }
 

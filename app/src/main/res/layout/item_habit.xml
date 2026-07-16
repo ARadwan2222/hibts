@@ -70,6 +70,17 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
+        <ImageView
+            android:id="@+id/ivNotes"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/ic_info_circle"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/brand_purple" />
+
         <ImageButton
             android:id="@+id/btnEdit"
             android:layout_width="32dp"

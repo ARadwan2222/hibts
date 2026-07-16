@@ -293,7 +293,6 @@ class OnboardingActivity : AppCompatActivity() {
         showLoading(true, getString(R.string.register))
 
         lifecycleScope.launch {
-            clearLocalData()
             auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
@@ -336,18 +335,7 @@ class OnboardingActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val user = auth.currentUser
                 if (user?.isEmailVerified == true) {
-                    val lastUserEmail = getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
-                        .getString("last_logged_in_email", "")
-                    
                     lifecycleScope.launch {
-                        // Clear data ONLY if the new user is different from the last logged in user
-                        if (email != lastUserEmail && lastUserEmail != "") {
-                            clearLocalData()
-                        }
-                        // Update persistent email
-                        getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
-                            .edit().putString("last_logged_in_email", email).apply()
-
                         fetchProfileAndGo(user.uid, user.email ?: "")
                     }
                 } else {
@@ -366,11 +354,6 @@ class OnboardingActivity : AppCompatActivity() {
         showLoading(true, getString(R.string.guest_login))
         lifecycleScope.launch {
             try { FirebaseAuth.getInstance().signOut() } catch (e: Exception) {}
-            clearLocalData()
-            // Reset last logged in email when using Guest
-            getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
-                .edit().putString("last_logged_in_email", "guest").apply()
-            
             saveLocalAndGo(getString(R.string.guest_login), "guest@hibts.app", "Male", 0L, getString(R.string.app_purpose), "👤")
         }
     }
@@ -381,17 +364,7 @@ class OnboardingActivity : AppCompatActivity() {
         auth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser!!
-                val email = user.email ?: ""
-                val lastUserEmail = getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
-                    .getString("last_logged_in_email", "")
-
                 lifecycleScope.launch {
-                    if (email != lastUserEmail && lastUserEmail != "") {
-                        clearLocalData()
-                    }
-                    getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
-                        .edit().putString("last_logged_in_email", email).apply()
-
                     db.collection("users").document(user.uid).get()
                         .addOnSuccessListener { doc ->
                             if (doc.exists()) {

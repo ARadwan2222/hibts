@@ -17,12 +17,8 @@ class GoalReminderWorker(
         val currentGoals = db.yearGoalDao().getAllCurrentGoalsSync()
         
         if (currentGoals.isNotEmpty()) {
-            val goal = currentGoals.first() // Get the first (most urgent or primary) goal
-            NotificationHelper.showAchievementNotification(
-                context, 
-                context.getString(R.string.goal_reminder_title, goal.title),
-                "🎯"
-            )
+            val goal = currentGoals.first() 
+            NotificationHelper.showYearGoalNotification(context, goal.title)
         }
 
         return Result.success()

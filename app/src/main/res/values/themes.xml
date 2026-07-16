@@ -57,4 +57,62 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorSurfaceVariant">@color/bg_light_rose</item>
     </style>
+
+    <!-- Additional Themes -->
+    <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_cats_primary</item>
+        <item name="android:windowBackground">@color/theme_cats_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_dogs_primary</item>
+        <item name="android:windowBackground">@color/theme_dogs_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Travel" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_travel_primary</item>
+        <item name="android:windowBackground">@color/theme_travel_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Nature" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_nature_primary</item>
+        <item name="android:windowBackground">@color/theme_nature_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_ocean_primary</item>
+        <item name="android:windowBackground">@color/theme_ocean_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_sunset_primary</item>
+        <item name="android:windowBackground">@color/theme_sunset_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_space_primary</item>
+        <item name="android:windowBackground">@color/theme_space_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_coffee_primary</item>
+        <item name="android:windowBackground">@color/theme_coffee_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_tech_primary</item>
+        <item name="android:windowBackground">@color/theme_tech_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Minimal" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_minimal_primary</item>
+        <item name="android:windowBackground">@color/theme_minimal_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Pastel" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_pastel_primary</item>
+        <item name="android:windowBackground">@color/theme_pastel_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Vintage" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_vintage_primary</item>
+        <item name="android:windowBackground">@color/theme_vintage_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Gold" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_gold_primary</item>
+        <item name="android:windowBackground">@color/theme_gold_bg</item>
+    </style>
+    <style name="Theme.HabitApp.Classic" parent="Theme.HabitApp">
+        <item name="colorPrimary">@color/theme_classic_primary</item>
+        <item name="android:windowBackground">@color/theme_classic_bg</item>
+    </style>
 </resources>

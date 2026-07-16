@@ -67,6 +67,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
         }
 
         val etName = view.findViewById<EditText>(R.id.etHabitName)
+        val etNotes = view.findViewById<EditText>(R.id.etHabitNotes)
         val btnCat = view.findViewById<Button>(R.id.btnSelectCategory)
         val btnFreq = view.findViewById<Button>(R.id.btnSelectFrequency)
         val tvIcon = view.findViewById<TextView>(R.id.tvSelectedIcon)
@@ -98,6 +99,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 editingHabit = AppDatabase.getInstance(requireContext()).habitDao().getHabitById(habitId)
                 editingHabit?.let {
                     etName.setText(it.name)
+                    etNotes.setText(it.notes)
                     selectedCategory = it.category
                     selectedFrequency = it.frequency
                     selectedSpecificDay = it.specificDay
@@ -107,6 +109,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                     updateSpecificDayUI(layoutSpec, btnSpecDay)
                     loadSuggestions(chipGroupSugg, etName, tvIcon, it.category)
                     btnSave.text = getString(R.string.update)
+                    btnSave.setBackgroundColor(0xFFC2185B.toInt())
                     // If editing, usually we show frequency if it was not daily
                     if (it.frequency != HabitFrequency.DAILY) btnFreq.visibility = View.VISIBLE
                 }
@@ -169,6 +172,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
 
         btnSave.setOnClickListener {
             val name = etName.text.toString().trim()
+            val notes = etNotes.text.toString().trim()
             if (name.isEmpty()) { etName.error = getString(R.string.error_empty_field); return@setOnClickListener }
 
             val wordCount = name.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
@@ -184,6 +188,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
 
             val habit = editingHabit?.copy(
                 name = name,
+                notes = notes,
                 category = selectedCategory,
                 frequency = selectedFrequency,
                 specificDay = selectedSpecificDay,
@@ -191,6 +196,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 targetDate = selectedTargetDate
             ) ?: Habit(
                 name = name,
+                notes = notes,
                 category = selectedCategory,
                 frequency = selectedFrequency,
                 specificDay = selectedSpecificDay,

@@ -49,6 +49,17 @@ class DayTransitionWorker(
         habitDao.resetWeeklyHabits(calendar.get(Calendar.DAY_OF_WEEK))
         habitDao.resetMonthlyHabits(calendar.get(Calendar.DAY_OF_MONTH))
 
+        // 4. Birthday Check
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val birthdate = prefs.getLong("user_birthdate", 0)
+        if (birthdate > 0) {
+            val birthCal = Calendar.getInstance().apply { timeInMillis = birthdate }
+            if (birthCal.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) && 
+                birthCal.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)) {
+                com.yourname.habitapp.utils.NotificationHelper.showBirthdayNotification(context)
+            }
+        }
+
         return Result.success()
     }
 

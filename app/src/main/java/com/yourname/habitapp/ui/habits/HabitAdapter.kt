@@ -16,7 +16,8 @@ import com.yourname.habitapp.data.models.HabitFrequency
 class HabitAdapter(
     private val onCompleteClick: (Habit) -> Unit,
     private val onEditClick: (Habit) -> Unit,
-    private val onDeleteClick: (Habit) -> Unit
+    private val onDeleteClick: (Habit) -> Unit,
+    private val onNotesClick: (Habit) -> Unit
 ) : ListAdapter<Habit, HabitAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -28,6 +29,7 @@ class HabitAdapter(
         val btnEdit   : View = view.findViewById(R.id.btnEdit)
         val btnDelete : View = view.findViewById(R.id.btnDelete)
         val indicator : View = view.findViewById(R.id.viewPriorityIndicator)
+        val ivNotes   : View = view.findViewById(R.id.ivNotes)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,6 +45,9 @@ class HabitAdapter(
         holder.tvFreq.text   = getFrequencyText(habit)
         
         holder.indicator.setBackgroundColor(0xFFFFD166.toInt()) // Soft Yellow
+
+        holder.ivNotes.visibility = if (habit.notes.isNotEmpty()) View.VISIBLE else View.GONE
+        holder.ivNotes.setOnClickListener { onNotesClick(habit) }
 
         holder.checkDone.setOnCheckedChangeListener(null)
         holder.checkDone.isChecked = habit.isCompletedToday

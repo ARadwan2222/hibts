@@ -136,6 +136,20 @@
             android:layout_marginTop="12dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+        <!-- Notes -->
+        <EditText
+            android:id="@+id/etGoalNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/notes_label"
+            android:background="@drawable/bg_habit_item"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:minLines="2"
+            android:gravity="top"
+            android:inputType="textMultiLine" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveGoal"
             android:layout_width="match_parent"
@@ -143,7 +157,7 @@
             android:text="@string/save"
             android:textSize="16sp"
             android:layout_marginTop="32dp"
-            android:backgroundTint="@color/brand_purple"
+            android:backgroundTint="@color/accent_pink"
             android:textColor="@color/white"
             app:cornerRadius="16dp" />
 
