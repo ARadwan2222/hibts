@@ -6,7 +6,8 @@
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="2dp"
     app:cardCornerRadius="10dp"
-    app:cardElevation="1dp">
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="?attr/colorPrimaryContainer">
 
     <LinearLayout
         android:id="@+id/layoutGoalContainer"
@@ -48,14 +49,14 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#333333" />
+                    android:textColor="@color/text_dark" />
                 <TextView
                     android:id="@+id/tvGoalCountdown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="متبقي: 10 أيام"
                     android:textSize="13sp"
-                    android:textColor="#666666" />
+                    android:textColor="@color/text_gray" />
             </LinearLayout>
 
             <ImageButton
@@ -64,7 +65,7 @@
                 android:layout_height="36dp"
                 android:src="@drawable/ic_edit"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#1976D2"
+                app:tint="?attr/colorPrimary"
                 android:padding="6dp"
                 android:scaleType="fitCenter" />
 
@@ -105,7 +106,7 @@
                 android:text="خطوات التنفيذ:"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#555555"
+                android:textColor="@color/text_gray"
                 android:layout_marginBottom="4dp" />
 
             <androidx.recyclerview.widget.RecyclerView

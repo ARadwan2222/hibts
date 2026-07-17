@@ -64,19 +64,34 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val gender = prefs.getString("user_gender", "Male")
-        if (gender == "Female") {
-            setTheme(R.style.Theme_HabitApp_Female)
-        } else {
-            setTheme(R.style.Theme_HabitApp_Male)
-        }
-
         val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        if (settingsPrefs.getBoolean("dark_mode", false)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        
+        // Apply Custom Theme
+        val themeName = settingsPrefs.getString("app_theme", "Male")
+        val themeId = when(themeName) {
+            "Female" -> R.style.Theme_HabitApp_Female
+            "Cats"   -> R.style.Theme_HabitApp_Cats
+            "Dogs"   -> R.style.Theme_HabitApp_Dogs
+            "Travel" -> R.style.Theme_HabitApp_Travel
+            "Nature" -> R.style.Theme_HabitApp_Nature
+            "Ocean"  -> R.style.Theme_HabitApp_Ocean
+            "Sunset" -> R.style.Theme_HabitApp_Sunset
+            "Space"  -> R.style.Theme_HabitApp_Space
+            "Coffee" -> R.style.Theme_HabitApp_Coffee
+            "Tech"   -> R.style.Theme_HabitApp_Tech
+            "Minimal"-> R.style.Theme_HabitApp_Minimal
+            "Pastel" -> R.style.Theme_HabitApp_Pastel
+            "Vintage"-> R.style.Theme_HabitApp_Vintage
+            "Gold"   -> R.style.Theme_HabitApp_Gold
+            "Classic"-> R.style.Theme_HabitApp_Classic
+            else     -> R.style.Theme_HabitApp_Male
         }
+        setTheme(themeId)
+
+        // Apply Dark Mode correctly
+        val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
+        AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+
         languageChosen = settingsPrefs.getBoolean("language_chosen", false)
 
         super.onCreate(savedInstanceState)

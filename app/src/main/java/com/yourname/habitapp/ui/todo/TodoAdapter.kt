@@ -20,7 +20,8 @@ class TodoAdapter(
     private val onCompleteClick: (TodoItem) -> Unit,
     private val onEditClick: (TodoItem) -> Unit,
     private val onDeleteClick: (TodoItem) -> Unit,
-    private val onMuteToggle: (TodoItem) -> Unit 
+    private val onMuteToggle: (TodoItem) -> Unit,
+    private val onNotesClick: (TodoItem) -> Unit
 ) : ListAdapter<TodoItem, TodoAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,6 +32,7 @@ class TodoAdapter(
         val btnDelete    : View = view.findViewById(R.id.btnDelete)
         val indicator    : View = view.findViewById(R.id.viewPriorityIndicator)
         val ivBell       : ImageView = view.findViewById(R.id.ivBell)
+        val ivNotes      : ImageView = view.findViewById(R.id.ivNotes)
     }
 
     private val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -51,6 +53,9 @@ class TodoAdapter(
         }
         holder.indicator.setBackgroundColor(priorityColor)
         
+        holder.ivNotes.visibility = if (todo.notes.isNotEmpty()) View.VISIBLE else View.GONE
+        holder.ivNotes.setOnClickListener { onNotesClick(todo) }
+
         // Bell logic: Lit ONLY if a reminder is active and NOT muted
         val reminderOn = todo.reminderStart || todo.reminderEnd
         val showLit = reminderOn && !todo.isMuted && !todo.isCompleted

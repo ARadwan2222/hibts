@@ -91,7 +91,8 @@ class HabitsFragment : Fragment() {
             onCompleteClick = { todo -> onTodoToggle(todo) },
             onEditClick = { todo -> openEditTodo(todo) },
             onDeleteClick = { todo -> showDeleteConfirmation(todo) },
-            onMuteToggle = { todo -> toggleTodoMute(todo) }
+            onMuteToggle = { todo -> toggleTodoMute(todo) },
+            onNotesClick = { todo -> showNotes(todo) }
         )
         dailyAdapter = HabitAdapter(
             onCompleteClick = { habit -> onHabitCompleted(habit) },
@@ -189,10 +190,6 @@ class HabitsFragment : Fragment() {
         view.findViewById<View>(R.id.layoutDailyHabitsHeader).setOnClickListener { toggleList(view, R.id.recyclerDailyHabits, R.id.ivDailyHabitsArrow) }
         view.findViewById<View>(R.id.layoutWeeklyHabitsHeader).setOnClickListener { toggleList(view, R.id.recyclerWeeklyHabits, R.id.ivWeeklyHabitsArrow) }
         view.findViewById<View>(R.id.layoutMonthlyHabitsHeader).setOnClickListener { toggleList(view, R.id.recyclerMonthlyHabits, R.id.ivMonthlyHabitsArrow) }
-        view.findViewById<View>(R.id.btnAddTaskPlus).setOnClickListener { AddTodoBottomSheet().show(parentFragmentManager, "AddTodo") }
-        view.findViewById<View>(R.id.btnAddHabitPlus).setOnClickListener { openAddHabit(HabitFrequency.DAILY) }
-        view.findViewById<View>(R.id.btnAddWeeklyPlus).setOnClickListener { openAddHabit(HabitFrequency.WEEKLY) }
-        view.findViewById<View>(R.id.btnAddMonthlyPlus).setOnClickListener { openAddHabit(HabitFrequency.MONTHLY) }
         
         val btnNotify = view.findViewById<ImageButton>(R.id.btnNotifications)
         val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
@@ -312,10 +309,15 @@ class HabitsFragment : Fragment() {
         }; flashHandler.post(flashRunnable!!)
     }
 
-    private fun showNotes(habit: Habit) {
+    private fun showNotes(item: Any) {
+        val (title, notes) = when(item) {
+            is TodoItem -> Pair(item.title, item.notes)
+            is Habit -> Pair(item.name, item.notes)
+            else -> return
+        }
         AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-            .setTitle(habit.name)
-            .setMessage(habit.notes)
+            .setTitle(title)
+            .setMessage(notes)
             .setPositiveButton(getString(R.string.close), null)
             .show()
     }

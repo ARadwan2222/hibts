@@ -58,6 +58,8 @@ class YearGoalAdapter(
         holder.tvIcon.text = "🎯"
         holder.tvTitle.text = goal.title
         
+        holder.container.setBackgroundColor(0) // Reset background
+        
         // Progress Bar Logic
         holder.progressBar.progress = goal.progress
         holder.progressBar.visibility = if (goal.progress > 0) View.VISIBLE else View.GONE
@@ -79,7 +81,7 @@ class YearGoalAdapter(
                 holder.container.setBackgroundColor(0x20F44336) // More transparent Red
             }
             else -> {
-                holder.container.setBackgroundColor(0x00000000) // Transparent
+                // Keep default or set to surface
             }
         }
 

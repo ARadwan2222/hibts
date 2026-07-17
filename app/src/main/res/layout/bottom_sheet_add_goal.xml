@@ -25,7 +25,7 @@
             android:id="@+id/tvSheetTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/new_habit_title"
+            android:text="@string/yearly_goals"
             android:textSize="14sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -126,7 +126,7 @@
                 android:textSize="20sp"
                 app:cornerRadius="12dp"
                 android:padding="0dp"
-                android:backgroundTint="@color/brand_purple" />
+                android:backgroundTint="?attr/colorPrimary" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -157,7 +157,7 @@
             android:text="@string/save"
             android:textSize="16sp"
             android:layout_marginTop="32dp"
-            android:backgroundTint="@color/accent_pink"
+            android:backgroundTint="?attr/colorPrimary"
             android:textColor="@color/white"
             app:cornerRadius="16dp" />
 

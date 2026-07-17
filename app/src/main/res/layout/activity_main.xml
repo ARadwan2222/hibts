@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_purple">
+    android:background="?android:attr/windowBackground">
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -48,7 +48,7 @@
         android:layout_marginBottom="12dp"
         android:src="@drawable/ic_plus"
         app:tint="@color/white"
-        app:backgroundTint="#E84393"
+        app:backgroundTint="?attr/colorPrimary"
         app:fabSize="normal"
         app:elevation="12dp"
         app:borderWidth="0dp"
