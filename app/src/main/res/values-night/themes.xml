@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Base.Theme.HabitApp" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.HabitApp" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/brand_purple_light</item>
         <item name="colorOnPrimary">#000000</item>
-        <item name="colorPrimaryContainer">#311B92</item>
-        <item name="colorOnPrimaryContainer">#D1C4E9</item>
         <item name="android:windowBackground">#000000</item>
         <item name="colorSurface">#121212</item>
         <item name="colorOnSurface">#FFFFFF</item>
-        <item name="colorSurfaceVariant">#212121</item>
-        <item name="colorOnSurfaceVariant">#B0B0B0</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:textColorSecondary">#B0B0B0</item>
         <item name="colorOutline">#333333</item>
-        <item name="themeDecorationEmoji"></item>
+        <item name="alertDialogTheme">@style/PurpleAlertDialog</item>
     </style>
 
-    <style name="Theme.HabitApp" parent="Base.Theme.HabitApp" />
-
-    <style name="PurpleAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="PurpleAlertDialog" parent="Theme.Material3.DayNight.Dialog.Alert">
         <item name="android:windowBackground">#1E1E1E</item>
         <item name="colorAccent">?attr/colorPrimary</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
     </style>
 
     <!-- Night Versions of 15 Themes -->
     <style name="Theme.HabitApp.Male" parent="Theme.HabitApp"><item name="colorPrimary">#B39DDB</item></style>
     <style name="Theme.HabitApp.Female" parent="Theme.HabitApp"><item name="colorPrimary">#F48FB1</item></style>
-    <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp"><item name="colorPrimary">#FFCC80</item><item name="themeDecorationEmoji">🐱🐾🐈😻</item></style>
-    <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp"><item name="colorPrimary">#BCAAA4</item><item name="themeDecorationEmoji">🐶🦴🐕🐕‍🦺</item></style>
-    <style name="Theme.HabitApp.Travel" parent="Theme.HabitApp"><item name="colorPrimary">#81D4FA</item><item name="themeDecorationEmoji">✈️🌍🏨🗼</item></style>
-    <style name="Theme.HabitApp.Nature" parent="Theme.HabitApp"><item name="colorPrimary">#A5D6A7</item><item name="themeDecorationEmoji">🌿🌻🌲🌳</item></style>
-    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp"><item name="colorPrimary">#80DEEA</item><item name="themeDecorationEmoji">🌊🐬🐙⛵</item></style>
-    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp"><item name="colorPrimary">#FFAB91</item><item name="themeDecorationEmoji">🌅🌇🌙⭐</item></style>
-    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp"><item name="colorPrimary">#9FA8DA</item><item name="themeDecorationEmoji">🚀⭐🪐🛸</item></style>
-    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp"><item name="colorPrimary">#D7CCC8</item><item name="themeDecorationEmoji">☕🥐🍩🍪</item></style>
-    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp"><item name="colorPrimary">#B0BEC5</item><item name="themeDecorationEmoji">💻📱⌨️🖱️</item></style>
+    <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp"><item name="colorPrimary">#FFCC80</item></style>
+    <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp"><item name="colorPrimary">#BCAAA4</item></style>
+    <style name="Theme.HabitApp.Travel" parent="Theme.HabitApp"><item name="colorPrimary">#81D4FA</item></style>
+    <style name="Theme.HabitApp.Nature" parent="Theme.HabitApp"><item name="colorPrimary">#A5D6A7</item></style>
+    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp"><item name="colorPrimary">#80DEEA</item></style>
+    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp"><item name="colorPrimary">#FFAB91</item></style>
+    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp"><item name="colorPrimary">#9FA8DA</item></style>
+    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp"><item name="colorPrimary">#D7CCC8</item></style>
+    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp"><item name="colorPrimary">#B0BEC5</item></style>
     <style name="Theme.HabitApp.Minimal" parent="Theme.HabitApp"><item name="colorPrimary">#EEEEEE</item></style>
     <style name="Theme.HabitApp.Pastel" parent="Theme.HabitApp"><item name="colorPrimary">#F48FB1</item></style>
     <style name="Theme.HabitApp.Vintage" parent="Theme.HabitApp"><item name="colorPrimary">#E6EE9C</item></style>

@@ -132,6 +132,10 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+        // Apply a safe color tint to prevent crashes on non-standard themes
+        binding.bottomNavigation.itemIconTintList = android.content.res.ColorStateList.valueOf(0xFF6C5CE7.toInt())
+        binding.bottomNavigation.itemTextColor = android.content.res.ColorStateList.valueOf(0xFF9E9E9E.toInt())
     }
 
     private fun replaceFragment(fragment: Fragment) {

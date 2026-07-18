@@ -196,13 +196,26 @@ class TodoFragment : Fragment() {
     }
 
     private fun applyThemeDecorations(view: View) {
-        val typedValue = android.util.TypedValue()
-        val theme = requireContext().theme
-        if (theme.resolveAttribute(R.attr.themeDecorationEmoji, typedValue, true)) {
-            val emojis = typedValue.string?.toString()
-            view.findViewById<TextView>(R.id.tvThemeDecorationTodo)?.text = emojis
-            view.findViewById<TextView>(R.id.tvThemeDecorationTodoBottom)?.text = emojis
+        val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        val themeName = settingsPrefs.getString("app_theme", "Male")
+
+        val emojis = when(themeName) {
+            "Cats" -> "🐱🐾🐈😻"
+            "Dogs" -> "🐶🦴🐕🐕‍🦺"
+            "Travel" -> "✈️🌍🏨🗼"
+            "Nature" -> "🌿🌻🌲🌳"
+            "Ocean" -> "🌊🐬🐙⛵"
+            "Sunset" -> "🌅🌇🌙⭐"
+            "Space" -> "🚀⭐🪐🛸"
+            "Coffee" -> "☕🥐🍩🍪"
+            "Tech" -> "💻📱⌨️🖱️"
+            "Vintage" -> "🕰️🎞️📻⏳"
+            "Gold" -> "👑💰💎✨"
+            else -> ""
         }
+
+        view.findViewById<TextView>(R.id.tvThemeDecorationTodo)?.text = emojis
+        view.findViewById<TextView>(R.id.tvThemeDecorationTodoBottom)?.text = emojis
     }
 
     private fun updateUI() {
