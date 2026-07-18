@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.HabitApp" parent="Base.Theme.HabitApp">
+    <style name="Base.Theme.HabitApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_purple_light</item>
+        <item name="colorOnPrimary">#000000</item>
         <item name="android:windowBackground">#000000</item>
         <item name="colorSurface">#121212</item>
         <item name="colorOnSurface">#FFFFFF</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textColorSecondary">#B0B0B0</item>
-        <item name="colorPrimaryContainer">#1E1E1E</item>
-        <item name="colorOnPrimaryContainer">#FFFFFF</item>
-        <item name="colorOutline">#333333</item>
     </style>
 
-    <!-- 15 Professional Themes (Night Mode) -->
-    <style name="Theme.HabitApp.Male" parent="Theme.HabitApp"><item name="colorPrimary">@color/brand_purple_light</item></style>
+    <style name="Theme.HabitApp" parent="Base.Theme.HabitApp" />
+
+    <style name="PurpleAlertDialog" parent="Theme.Material3.Dark.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_rounded_dialog</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Night Versions of 15 Themes -->
+    <style name="Theme.HabitApp.Male" parent="Theme.HabitApp"><item name="colorPrimary">#B39DDB</item></style>
     <style name="Theme.HabitApp.Female" parent="Theme.HabitApp"><item name="colorPrimary">#F48FB1</item></style>
     <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp"><item name="colorPrimary">#FFCC80</item><item name="themeDecorationEmoji">🐱🐾🐈😻</item></style>
     <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp"><item name="colorPrimary">#BCAAA4</item><item name="themeDecorationEmoji">🐶🦴🐕🐕‍🦺</item></style>

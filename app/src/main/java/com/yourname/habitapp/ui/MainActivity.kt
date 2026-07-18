@@ -132,6 +132,15 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+        // Apply Bottom Nav Tint Programmatically to prevent crashes
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        val colorPrimary = typedValue.data
+        val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+        val colorList = android.content.res.ColorStateList(states, intArrayOf(colorPrimary, 0xFF9E9E9E.toInt()))
+        binding.bottomNavigation.itemIconTintList = colorList
+        binding.bottomNavigation.itemTextColor = colorList
     }
 
     private fun replaceFragment(fragment: Fragment) {
