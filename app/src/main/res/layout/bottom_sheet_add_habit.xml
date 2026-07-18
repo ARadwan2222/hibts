@@ -31,6 +31,13 @@
             android:gravity="center"
             android:textColor="@color/text_gray" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="?attr/themeDecorationEmoji"
+            android:textSize="20sp" />
+
         <EditText
             android:id="@+id/etHabitName"
             android:layout_width="match_parent"

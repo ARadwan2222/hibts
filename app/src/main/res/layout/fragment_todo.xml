@@ -40,6 +40,29 @@
             app:layout_constraintTop_toTopOf="@id/tvTodoHeaderTitle" />
 
         <TextView
+            android:id="@+id/tvThemeDecorationTodo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:text="?attr/themeDecorationEmoji"
+            android:textSize="40sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnNotificationsTodo" />
+
+        <TextView
+            android:id="@+id/tvThemeDecorationTodoBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="100dp"
+            android:text="?attr/themeDecorationEmoji"
+            android:textSize="60sp"
+            android:alpha="0.2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
             android:id="@+id/tvTodoHeaderSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
