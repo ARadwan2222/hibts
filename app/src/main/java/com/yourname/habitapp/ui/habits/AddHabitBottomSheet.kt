@@ -109,7 +109,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                     updateSpecificDayUI(layoutSpec, btnSpecDay)
                     loadSuggestions(chipGroupSugg, etName, tvIcon, it.category)
                     btnSave.text = getString(R.string.update)
-                    btnSave.setBackgroundColor(0xFFC2185B.toInt())
+                    // Color is handled by ?attr/colorPrimary in XML now
                     // If editing, usually we show frequency if it was not daily
                     if (it.frequency != HabitFrequency.DAILY) btnFreq.visibility = View.VISIBLE
                 }

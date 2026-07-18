@@ -101,7 +101,6 @@ class AddGoalBottomSheet : BottomSheetDialogFragment() {
                         btnDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(date))
                     }
                     btnSave.text = getString(R.string.update)
-                    btnSave.setBackgroundColor(0xFFC2185B.toInt()) // Deep Pink
 
                     // Load existing steps
                     val existingSteps = dao.getStepsForGoalSync(it.id)

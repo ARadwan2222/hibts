@@ -22,7 +22,8 @@
                 android:layout_height="180dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg_dashboard_header"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/profile_image_label" />
 
             <View
                 android:id="@+id/viewCoverOverlay"
@@ -41,7 +42,8 @@
                 android:src="@drawable/ic_edit"
                 app:tint="@color/white"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="@string/edit" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/layoutAvatarCard"
@@ -251,7 +253,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notification Sounds"
+                    android:text="@string/notification_sounds_label"
                     android:textColor="@color/text_dark"
                     android:textStyle="bold"
                     android:textSize="14sp"
@@ -271,15 +273,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Start Task Tone"
+                        android:text="@string/start_task_tone"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                     <TextView
                         android:id="@+id/tvToneStartTask"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Default"
-                        android:textColor="@color/brand_purple"
+                        android:text="@string/default_label"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -296,15 +298,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="End Task Tone"
+                        android:text="@string/end_task_tone"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                     <TextView
                         android:id="@+id/tvToneEndTask"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Default"
-                        android:textColor="@color/brand_purple"
+                        android:text="@string/default_label"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -321,15 +323,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="New Achievement Tone"
+                        android:text="@string/new_achievement_tone"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                     <TextView
                         android:id="@+id/tvToneAchievement"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Default"
-                        android:textColor="@color/brand_purple"
+                        android:text="@string/default_label"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -346,15 +348,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Year Goal Tone"
+                        android:text="@string/year_goal_tone"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                     <TextView
                         android:id="@+id/tvToneYearGoal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Default"
-                        android:textColor="@color/brand_purple"
+                        android:text="@string/default_label"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -371,15 +373,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Habit Reminder Tone"
+                        android:text="@string/habit_reminder_tone"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                     <TextView
                         android:id="@+id/tvToneHabit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Default"
-                        android:textColor="@color/brand_purple"
+                        android:text="@string/default_label"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -396,15 +398,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Birthday Tone"
+                        android:text="@string/birthday_tone"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                     <TextView
                         android:id="@+id/tvToneBirthday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Default"
-                        android:textColor="@color/brand_purple"
+                        android:text="@string/default_label"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -443,7 +445,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/how_to_use_label"
+                        android:text="@string/how_to_use_hibts"
                         android:textColor="@color/text_dark"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -535,7 +537,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:gravity="center"
-                    android:textColor="@color/brand_purple"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="13sp" />
 
                 <TextView

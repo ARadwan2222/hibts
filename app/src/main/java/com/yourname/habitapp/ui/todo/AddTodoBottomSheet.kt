@@ -82,7 +82,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                     selectedEndTime = it.endTime
                     selectedDate.timeInMillis = it.targetDate
                     btnSave.text = getString(R.string.update)
-                    btnSave.setBackgroundColor(0xFFC2185B.toInt()) // Deep Pink for clear visibility
+                    // Color is handled by ?attr/colorPrimary in XML now
                     btnDate.text = formatDate(it.targetDate)
                     if (it.startTime != null) btnStartTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.start), formatTime(it.startTime))
                     if (it.endTime != null) btnEndTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.end), formatTime(it.endTime))

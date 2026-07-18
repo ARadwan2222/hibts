@@ -44,7 +44,12 @@ class HabitAdapter(
         holder.tvStreak.text = if (habit.streak > 0) "🔥 ${habit.streak}" else ""
         holder.tvFreq.text   = getFrequencyText(habit)
         
-        holder.indicator.setBackgroundColor(0xFFFFD166.toInt()) // Soft Yellow
+        // Resolve primary color from theme
+        val typedValue = android.util.TypedValue()
+        holder.itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        val primaryColor = typedValue.data
+
+        holder.indicator.setBackgroundColor(primaryColor)
 
         holder.ivNotes.visibility = if (habit.notes.isNotEmpty()) View.VISIBLE else View.GONE
         holder.ivNotes.setOnClickListener { onNotesClick(habit) }

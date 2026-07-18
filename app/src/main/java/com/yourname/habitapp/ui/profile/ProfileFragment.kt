@@ -71,37 +71,43 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateToneNameUI(key: String, uri: Uri) {
-        val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
-        val title = ringtone.getTitle(requireContext())
-        when(key) {
-            "tone_start_task" -> view?.findViewById<TextView>(R.id.tvToneStartTask)?.text = title
-            "tone_end_task" -> view?.findViewById<TextView>(R.id.tvToneEndTask)?.text = title
-            "tone_achievement" -> view?.findViewById<TextView>(R.id.tvToneAchievement)?.text = title
-            "tone_year_goal" -> view?.findViewById<TextView>(R.id.tvToneYearGoal)?.text = title
-            "tone_habit" -> view?.findViewById<TextView>(R.id.tvToneHabit)?.text = title
-            "tone_birthday" -> view?.findViewById<TextView>(R.id.tvToneBirthday)?.text = title
-        }
+        try {
+            val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
+            val title = ringtone?.getTitle(requireContext()) ?: "Default"
+            when(key) {
+                "tone_start_task" -> view?.findViewById<TextView>(R.id.tvToneStartTask)?.text = title
+                "tone_end_task" -> view?.findViewById<TextView>(R.id.tvToneEndTask)?.text = title
+                "tone_achievement" -> view?.findViewById<TextView>(R.id.tvToneAchievement)?.text = title
+                "tone_year_goal" -> view?.findViewById<TextView>(R.id.tvToneYearGoal)?.text = title
+                "tone_habit" -> view?.findViewById<TextView>(R.id.tvToneHabit)?.text = title
+                "tone_birthday" -> view?.findViewById<TextView>(R.id.tvToneBirthday)?.text = title
+            }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun startTonePicker(code: Int) {
-        tonePickerRequestCode = code
-        val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        val key = when(code) {
-            1 -> "tone_start_task"
-            2 -> "tone_end_task"
-            3 -> "tone_achievement"
-            4 -> "tone_year_goal"
-            5 -> "tone_habit"
-            6 -> "tone_birthday"
-            else -> "notification_tone"
+        try {
+            tonePickerRequestCode = code
+            val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+            val key = when(code) {
+                1 -> "tone_start_task"
+                2 -> "tone_end_task"
+                3 -> "tone_achievement"
+                4 -> "tone_year_goal"
+                5 -> "tone_habit"
+                6 -> "tone_birthday"
+                else -> "notification_tone"
+            }
+            val currentUri = settingsPrefs.getString(key, null)?.let { Uri.parse(it) }
+            
+            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "اختر نغمة التنبيه")
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
+            pickRingtone.launch(intent)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "لا يمكن فتح مدير النغمات", Toast.LENGTH_SHORT).show()
         }
-        val currentUri = settingsPrefs.getString(key, null)?.let { Uri.parse(it) }
-        
-        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone")
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
-        pickRingtone.launch(intent)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -240,8 +246,8 @@ class ProfileFragment : Fragment() {
         
         btnHelpCenterRow.setOnClickListener { 
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.how_to_use_label))
-                .setMessage(getString(R.string.terms_of_use_text)) 
+                .setTitle(getString(R.string.how_to_use_hibts))
+                .setMessage(getString(R.string.how_to_use_content))
                 .setPositiveButton("OK", null)
                 .show()
         }
@@ -353,25 +359,32 @@ class ProfileFragment : Fragment() {
 
     private fun resetEverything() {
         val context = requireContext()
-        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val lastEmail = prefs.getString("user_email", "")
-        
-        context.getSharedPreferences("persistent_prefs", Context.MODE_PRIVATE)
-            .edit().putString("last_logged_in_email", lastEmail).commit()
+        AlertDialog.Builder(context, R.style.PurpleAlertDialog)
+            .setTitle(R.string.reset_app_data)
+            .setMessage("سيتم حذف جميع المهام والعادات المسجلة نهائياً. هل أنت متأكد؟")
+            .setPositiveButton(R.string.yes) { _, _ ->
+                lifecycleScope.launch {
+                    try {
+                        val db = AppDatabase.getInstance(context)
+                        db.clearAllTables() // Actual DB Wipe
 
-        FirebaseAuth.getInstance().signOut()
-        val prefsList = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
-        prefsList.forEach { context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
+                        val prefsList = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
+                        prefsList.forEach { context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
 
-        lifecycleScope.launch {
-            val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-            intent?.let {
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(it)
-                activity?.finish()
-                Runtime.getRuntime().exit(0)
+                        FirebaseAuth.getInstance().signOut()
+
+                        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                        intent?.let {
+                            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            startActivity(it)
+                            activity?.finish()
+                            Runtime.getRuntime().exit(0)
+                        }
+                    } catch (e: Exception) { e.printStackTrace() }
+                }
             }
-        }
+            .setNegativeButton(R.string.no, null)
+            .show()
     }
 
     private fun updateLocale(langCode: String) {

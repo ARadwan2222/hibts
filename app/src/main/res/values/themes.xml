@@ -25,84 +25,21 @@
     <style name="RoundedComponent" parent="ShapeAppearance.Material3.MediumComponent"><item name="cornerSize">24dp</item></style>
     <style name="CircleImage" parent=""><item name="cornerSize">50%</item></style>
 
-    <!-- 15 Professional Themes -->
-    <style name="Theme.HabitApp.Male" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/brand_purple</item>
-        <item name="colorPrimaryContainer">@color/brand_purple_light</item>
-    </style>
-    <style name="Theme.HabitApp.Female" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/brand_rose</item>
-        <item name="colorPrimaryContainer">@color/brand_rose_light</item>
-        <item name="android:windowBackground">@color/bg_light_rose</item>
-    </style>
-    <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_cats_primary</item>
-        <item name="colorPrimaryContainer">#FFE0B2</item>
-        <item name="android:windowBackground">@color/theme_cats_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_dogs_primary</item>
-        <item name="colorPrimaryContainer">#D7CCC8</item>
-        <item name="android:windowBackground">@color/theme_dogs_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Travel" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_travel_primary</item>
-        <item name="colorPrimaryContainer">#B3E5FC</item>
-        <item name="android:windowBackground">@color/theme_travel_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Nature" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_nature_primary</item>
-        <item name="colorPrimaryContainer">#C8E6C9</item>
-        <item name="android:windowBackground">@color/theme_nature_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_ocean_primary</item>
-        <item name="colorPrimaryContainer">#B2EBF2</item>
-        <item name="android:windowBackground">@color/theme_ocean_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_sunset_primary</item>
-        <item name="colorPrimaryContainer">#FFCCBC</item>
-        <item name="android:windowBackground">@color/theme_sunset_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_space_primary</item>
-        <item name="colorPrimaryContainer">#C5CAE9</item>
-        <item name="android:windowBackground">@color/theme_space_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_coffee_primary</item>
-        <item name="colorPrimaryContainer">#D7CCC8</item>
-        <item name="android:windowBackground">@color/theme_coffee_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_tech_primary</item>
-        <item name="colorPrimaryContainer">#CFD8DC</item>
-        <item name="android:windowBackground">@color/theme_tech_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Minimal" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_minimal_primary</item>
-        <item name="colorPrimaryContainer">#F5F5F5</item>
-        <item name="android:windowBackground">@color/theme_minimal_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Pastel" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_pastel_primary</item>
-        <item name="colorPrimaryContainer">#FCE4EC</item>
-        <item name="android:windowBackground">@color/theme_pastel_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Vintage" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_vintage_primary</item>
-        <item name="colorPrimaryContainer">#F0F4C3</item>
-        <item name="android:windowBackground">@color/theme_vintage_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Gold" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_gold_primary</item>
-        <item name="colorPrimaryContainer">#FFF9C4</item>
-        <item name="android:windowBackground">@color/theme_gold_bg</item>
-    </style>
-    <style name="Theme.HabitApp.Classic" parent="Theme.HabitApp">
-        <item name="colorPrimary">@color/theme_classic_primary</item>
-        <item name="colorPrimaryContainer">#BBDEFB</item>
-        <item name="android:windowBackground">@color/theme_classic_bg</item>
-    </style>
+    <!-- 15 Distinctive Themes -->
+    <style name="Theme.HabitApp.Male" parent="Theme.HabitApp"><item name="colorPrimary">@color/brand_purple</item><item name="colorPrimaryContainer">#E8EAF6</item></style>
+    <style name="Theme.HabitApp.Female" parent="Theme.HabitApp"><item name="colorPrimary">@color/brand_rose</item><item name="colorPrimaryContainer">#FCE4EC</item><item name="android:windowBackground">#FFF0F5</item></style>
+    <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp"><item name="colorPrimary">#E67E22</item><item name="colorPrimaryContainer">#FDEBD0</item><item name="android:windowBackground">#FEF5E7</item></style>
+    <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp"><item name="colorPrimary">#8D6E63</item><item name="colorPrimaryContainer">#EFEBE9</item><item name="android:windowBackground">#F4F1F0</item></style>
+    <style name="Theme.HabitApp.Travel" parent="Theme.HabitApp"><item name="colorPrimary">#2980B9</item><item name="colorPrimaryContainer">#D6EAF8</item><item name="android:windowBackground">#EBF5FB</item></style>
+    <style name="Theme.HabitApp.Nature" parent="Theme.HabitApp"><item name="colorPrimary">#27AE60</item><item name="colorPrimaryContainer">#D5F5E3</item><item name="android:windowBackground">#EAFAF1</item></style>
+    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp"><item name="colorPrimary">#16A085</item><item name="colorPrimaryContainer">#D1F2EB</item><item name="android:windowBackground">#E8F8F5</item></style>
+    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp"><item name="colorPrimary">#E74C3C</item><item name="colorPrimaryContainer">#FADBD8</item><item name="android:windowBackground">#FDEDEC</item></style>
+    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp"><item name="colorPrimary">#8E44AD</item><item name="colorPrimaryContainer">#EBDEF0</item><item name="android:windowBackground">#F5EEF8</item></style>
+    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp"><item name="colorPrimary">#6F4E37</item><item name="colorPrimaryContainer">#EDE0D4</item><item name="android:windowBackground">#F5EBE0</item></style>
+    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp"><item name="colorPrimary">#2C3E50</item><item name="colorPrimaryContainer">#D5DBDB</item><item name="android:windowBackground">#EBEDEF</item></style>
+    <style name="Theme.HabitApp.Minimal" parent="Theme.HabitApp"><item name="colorPrimary">#34495E</item><item name="colorPrimaryContainer">#F2F4F4</item><item name="android:windowBackground">#F8F9F9</item></style>
+    <style name="Theme.HabitApp.Pastel" parent="Theme.HabitApp"><item name="colorPrimary">#FF85A2</item><item name="colorPrimaryContainer">#FFE4E8</item><item name="android:windowBackground">#FFF5F6</item></style>
+    <style name="Theme.HabitApp.Vintage" parent="Theme.HabitApp"><item name="colorPrimary">#9A8C98</item><item name="colorPrimaryContainer">#C9ADA7</item><item name="android:windowBackground">#F2E9E4</item></style>
+    <style name="Theme.HabitApp.Gold" parent="Theme.HabitApp"><item name="colorPrimary">#D4AF37</item><item name="colorPrimaryContainer">#FCF3CF</item><item name="android:windowBackground">#FEF9E7</item></style>
+    <style name="Theme.HabitApp.Classic" parent="Theme.HabitApp"><item name="colorPrimary">#3498DB</item><item name="colorPrimaryContainer">#AED6F1</item><item name="android:windowBackground">#EAF2F8</item></style>
 </resources>

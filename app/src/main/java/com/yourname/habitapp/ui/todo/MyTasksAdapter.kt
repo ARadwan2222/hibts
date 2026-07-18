@@ -64,6 +64,11 @@ class MyTasksAdapter(
             title.text = todo.title
             val timeView = itemView.findViewById<TextView>(R.id.tvTodoTime)
             
+            // Resolve primary color from theme
+            val typedValue = android.util.TypedValue()
+            itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            val primaryColor = typedValue.data
+
             ivNotes.visibility = if (todo.notes?.isNotEmpty() == true) View.VISIBLE else View.GONE
             ivNotes.setOnClickListener { onNotesClick(todo) }
 
@@ -92,6 +97,9 @@ class MyTasksAdapter(
                 }
             }
 
+            // Priority Indicator Color
+            itemView.findViewById<View>(R.id.viewPriorityIndicator)?.setBackgroundColor(primaryColor)
+
             check.visibility = View.VISIBLE
             check.setOnCheckedChangeListener(null)
             check.isChecked = todo.isCompleted
@@ -119,6 +127,11 @@ class MyTasksAdapter(
             title.text = habit.name
             icon.text = habit.icon
 
+            // Resolve primary color from theme
+            val typedValue = android.util.TypedValue()
+            itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            val primaryColor = typedValue.data
+
             ivNotes.visibility = if (habit.notes.isNotEmpty()) View.VISIBLE else View.GONE
             ivNotes.setOnClickListener { onNotesClick(habit) }
 
@@ -131,6 +144,9 @@ class MyTasksAdapter(
                                else title.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
 
             itemView.alpha = if (habit.isCompletedToday) 0.6f else 1.0f
+
+            // Priority Indicator Color
+            itemView.findViewById<View>(R.id.viewPriorityIndicator)?.setBackgroundColor(primaryColor)
             
             btnEdit.setOnClickListener { onEdit(habit) }
             btnDelete.setOnClickListener { onDelete(habit) }

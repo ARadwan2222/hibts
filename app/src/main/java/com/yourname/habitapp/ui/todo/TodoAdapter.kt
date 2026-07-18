@@ -46,9 +46,14 @@ class TodoAdapter(
         val todo = getItem(position)
         holder.tvTitle.text = todo.title
 
+        // Resolve primary color from theme
+        val typedValue = android.util.TypedValue()
+        holder.itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        val primaryColor = typedValue.data
+
         val priorityColor = when(todo.priority) {
             Priority.HIGH -> 0xFFE84393.toInt() 
-            Priority.MEDIUM -> 0xFF6C5CE7.toInt()
+            Priority.MEDIUM -> primaryColor
             Priority.LOW -> 0xFF00CEC9.toInt()
         }
         holder.indicator.setBackgroundColor(priorityColor)

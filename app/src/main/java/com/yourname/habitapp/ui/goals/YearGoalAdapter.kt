@@ -98,7 +98,13 @@ class YearGoalAdapter(
         if (diff > 0) {
             val days = diff / (1000 * 60 * 60 * 24)
             holder.tvCountdown.text = context.getString(R.string.days_left_msg).format(days)
-            holder.tvCountdown.setTextColor(if (days < 7) 0xFFD32F2F.toInt() else 0xFF1976D2.toInt())
+            
+            // Resolve primary color from theme
+            val typedValue = android.util.TypedValue()
+            context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            val primaryColor = typedValue.data
+            
+            holder.tvCountdown.setTextColor(if (days < 7) 0xFFD32F2F.toInt() else primaryColor)
         } else {
             holder.tvCountdown.text = context.getString(R.string.time_up_warning)
             holder.tvCountdown.setTextColor(0xFFD32F2F.toInt())
