@@ -17,6 +17,10 @@ import com.yourname.habitapp.ui.onboarding.OnboardingActivity
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
+        AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
@@ -71,13 +75,8 @@ class SplashActivity : AppCompatActivity() {
                 val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
                 val onboardingDone = prefs.getBoolean("onboarding_done", false)
 
-                // Apply saved theme/dark mode settings on splash
-                val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
-                AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
-
                 // Set Theme from settings before moving forward
                 val themeName = settingsPrefs.getString("app_theme", "Male")
-                // No need to call setTheme here as it doesn't have UI, but ensures consistency if needed
 
                 if (user != null) {
                     if (user.isEmailVerified && onboardingDone) {

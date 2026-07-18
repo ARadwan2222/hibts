@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Base.Theme.HabitApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.HabitApp" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/brand_purple_light</item>
         <item name="colorOnPrimary">#000000</item>
+        <item name="colorPrimaryContainer">#311B92</item>
+        <item name="colorOnPrimaryContainer">#D1C4E9</item>
         <item name="android:windowBackground">#000000</item>
         <item name="colorSurface">#121212</item>
         <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorSurfaceVariant">#212121</item>
+        <item name="colorOnSurfaceVariant">#B0B0B0</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textColorSecondary">#B0B0B0</item>
+        <item name="colorOutline">#333333</item>
+        <item name="themeDecorationEmoji"></item>
     </style>
 
     <style name="Theme.HabitApp" parent="Base.Theme.HabitApp" />
 
-    <style name="PurpleAlertDialog" parent="Theme.Material3.Dark.Dialog.Alert">
-        <item name="android:windowBackground">@drawable/bg_rounded_dialog</item>
+    <style name="PurpleAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">#1E1E1E</item>
         <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
     </style>
 
     <!-- Night Versions of 15 Themes -->

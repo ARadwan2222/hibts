@@ -82,6 +82,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="?attr/themeDecorationEmoji"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="40sp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -92,8 +93,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="?attr/themeDecorationEmoji"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="60sp"
-                android:alpha="0.2"
+                android:alpha="0.15"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

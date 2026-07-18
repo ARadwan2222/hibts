@@ -58,31 +58,31 @@
         <item name="colorPrimary">#16A085</item>
         <item name="colorPrimaryContainer">#D1F2EB</item>
         <item name="android:windowBackground">#E8F8F5</item>
-        <item name="themeDecorationEmoji">🌊🐬</item>
+        <item name="themeDecorationEmoji">🌊🐬🐙⛵</item>
     </style>
     <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp">
         <item name="colorPrimary">#E74C3C</item>
         <item name="colorPrimaryContainer">#FADBD8</item>
         <item name="android:windowBackground">#FDEDEC</item>
-        <item name="themeDecorationEmoji">🌅🌇</item>
+        <item name="themeDecorationEmoji">🌅🌇🌙⭐</item>
     </style>
     <style name="Theme.HabitApp.Space" parent="Theme.HabitApp">
         <item name="colorPrimary">#8E44AD</item>
         <item name="colorPrimaryContainer">#EBDEF0</item>
         <item name="android:windowBackground">#F5EEF8</item>
-        <item name="themeDecorationEmoji">🚀⭐</item>
+        <item name="themeDecorationEmoji">🚀⭐🪐🛸</item>
     </style>
     <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp">
         <item name="colorPrimary">#6F4E37</item>
         <item name="colorPrimaryContainer">#EDE0D4</item>
         <item name="android:windowBackground">#F5EBE0</item>
-        <item name="themeDecorationEmoji">☕🥐</item>
+        <item name="themeDecorationEmoji">☕🥐🍩🍪</item>
     </style>
     <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp">
         <item name="colorPrimary">#2C3E50</item>
         <item name="colorPrimaryContainer">#D5DBDB</item>
         <item name="android:windowBackground">#EBEDEF</item>
-        <item name="themeDecorationEmoji">💻📱</item>
+        <item name="themeDecorationEmoji">💻📱⌨️🖱️</item>
     </style>
     <style name="Theme.HabitApp.Minimal" parent="Theme.HabitApp"><item name="colorPrimary">#34495E</item><item name="colorPrimaryContainer">#F2F4F4</item><item name="android:windowBackground">#F8F9F9</item></style>
     <style name="Theme.HabitApp.Pastel" parent="Theme.HabitApp"><item name="colorPrimary">#FF85A2</item><item name="colorPrimaryContainer">#FFE4E8</item><item name="android:windowBackground">#FFF5F6</item></style>

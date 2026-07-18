@@ -35,6 +35,8 @@
             android:background="@android:color/transparent"
             app:elevation="0dp"
             app:itemIconSize="22dp"
+            app:itemIconTint="@color/nav_item_selector"
+            app:itemTextColor="@color/nav_item_selector"
             app:itemRippleColor="@null"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/bottom_nav_menu" />
