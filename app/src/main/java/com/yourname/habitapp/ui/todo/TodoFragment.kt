@@ -190,9 +190,19 @@ class TodoFragment : Fragment() {
             updateUI()
         }
 
-
+        applyThemeDecorations(view)
 
         updateUI()
+    }
+
+    private fun applyThemeDecorations(view: View) {
+        val typedValue = android.util.TypedValue()
+        val theme = requireContext().theme
+        if (theme.resolveAttribute(R.attr.themeDecorationEmoji, typedValue, true)) {
+            val emojis = typedValue.string?.toString()
+            view.findViewById<TextView>(R.id.tvThemeDecorationTodo)?.text = emojis
+            view.findViewById<TextView>(R.id.tvThemeDecorationTodoBottom)?.text = emojis
+        }
     }
 
     private fun updateUI() {

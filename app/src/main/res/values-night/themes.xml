@@ -8,20 +8,21 @@
         <item name="android:textColorSecondary">#B0B0B0</item>
         <item name="colorPrimaryContainer">#1E1E1E</item>
         <item name="colorOnPrimaryContainer">#FFFFFF</item>
+        <item name="colorOutline">#333333</item>
     </style>
 
-    <!-- 15 Professional Themes (Night Mode Versions) -->
+    <!-- 15 Professional Themes (Night Mode) -->
     <style name="Theme.HabitApp.Male" parent="Theme.HabitApp"><item name="colorPrimary">@color/brand_purple_light</item></style>
     <style name="Theme.HabitApp.Female" parent="Theme.HabitApp"><item name="colorPrimary">#F48FB1</item></style>
     <style name="Theme.HabitApp.Cats" parent="Theme.HabitApp"><item name="colorPrimary">#FFCC80</item><item name="themeDecorationEmoji">🐱🐾🐈😻</item></style>
     <style name="Theme.HabitApp.Dogs" parent="Theme.HabitApp"><item name="colorPrimary">#BCAAA4</item><item name="themeDecorationEmoji">🐶🦴🐕🐕‍🦺</item></style>
     <style name="Theme.HabitApp.Travel" parent="Theme.HabitApp"><item name="colorPrimary">#81D4FA</item><item name="themeDecorationEmoji">✈️🌍🏨🗼</item></style>
     <style name="Theme.HabitApp.Nature" parent="Theme.HabitApp"><item name="colorPrimary">#A5D6A7</item><item name="themeDecorationEmoji">🌿🌻🌲🌳</item></style>
-    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp"><item name="colorPrimary">#80DEEA</item><item name="themeDecorationEmoji">🌊🐬</item></style>
-    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp"><item name="colorPrimary">#FFAB91</item><item name="themeDecorationEmoji">🌅🌇</item></style>
-    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp"><item name="colorPrimary">#9FA8DA</item><item name="themeDecorationEmoji">🚀⭐</item></style>
-    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp"><item name="colorPrimary">#D7CCC8</item><item name="themeDecorationEmoji">☕🥐</item></style>
-    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp"><item name="colorPrimary">#B0BEC5</item><item name="themeDecorationEmoji">💻📱</item></style>
+    <style name="Theme.HabitApp.Ocean" parent="Theme.HabitApp"><item name="colorPrimary">#80DEEA</item><item name="themeDecorationEmoji">🌊🐬🐙⛵</item></style>
+    <style name="Theme.HabitApp.Sunset" parent="Theme.HabitApp"><item name="colorPrimary">#FFAB91</item><item name="themeDecorationEmoji">🌅🌇🌙⭐</item></style>
+    <style name="Theme.HabitApp.Space" parent="Theme.HabitApp"><item name="colorPrimary">#9FA8DA</item><item name="themeDecorationEmoji">🚀⭐🪐🛸</item></style>
+    <style name="Theme.HabitApp.Coffee" parent="Theme.HabitApp"><item name="colorPrimary">#D7CCC8</item><item name="themeDecorationEmoji">☕🥐🍩🍪</item></style>
+    <style name="Theme.HabitApp.Tech" parent="Theme.HabitApp"><item name="colorPrimary">#B0BEC5</item><item name="themeDecorationEmoji">💻📱⌨️🖱️</item></style>
     <style name="Theme.HabitApp.Minimal" parent="Theme.HabitApp"><item name="colorPrimary">#EEEEEE</item></style>
     <style name="Theme.HabitApp.Pastel" parent="Theme.HabitApp"><item name="colorPrimary">#F48FB1</item></style>
     <style name="Theme.HabitApp.Vintage" parent="Theme.HabitApp"><item name="colorPrimary">#E6EE9C</item></style>

@@ -62,7 +62,10 @@ class MainActivity : AppCompatActivity() {
             "Vintage"-> R.style.Theme_HabitApp_Vintage
             "Gold"   -> R.style.Theme_HabitApp_Gold
             "Classic"-> R.style.Theme_HabitApp_Classic
-            else     -> R.style.Theme_HabitApp_Male
+            else     -> {
+                val gender = prefs.getString("user_gender", "Male")
+                if (gender == "Female") R.style.Theme_HabitApp_Female else R.style.Theme_HabitApp_Male
+            }
         }
         setTheme(themeId)
 

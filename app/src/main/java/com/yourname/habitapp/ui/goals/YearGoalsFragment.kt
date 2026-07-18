@@ -116,7 +116,19 @@ class YearGoalsFragment : Fragment() {
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayoutGoals)
         setupYearTabs(tabLayout)
 
+        applyThemeDecorations(view)
+
         observeGoals()
+    }
+
+    private fun applyThemeDecorations(view: View) {
+        val typedValue = android.util.TypedValue()
+        val theme = requireContext().theme
+        if (theme.resolveAttribute(R.attr.themeDecorationEmoji, typedValue, true)) {
+            val emojis = typedValue.string?.toString()
+            view.findViewById<TextView>(R.id.tvThemeDecorationGoals)?.text = emojis
+            view.findViewById<TextView>(R.id.tvThemeDecorationGoalsBottom)?.text = emojis
+        }
     }
 
     private fun setupYearTabs(tabLayout: TabLayout) {

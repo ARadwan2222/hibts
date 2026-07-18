@@ -75,6 +75,10 @@ class SplashActivity : AppCompatActivity() {
                 val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
                 AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
 
+                // Set Theme from settings before moving forward
+                val themeName = settingsPrefs.getString("app_theme", "Male")
+                // No need to call setTheme here as it doesn't have UI, but ensures consistency if needed
+
                 if (user != null) {
                     if (user.isEmailVerified && onboardingDone) {
                         // Fully registered and verified

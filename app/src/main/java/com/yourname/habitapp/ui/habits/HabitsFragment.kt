@@ -80,6 +80,8 @@ class HabitsFragment : Fragment() {
         setupFilters(view)
         setupFlashing(view.findViewById(R.id.cardFocus))
         
+        applyThemeDecorations(view)
+        
         setupSwipeDelete(view.findViewById(R.id.recyclerCurrentTasks), taskAdapter)
         setupSwipeDelete(view.findViewById(R.id.recyclerDailyHabits), dailyAdapter)
         setupSwipeDelete(view.findViewById(R.id.recyclerWeeklyHabits), weeklyAdapter)
@@ -458,5 +460,15 @@ class HabitsFragment : Fragment() {
         }
     }
     private fun openAddHabit(freq: HabitFrequency?) { AddHabitBottomSheet.newInstance(-1, freq, false).show(parentFragmentManager, "AddHabit") }
+    private fun applyThemeDecorations(view: View) {
+        val typedValue = android.util.TypedValue()
+        val theme = requireContext().theme
+        if (theme.resolveAttribute(R.attr.themeDecorationEmoji, typedValue, true)) {
+            val emojis = typedValue.string?.toString()
+            view.findViewById<TextView>(R.id.tvThemeDecoration)?.text = emojis
+            view.findViewById<TextView>(R.id.tvThemeDecorationBottom)?.text = emojis
+        }
+    }
+
     override fun onDestroyView() { super.onDestroyView(); countDownTimer?.cancel(); flashRunnable?.let { flashHandler.removeCallbacks(it) } }
 }
