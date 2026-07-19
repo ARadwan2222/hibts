@@ -479,8 +479,13 @@ class HabitsFragment : Fragment() {
             else -> ""
         }
         
-        view.findViewById<TextView>(R.id.tvThemeDecoration)?.text = emojis
-        view.findViewById<TextView>(R.id.tvThemeDecorationBottom)?.text = emojis
+        val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorations)
+        if (emojis.isNotEmpty()) {
+            val repeated = (1..100).joinToString(" ") { emojis }
+            bgDecorations?.text = repeated
+        } else {
+            bgDecorations?.text = ""
+        }
     }
 
     override fun onDestroyView() { super.onDestroyView(); countDownTimer?.cancel(); flashRunnable?.let { flashHandler.removeCallbacks(it) } }

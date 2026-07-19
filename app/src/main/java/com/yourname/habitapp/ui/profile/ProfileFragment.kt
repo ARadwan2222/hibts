@@ -135,8 +135,6 @@ class ProfileFragment : Fragment() {
         val switchSound = view.findViewById<CompoundButton>(R.id.switchSound)
         val switchDarkMode = view.findViewById<CompoundButton>(R.id.switchDarkMode)
         val switchVibration = view.findViewById<CompoundButton>(R.id.switchVibration)
-        val btnChooseToneRow = view.findViewById<View>(R.id.btnChooseToneRow)
-        val tvToneName = view.findViewById<TextView>(R.id.tvSelectedToneName)
         val spinnerLang = view.findViewById<Spinner>(R.id.spinnerLanguage)
         val spinnerTheme = view.findViewById<Spinner>(R.id.spinnerTheme)
         

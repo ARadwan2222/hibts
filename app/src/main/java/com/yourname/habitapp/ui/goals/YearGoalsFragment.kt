@@ -141,8 +141,13 @@ class YearGoalsFragment : Fragment() {
             else -> ""
         }
 
-        view.findViewById<TextView>(R.id.tvThemeDecorationGoals)?.text = emojis
-        view.findViewById<TextView>(R.id.tvThemeDecorationGoalsBottom)?.text = emojis
+        val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorationsGoals)
+        if (bgDecorations != null && emojis.isNotEmpty()) {
+            val repeated = (1..100).joinToString(" ") { emojis }
+            bgDecorations.text = repeated
+        } else {
+            bgDecorations?.text = ""
+        }
     }
 
     private fun setupYearTabs(tabLayout: TabLayout) {
