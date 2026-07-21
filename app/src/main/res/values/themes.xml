@@ -10,11 +10,16 @@
         <item name="colorOnSurface">@color/text_dark</item>
         <item name="colorOutline">#E0E0E0</item>
         <item name="alertDialogTheme">@style/PurpleAlertDialog</item>
+
+        <!-- Fixed Toggle Colors -->
+        <item name="android:colorControlActivated">?attr/colorPrimary</item>
+        <item name="android:colorControlNormal">#757575</item>
     </style>
 
     <style name="PurpleAlertDialog" parent="Theme.Material3.DayNight.Dialog.Alert">
         <item name="android:windowBackground">@drawable/bg_rounded_dialog</item>
         <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="colorPrimary">?attr/colorPrimary</item>
     </style>
 
     <style name="RoundedComponent" parent="ShapeAppearance.Material3.MediumComponent"><item name="cornerSize">24dp</item></style>

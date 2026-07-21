@@ -198,7 +198,6 @@ class TodoFragment : Fragment() {
     private fun applyThemeDecorations(view: View) {
         val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         val themeName = settingsPrefs.getString("app_theme", "Male")
-
         val emojis = when(themeName) {
             "Cats" -> "🐱🐾🐈😻"
             "Dogs" -> "🐶🦴🐕🐕‍🦺"
@@ -213,9 +212,13 @@ class TodoFragment : Fragment() {
             "Gold" -> "👑💰💎✨"
             else -> ""
         }
-
-        view.findViewById<TextView>(R.id.tvThemeDecorationTodo)?.text = emojis
-        view.findViewById<TextView>(R.id.tvThemeDecorationTodoBottom)?.text = emojis
+        val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorationsTodo)
+        if (bgDecorations != null && emojis.isNotEmpty()) {
+            val repeated = (1..100).joinToString(" ") { emojis }
+            bgDecorations.text = repeated
+        } else {
+            bgDecorations?.text = ""
+        }
     }
 
     private fun updateUI() {
