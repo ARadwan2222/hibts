@@ -80,13 +80,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabAddMain.setOnClickListener {
+            if (isFinishing || isDestroyed) return@setOnClickListener
             try {
                 val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-                when {
-                    fragment is YearGoalsFragment -> {
+                when (fragment) {
+                    is YearGoalsFragment -> {
                         AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
                     }
-                    fragment is TodoFragment -> {
+                    is TodoFragment -> {
                         val dateMillis = fragment.getSelectedDateMillis()
                         showAddTaskHabitDialog(dateMillis)
                     }
@@ -96,7 +97,6 @@ class MainActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                showAddTaskHabitDialog(System.currentTimeMillis())
             }
         }
 
@@ -115,15 +115,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAddTaskHabitDialog(dateMillis: Long) {
+        if (isFinishing || isDestroyed) return
         val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
         AlertDialog.Builder(this, R.style.PurpleAlertDialog)
             .setTitle(getString(R.string.add_options_title))
             .setItems(options) { _, which ->
-                if (which == 0) {
-                    AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-                } else {
-                    AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
-                }
+                try {
+                    if (which == 0) {
+                        AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+                    } else {
+                        AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
+                    }
+                } catch (e: Exception) { e.printStackTrace() }
             }.show()
     }
 
