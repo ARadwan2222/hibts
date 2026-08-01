@@ -6,7 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.yourname.habitapp.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.yourname.habitapp.ui.todo.AddTodoBottomSheet
 import com.yourname.habitapp.ui.habits.AddHabitBottomSheet
 import com.yourname.habitapp.ui.goals.AddGoalBottomSheet
@@ -16,7 +15,6 @@ import com.yourname.habitapp.ui.habits.HabitsFragment
 import com.yourname.habitapp.ui.todo.TodoFragment
 import com.yourname.habitapp.ui.goals.YearGoalsFragment
 import androidx.fragment.app.Fragment
-import com.yourname.habitapp.ui.achievements.AchievementsFragment
 import com.yourname.habitapp.ui.profile.ProfileFragment
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // Permission granted
             com.yourname.habitapp.utils.NotificationHelper.createNotificationChannels(this)
         }
     }
@@ -40,11 +37,9 @@ class MainActivity : AppCompatActivity() {
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
 
-        // Apply Dark Mode correctly
         val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
         AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
 
-        // Apply Custom Theme
         val themeName = settingsPrefs.getString("app_theme", "Male")
         val themeId = when(themeName) {
             "Female" -> R.style.Theme_HabitApp_Female
@@ -70,57 +65,38 @@ class MainActivity : AppCompatActivity() {
         setTheme(themeId)
 
         super.onCreate(savedInstanceState)
-        
-        // Stop any notification sounds when app is opened
         com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // إعداد التنبيهات
         com.yourname.habitapp.utils.NotificationHelper.createNotificationChannels(this)
         com.yourname.habitapp.worker.HabitReminderWorker.scheduleDailyReminder(this)
         com.yourname.habitapp.worker.DayTransitionWorker.schedule(this)
         com.yourname.habitapp.worker.GoalReminderWorker.schedule(this)
 
-        // تعيين الشاشة الافتراضية
         if (savedInstanceState == null) {
             replaceFragment(HabitsFragment())
         }
 
         binding.fabAddMain.setOnClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-            when {
-                currentFragment is YearGoalsFragment -> {
-                    AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
+            try {
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+                when {
+                    fragment is YearGoalsFragment -> {
+                        AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
+                    }
+                    fragment is TodoFragment -> {
+                        val dateMillis = fragment.getSelectedDateMillis()
+                        showAddTaskHabitDialog(dateMillis)
+                    }
+                    else -> {
+                        showAddTaskHabitDialog(System.currentTimeMillis())
+                    }
                 }
-                currentFragment is TodoFragment -> {
-                    val dateMillis = currentFragment.getSelectedDateMillis()
-                    val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-                    AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                        .setTitle(getString(R.string.add_options_title))
-                        .setItems(options) { _, which ->
-                            if (which == 0) {
-                                AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-                            } else {
-                                AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
-                            }
-                        }.show()
-                }
-                else -> {
-                    // Default behavior for HabitsFragment or null
-                    val dateMillis = System.currentTimeMillis()
-                    val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-                    AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                        .setTitle(getString(R.string.add_options_title))
-                        .setItems(options) { _, which ->
-                            if (which == 0) {
-                                AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-                            } else {
-                                AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
-                            }
-                        }.show()
-                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                showAddTaskHabitDialog(System.currentTimeMillis())
             }
         }
 
@@ -134,9 +110,21 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // Apply a safe color tint to prevent crashes on non-standard themes
         binding.bottomNavigation.itemIconTintList = android.content.res.ColorStateList.valueOf(0xFF6C5CE7.toInt())
         binding.bottomNavigation.itemTextColor = android.content.res.ColorStateList.valueOf(0xFF9E9E9E.toInt())
+    }
+
+    private fun showAddTaskHabitDialog(dateMillis: Long) {
+        val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+        AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+            .setTitle(getString(R.string.add_options_title))
+            .setItems(options) { _, which ->
+                if (which == 0) {
+                    AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+                } else {
+                    AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
+                }
+            }.show()
     }
 
     private fun replaceFragment(fragment: Fragment) {

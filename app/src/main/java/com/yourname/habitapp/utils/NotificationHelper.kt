@@ -47,7 +47,9 @@ object NotificationHelper {
 
     private fun startSoundService(context: Context, todoId: Int, toneKey: String) {
         val settingsPrefs = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        if (settingsPrefs.getBoolean("mute_notifications", false)) return
+        
+        // Use "notifications" key (consistent with Profile settings)
+        if (!settingsPrefs.getBoolean("notifications", true)) return
 
         val customToneUriString = settingsPrefs.getString(toneKey, null)
         val toneUri = if (customToneUriString != null) customToneUriString 
