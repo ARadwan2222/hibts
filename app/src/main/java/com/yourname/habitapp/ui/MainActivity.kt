@@ -90,12 +90,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.fabAddMain.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-            when (currentFragment) {
-                is YearGoalsFragment -> {
+            when {
+                currentFragment is YearGoalsFragment -> {
                     AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
                 }
-                is TodoFragment -> {
-                    val dateMillis = (currentFragment as TodoFragment).getSelectedDateMillis()
+                currentFragment is TodoFragment -> {
+                    val dateMillis = currentFragment.getSelectedDateMillis()
                     val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
                     AlertDialog.Builder(this, R.style.PurpleAlertDialog)
                         .setTitle(getString(R.string.add_options_title))
@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                         }.show()
                 }
                 else -> {
+                    // Default behavior for HabitsFragment or null
                     val dateMillis = System.currentTimeMillis()
                     val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
                     AlertDialog.Builder(this, R.style.PurpleAlertDialog)

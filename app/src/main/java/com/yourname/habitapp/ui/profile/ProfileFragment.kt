@@ -16,16 +16,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.yourname.habitapp.R
 import com.yourname.habitapp.data.AppDatabase
 import com.yourname.habitapp.ui.achievements.AchievementsActivity
 import com.yourname.habitapp.utils.AchievementEngine
-import com.yourname.habitapp.utils.NotificationHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.*
 
 class ProfileFragment : Fragment() {
@@ -46,6 +45,14 @@ class ProfileFragment : Fragment() {
             prefs.edit().putString("user_cover", it.toString()).apply()
             view?.findViewById<ImageView>(R.id.ivProfileCover)?.setImageURI(it)
         }
+    }
+
+    private val createBackup = registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+        uri?.let { exportDatabase(it) }
+    }
+
+    private val openBackup = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { importDatabase(it) }
     }
 
     private var tonePickerRequestCode = -1
@@ -78,9 +85,6 @@ class ProfileFragment : Fragment() {
                 "tone_start_task" -> view?.findViewById<TextView>(R.id.tvToneStartTask)?.text = title
                 "tone_end_task" -> view?.findViewById<TextView>(R.id.tvToneEndTask)?.text = title
                 "tone_achievement" -> view?.findViewById<TextView>(R.id.tvToneAchievement)?.text = title
-                "tone_year_goal" -> view?.findViewById<TextView>(R.id.tvToneYearGoal)?.text = title
-                "tone_habit" -> view?.findViewById<TextView>(R.id.tvToneHabit)?.text = title
-                "tone_birthday" -> view?.findViewById<TextView>(R.id.tvToneBirthday)?.text = title
             }
         } catch (e: Exception) { e.printStackTrace() }
     }
@@ -93,20 +97,17 @@ class ProfileFragment : Fragment() {
                 1 -> "tone_start_task"
                 2 -> "tone_end_task"
                 3 -> "tone_achievement"
-                4 -> "tone_year_goal"
-                5 -> "tone_habit"
-                6 -> "tone_birthday"
                 else -> "notification_tone"
             }
             val currentUri = settingsPrefs.getString(key, null)?.let { Uri.parse(it) }
             
             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "اختر نغمة التنبيه")
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.notification_tone))
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentUri)
             pickRingtone.launch(intent)
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "لا يمكن فتح مدير النغمات", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Error opening ringtone picker", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -125,16 +126,16 @@ class ProfileFragment : Fragment() {
         val ivAvatarPlaceholder = view.findViewById<View>(R.id.tvAvatar)
         val ivProfilePic = view.findViewById<ImageView>(R.id.ivProfilePic)
         val ivProfileCover = view.findViewById<ImageView>(R.id.ivProfileCover)
-        val btnEditCover = view.findViewById<View>(R.id.btnEditCover)
         val tvBirthdateCountdown = view.findViewById<TextView>(R.id.tvBirthdateCountdown)
         
         val btnAchievementsRow = view.findViewById<View>(R.id.btnViewAchievementsRow)
         val btnBackupRow = view.findViewById<View>(R.id.btnBackupRow)
+        val btnRestoreRow = view.findViewById<View>(R.id.btnRestoreRow)
         
-        val switchNotifications = view.findViewById<CompoundButton>(R.id.switchNotifications)
-        val switchSound = view.findViewById<CompoundButton>(R.id.switchSound)
-        val switchDarkMode = view.findViewById<CompoundButton>(R.id.switchDarkMode)
-        val switchVibration = view.findViewById<CompoundButton>(R.id.switchVibration)
+        val switchNotifications = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.switchNotifications)
+        val switchSound = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.switchSound)
+        val switchDarkMode = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.switchDarkMode)
+        val switchVibration = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.switchVibration)
         val spinnerLang = view.findViewById<Spinner>(R.id.spinnerLanguage)
         val spinnerTheme = view.findViewById<Spinner>(R.id.spinnerTheme)
         
@@ -148,13 +149,9 @@ class ProfileFragment : Fragment() {
         view.findViewById<View>(R.id.btnToneStartTask)?.setOnClickListener { startTonePicker(1) }
         view.findViewById<View>(R.id.btnToneEndTask)?.setOnClickListener { startTonePicker(2) }
         view.findViewById<View>(R.id.btnToneAchievement)?.setOnClickListener { startTonePicker(3) }
-        view.findViewById<View>(R.id.btnToneYearGoal)?.setOnClickListener { startTonePicker(4) }
-        view.findViewById<View>(R.id.btnToneHabit)?.setOnClickListener { startTonePicker(5) }
-        view.findViewById<View>(R.id.btnToneBirthday)?.setOnClickListener { startTonePicker(6) }
 
-        // Initial Tone Names
         lifecycleScope.launch {
-            val keys = listOf("tone_start_task", "tone_end_task", "tone_achievement", "tone_year_goal", "tone_habit", "tone_birthday")
+            val keys = listOf("tone_start_task", "tone_end_task", "tone_achievement")
             keys.forEach { key ->
                 settingsPrefs.getString(key, null)?.let { updateToneNameUI(key, Uri.parse(it)) }
             }
@@ -176,46 +173,21 @@ class ProfileFragment : Fragment() {
             override fun onNothingSelected(p: AdapterView<*>?) {}
         }
 
-        // Set Version Name
         try {
             val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
             tvVersion.text = getString(R.string.version_prefix).format(pInfo.versionName)
         } catch (e: Exception) {
-            tvVersion.text = getString(R.string.version_prefix).format("1.2.0")
+            tvVersion.text = "Version 1.2.2"
         }
 
-        // User Data Display
         val name = prefs.getString("user_name", "User")
-        val email = prefs.getString("user_email", "")
-        val isGuest = email == "guest@hibts.app"
-        
-        if (isGuest) {
-            btnBackupRow.isEnabled = false
-            btnBackupRow.alpha = 0.5f
-            Toast.makeText(requireContext(), "بعض المميزات (مثل النسخ السحابي) معطلة في وضع الضيف", Toast.LENGTH_LONG).show()
-        }
-
-        val imageUriString = prefs.getString("user_image", null)
-        val coverUriString = prefs.getString("user_cover", null)
-        val birthdateMillis = prefs.getLong("user_birthdate", 0)
-        
         val xp = AchievementEngine.getTotalXP(requireContext())
         val (level, levelName) = AchievementEngine.getLevel(requireContext(), xp)
 
         tvName.text = name
         tvXP.text = getString(R.string.level_display).format(level, levelName) + " | " + getString(R.string.total_xp).format(xp)
 
-        // Birthday Countdown
-        if (birthdateMillis > 0) {
-            val calBirth = Calendar.getInstance().apply { timeInMillis = birthdateMillis }
-            val calNow = Calendar.getInstance()
-            calBirth.set(Calendar.YEAR, calNow.get(Calendar.YEAR))
-            if (calBirth.before(calNow)) calBirth.add(Calendar.YEAR, 1)
-            val diff = calBirth.timeInMillis - calNow.timeInMillis
-            val days = diff / (1000 * 60 * 60 * 24)
-            tvBirthdateCountdown.text = if (days == 0L) getString(R.string.yes) else "Birthday in $days days 🎂"
-        }
-
+        val imageUriString = prefs.getString("user_image", null)
         if (imageUriString != null) {
             try {
                 ivProfilePic.setImageURI(Uri.parse(imageUriString))
@@ -230,27 +202,25 @@ class ProfileFragment : Fragment() {
             ivAvatarPlaceholder.visibility = View.VISIBLE
         }
 
+        val coverUriString = prefs.getString("user_cover", null)
         if (coverUriString != null) {
-            try {
-                ivProfileCover.setImageURI(Uri.parse(coverUriString))
-            } catch (e: Exception) {}
+            try { ivProfileCover.setImageURI(Uri.parse(coverUriString)) } catch (e: Exception) {}
         }
 
         ivProfilePic.setOnClickListener { pickImage.launch("image/*") }
         ivAvatarPlaceholder.setOnClickListener { pickImage.launch("image/*") }
-        btnEditCover?.setOnClickListener { pickCover.launch("image/*") }
+        view.findViewById<View>(R.id.btnEditAvatarInside)?.setOnClickListener { pickImage.launch("image/*") }
 
         btnAchievementsRow.setOnClickListener { startActivity(Intent(requireContext(), AchievementsActivity::class.java)) }
         
         btnHelpCenterRow.setOnClickListener { 
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(getString(R.string.how_to_use_hibts))
-                .setMessage(getString(R.string.how_to_use_content))
+                .setMessage(android.text.Html.fromHtml(getString(R.string.how_to_use_content), android.text.Html.FROM_HTML_MODE_LEGACY))
                 .setPositiveButton("OK", null)
                 .show()
         }
 
-        // Terms of Use
         btnTermsRow.setOnClickListener {
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(R.string.terms_of_use)
@@ -259,10 +229,9 @@ class ProfileFragment : Fragment() {
                 .show()
         }
 
-        // Backup Data
-        btnBackupRow.setOnClickListener { performBackup() }
+        btnBackupRow.setOnClickListener { createBackup.launch("hibts_backup_${System.currentTimeMillis()}.db") }
+        btnRestoreRow.setOnClickListener { openBackup.launch(arrayOf("application/octet-stream", "*/*")) }
 
-        // Logout - Keep Local Data
         btnLogoutRow.setOnClickListener {
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(R.string.logout)
@@ -280,7 +249,6 @@ class ProfileFragment : Fragment() {
                 .show()
         }
 
-        // Reset App - Delete Local Data
         btnResetAppRow.setOnClickListener {
             AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                 .setTitle(getString(R.string.reset_app_data))
@@ -290,7 +258,6 @@ class ProfileFragment : Fragment() {
                 .show()
         }
 
-        // Settings Listeners
         switchNotifications.isChecked = settingsPrefs.getBoolean("notifications", true)
         switchSound.isChecked = settingsPrefs.getBoolean("sound", true)
         switchDarkMode.isChecked = settingsPrefs.getBoolean("dark_mode", false)
@@ -304,23 +271,13 @@ class ProfileFragment : Fragment() {
         }
         switchVibration.setOnCheckedChangeListener { _, isChecked -> settingsPrefs.edit().putBoolean("vibration", isChecked).apply() }
 
-        // Language Spinner
         val languages = listOf("English", "العربية", "Deutsch")
         spinnerLang.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, languages)
         val currentLang = settingsPrefs.getString("lang", "en")
-        val selection = when(currentLang) {
-            "ar" -> 1
-            "de" -> 2
-            else -> 0
-        }
-        spinnerLang.setSelection(selection)
+        spinnerLang.setSelection(when(currentLang) { "ar" -> 1; "de" -> 2; else -> 0 })
         spinnerLang.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
-                val lang = when(pos) {
-                    1 -> "ar"
-                    2 -> "de"
-                    else -> "en"
-                }
+                val lang = when(pos) { 1 -> "ar"; 2 -> "de"; else -> "en" }
                 if (lang != currentLang) {
                     settingsPrefs.edit().putString("lang", lang).apply()
                     updateLocale(lang)
@@ -330,59 +287,56 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun performBackup() {
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) {
-            Toast.makeText(requireContext(), "يرجى تسجيل الدخول أولاً للنسخ الاحتياطي", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        lifecycleScope.launch {
-            val db = AppDatabase.getInstance(requireContext())
-            val habits = withContext(Dispatchers.IO) { db.habitDao().getAllHabitsSync() }
-            val todos = withContext(Dispatchers.IO) { db.todoDao().getAllTodosSync() }
-
-            val backupData = hashMapOf(
-                "habits" to habits,
-                "todos" to todos,
-                "timestamp" to System.currentTimeMillis()
-            )
-
-            FirebaseFirestore.getInstance().collection("backups").document(user.uid)
-                .set(backupData)
-                .addOnSuccessListener { Toast.makeText(requireContext(), "تم النسخ الاحتياطي بنجاح ✅", Toast.LENGTH_SHORT).show() }
-                .addOnFailureListener { e -> Toast.makeText(requireContext(), "فشل النسخ: ${e.message}", Toast.LENGTH_SHORT).show() }
+    private fun exportDatabase(uri: Uri) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val dbFile = requireContext().getDatabasePath("habit_database")
+                val inputStream: InputStream = dbFile.inputStream()
+                val outputStream: OutputStream? = requireContext().contentResolver.openOutputStream(uri)
+                outputStream?.use { input -> inputStream.copyTo(input) }
+                withContext(Dispatchers.Main) { Toast.makeText(requireContext(), "Backup Saved ✅", Toast.LENGTH_SHORT).show() }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { Toast.makeText(requireContext(), "Backup Failed: ${e.message}", Toast.LENGTH_LONG).show() }
+            }
         }
     }
 
-    private fun resetEverything() {
-        val context = requireContext()
-        AlertDialog.Builder(context, R.style.PurpleAlertDialog)
-            .setTitle(R.string.reset_app_data)
-            .setMessage("سيتم حذف جميع المهام والعادات المسجلة نهائياً. هل أنت متأكد؟")
-            .setPositiveButton(R.string.yes) { _, _ ->
-                lifecycleScope.launch {
+    private fun importDatabase(uri: Uri) {
+        AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+            .setTitle("Restore Data")
+            .setMessage("This will replace all current data. Proceed?")
+            .setPositiveButton("Restore") { _, _ ->
+                lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        val db = AppDatabase.getInstance(context)
-                        db.clearAllTables() // Actual DB Wipe
-
-                        val prefsList = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
-                        prefsList.forEach { context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
-
-                        FirebaseAuth.getInstance().signOut()
-
-                        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                        intent?.let {
-                            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            startActivity(it)
-                            activity?.finish()
-                            Runtime.getRuntime().exit(0)
+                        val dbFile = requireContext().getDatabasePath("habit_database")
+                        val inputStream: InputStream? = requireContext().contentResolver.openInputStream(uri)
+                        inputStream?.use { input -> dbFile.outputStream().use { output -> input.copyTo(output) } }
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "Restore Successful ✅", Toast.LENGTH_SHORT).show()
+                            activity?.recreate()
                         }
-                    } catch (e: Exception) { e.printStackTrace() }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) { Toast.makeText(requireContext(), "Restore Failed: ${e.message}", Toast.LENGTH_LONG).show() }
+                    }
                 }
+            }.setNegativeButton("Cancel", null).show()
+    }
+
+    private fun resetEverything() {
+        lifecycleScope.launch {
+            val db = AppDatabase.getInstance(requireContext())
+            db.clearAllTables()
+            val prefsList = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
+            prefsList.forEach { requireContext().getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
+            FirebaseAuth.getInstance().signOut()
+            val intent = requireContext().packageManager.getLaunchIntentForPackage(requireContext().packageName)
+            intent?.let {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(it)
+                activity?.finish()
+                Runtime.getRuntime().exit(0)
             }
-            .setNegativeButton(R.string.no, null)
-            .show()
+        }
     }
 
     private fun updateLocale(langCode: String) {

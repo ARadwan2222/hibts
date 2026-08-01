@@ -138,14 +138,14 @@ class HabitsFragment : Fragment() {
         combinedData.observe(viewLifecycleOwner) { (tasks, habits) ->
             // Update Points and Animate (Life effect)
             val xp = AchievementEngine.getTotalXP(requireContext())
-            val currentPointsStr = tvPoints.text.toString().replace(",", "")
+            val currentPointsStr = tvPoints?.text?.toString()?.replace(",", "") ?: "0"
             val currentPoints = if (currentPointsStr.isEmpty() || currentPointsStr == "pts") 0 else currentPointsStr.toIntOrNull() ?: 0
             
             if (xp > currentPoints) {
-                tvPoints.text = String.format(Locale.getDefault(), "%,d", xp)
-                animatePoints(tvPoints)
+                tvPoints?.text = String.format(Locale.getDefault(), "%,d", xp)
+                tvPoints?.let { animatePoints(it) }
             } else {
-                tvPoints.text = String.format(Locale.getDefault(), "%,d", xp)
+                tvPoints?.text = String.format(Locale.getDefault(), "%,d", xp)
             }
 
             val now = Calendar.getInstance()
@@ -188,7 +188,6 @@ class HabitsFragment : Fragment() {
     }
 
     private fun setupClickListeners(view: View) {
-
         // Section Toggles
         view.findViewById<View>(R.id.layoutTodayTasksHeader)?.setOnClickListener { toggleList(view, R.id.recyclerCurrentTasks, R.id.ivTodayTasksArrow) }
         view.findViewById<View>(R.id.layoutDailyHabitsHeader)?.setOnClickListener { toggleList(view, R.id.recyclerDailyHabits, R.id.ivDailyHabitsArrow) }
@@ -204,50 +203,51 @@ class HabitsFragment : Fragment() {
         val btnNotify = view.findViewById<ImageButton>(R.id.btnNotifications)
         val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         
-        fun updateNotifyIcon(isMuted: Boolean) {
-            btnNotify?.setImageResource(if (isMuted) R.drawable.ic_notification_off else R.drawable.ic_notification)
+        fun updateNotifyIcon(isEnabled: Boolean) {
+            btnNotify?.setImageResource(if (isEnabled) R.drawable.ic_notification else R.drawable.ic_notification_off)
         }
         
-        updateNotifyIcon(settingsPrefs.getBoolean("mute_notifications", false))
+        updateNotifyIcon(settingsPrefs.getBoolean("notifications", true))
         
         btnNotify?.setOnClickListener {
-            val isMuted = settingsPrefs.getBoolean("mute_notifications", false)
-            val nextMute = !isMuted
-            settingsPrefs.edit().putBoolean("mute_notifications", nextMute).apply()
-            if (nextMute) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
-            updateNotifyIcon(nextMute)
-            val msg = if (nextMute) "تم كتم التنبيهات 🔇" else "تم تفعيل التنبيهات 🔔"
+            val isEnabled = settingsPrefs.getBoolean("notifications", true)
+            val nextState = !isEnabled
+            settingsPrefs.edit().putBoolean("notifications", nextState).apply()
+            if (!nextState) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
+            updateNotifyIcon(nextState)
+            val msg = if (nextState) "تم تفعيل التنبيهات 🔔" else "تم كتم التنبيهات 🔇"
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setupFilters(view: View) {
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupFilter)
-        chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+        chipGroup?.setOnCheckedStateChangeListener { group, checkedIds ->
             val isWeek = checkedIds.contains(R.id.chipWeek)
-            view.findViewById<View>(R.id.layoutWeeklyHabitsHeader).visibility = if (isWeek) View.VISIBLE else View.GONE
-            view.findViewById<View>(R.id.layoutMonthlyHabitsHeader).visibility = if (isWeek) View.GONE else View.VISIBLE
+            view.findViewById<View>(R.id.layoutWeeklyHabitsHeader)?.visibility = if (isWeek) View.VISIBLE else View.GONE
+            view.findViewById<View>(R.id.layoutMonthlyHabitsHeader)?.visibility = if (isWeek) View.GONE else View.VISIBLE
         }
     }
 
     private fun toggleList(view: View, recyclerId: Int, arrowId: Int) {
         val recycler = view.findViewById<RecyclerView>(recyclerId)
         val arrow = view.findViewById<ImageView>(arrowId)
+        if (recycler == null || arrow == null) return
         val isVisible = recycler.visibility == View.VISIBLE
         recycler.visibility = if (isVisible) View.GONE else View.VISIBLE
         arrow.animate().rotation(if (isVisible) 180f else 0f).setDuration(200).start()
     }
 
-    private fun updateDashboard(tasks: List<TodoItem>, habits: List<Habit>, tvProgress: TextView, tvTitle: TextView, tvInspo: TextView, timer: TextView, tvTTitle: TextView, tvHTitle: TextView) {
+    private fun updateDashboard(tasks: List<TodoItem>, habits: List<Habit>, tvProgress: TextView?, tvTitle: TextView?, tvInspo: TextView?, timer: TextView?, tvTTitle: TextView?, tvHTitle: TextView?) {
         val completedTasks = tasks.count { it.isCompleted }
-        tvTTitle.text = getString(R.string.today_tasks_label) + " $completedTasks/${tasks.size}"
-        tvHTitle.text = getString(R.string.daily_habits_label)
-        tvProgress.text = "$completedTasks / ${tasks.size} " + getString(R.string.achieved)
+        tvTTitle?.text = getString(R.string.today_tasks_label) + " $completedTasks/${tasks.size}"
+        tvHTitle?.text = getString(R.string.daily_habits_label)
+        tvProgress?.text = "$completedTasks / ${tasks.size} " + getString(R.string.achieved)
 
         val pendingTasks = tasks.filter { !it.isCompleted }
 
         if (tasks.isEmpty()) {
-            tvInspo.text = getString(R.string.start_timer); tvTitle.text = getString(R.string.add_first_task); timer.text = "--:--:--"; countDownTimer?.cancel()
+            tvInspo?.text = getString(R.string.start_timer); tvTitle?.text = getString(R.string.add_first_task); timer?.text = "--:--:--"; countDownTimer?.cancel()
         } else if (pendingTasks.isNotEmpty()) {
             val now = System.currentTimeMillis()
             
@@ -264,26 +264,26 @@ class HabitsFragment : Fragment() {
 
             val focusTask = activeTask ?: soonTask ?: manualFirstTask!!
             
-            tvTitle.text = focusTask.title
+            tvTitle?.text = focusTask.title
             if (focusTask.startTime != null) {
                 val effectiveEndTime = focusTask.endTime ?: (focusTask.startTime!! + (focusTask.durationMinutes * 60 * 1000L))
                 
                 if (now < focusTask.startTime!!) {
-                    tvInspo.text = getString(R.string.focus_next_goal)
-                    timer.text = "--:--:--"; countDownTimer?.cancel()
+                    tvInspo?.text = getString(R.string.focus_next_goal)
+                    timer?.text = "--:--:--"; countDownTimer?.cancel()
                 } else if (now < effectiveEndTime) {
-                    tvInspo.text = getString(R.string.focus_in_progress)
-                    startFocusTimer(timer, effectiveEndTime)
+                    tvInspo?.text = getString(R.string.focus_in_progress)
+                    timer?.let { startFocusTimer(it, effectiveEndTime) }
                 } else {
-                    tvInspo.text = getString(R.string.focus_time_up)
-                    timer.text = getString(R.string.focus_time_finished); countDownTimer?.cancel()
+                    tvInspo?.text = getString(R.string.focus_time_up)
+                    timer?.text = getString(R.string.focus_time_finished); countDownTimer?.cancel()
                 }
             } else { 
-                tvInspo.text = getString(R.string.focus_next_goal)
-                timer.text = getString(R.string.focus_all_day); countDownTimer?.cancel() 
+                tvInspo?.text = getString(R.string.focus_next_goal)
+                timer?.text = getString(R.string.focus_all_day); countDownTimer?.cancel() 
             }
         } else {
-            tvInspo.text = getString(R.string.focus_hero); tvTitle.text = getString(R.string.focus_completed_all); timer.text = "00:00:00"; countDownTimer?.cancel()
+            tvInspo?.text = getString(R.string.focus_hero); tvTitle?.text = getString(R.string.focus_completed_all); timer?.text = "00:00:00"; countDownTimer?.cancel()
         }
     }
 
@@ -304,13 +304,13 @@ class HabitsFragment : Fragment() {
             }
             override fun onFinish() { 
                 timer.text = "00:00:00" 
-                // Refresh dashboard to show next task by forcing a refresh of the current data
                 combinedData.value = combinedData.value
             }
         }.start()
     }
 
-    private fun setupFlashing(view: View) {
+    private fun setupFlashing(view: View?) {
+        if (view == null) return
         flashRunnable = object : Runnable {
             override fun run() {
                 val anim = AlphaAnimation(1.0f, 0.4f); anim.duration = 600; anim.repeatMode = Animation.REVERSE; anim.repeatCount = 3
@@ -489,7 +489,8 @@ class HabitsFragment : Fragment() {
         
         val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorations)
         if (emojis.isNotEmpty()) {
-            val repeated = (1..100).joinToString(" ") { emojis }
+            // Repeat emojis many times to fill background nicely with small font
+            val repeated = (1..200).joinToString(" ") { emojis }
             bgDecorations?.text = repeated
         } else {
             bgDecorations?.text = ""

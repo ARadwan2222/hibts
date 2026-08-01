@@ -143,7 +143,7 @@ class YearGoalsFragment : Fragment() {
 
         val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorationsGoals)
         if (bgDecorations != null && emojis.isNotEmpty()) {
-            val repeated = (1..100).joinToString(" ") { emojis }
+            val repeated = (1..200).joinToString(" ") { emojis }
             bgDecorations.text = repeated
         } else {
             bgDecorations?.text = ""

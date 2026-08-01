@@ -22,7 +22,8 @@
                 android:layout_height="180dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg_dashboard_header"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/profile_image_label" />
 
             <View
                 android:layout_width="match_parent"
@@ -60,19 +61,20 @@
                         android:gravity="center"
                         android:textSize="50sp" />
 
-                    <!-- EDIT BUTTON INSIDE IMAGE -->
+                    <!-- CAMERA ICON INSIDE IMAGE -->
                     <ImageButton
                         android:id="@+id/btnEditAvatarInside"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="bottom|end"
                         android:layout_margin="4dp"
                         android:background="@drawable/bg_item_circle"
                         android:backgroundTint="?attr/colorPrimary"
-                        android:src="@drawable/ic_edit"
+                        android:src="@drawable/ic_camera"
                         app:tint="@color/white"
-                        android:padding="8dp"
-                        android:scaleType="fitCenter" />
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="@string/edit" />
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -108,6 +110,9 @@
                 android:backgroundTint="@color/brand_rose"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@id/tvProfileXP"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -204,10 +209,10 @@
                 <TextView android:id="@+id/btnTermsRow" android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center_vertical" android:text="@string/terms_of_use" android:textColor="?android:attr/textColorPrimary" android:clickable="true" android:focusable="true" />
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
 
-                <TextView android:id="@+id/btnBackupRow" android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center_vertical" android:text="Backup" android:textColor="?android:attr/textColorPrimary" android:clickable="true" android:focusable="true" />
+                <TextView android:id="@+id/btnBackupRow" android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center_vertical" android:text="@string/backup_to_cloud" android:textColor="?android:attr/textColorPrimary" android:clickable="true" android:focusable="true" />
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
 
-                <TextView android:id="@+id/btnRestoreRow" android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center_vertical" android:text="Restore" android:textColor="?android:attr/textColorPrimary" android:clickable="true" android:focusable="true" />
+                <TextView android:id="@+id/btnRestoreRow" android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center_vertical" android:text="@string/restore_data" android:textColor="?android:attr/textColorPrimary" android:clickable="true" android:focusable="true" />
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/gray_light" />
 
                 <TextView android:id="@+id/btnLogoutRow" android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center_vertical" android:text="@string/logout" android:textColor="@color/accent_pink" android:textStyle="bold" android:clickable="true" android:focusable="true" />

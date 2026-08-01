@@ -10,6 +10,8 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
+import android.os.Vibrator
+import android.os.VibratorManager
 import com.yourname.habitapp.data.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +25,14 @@ class SoundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        
+        // 1. Check Global Notifications Setting
+        if (!settingsPrefs.getBoolean("notifications", true)) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         val action = intent?.action
         val todoId = intent?.getIntExtra("TODO_ID", -1) ?: -1
         val notificationId = intent?.getIntExtra("NOTIFICATION_ID", -1) ?: -1
@@ -30,16 +40,23 @@ class SoundService : Service() {
 
         when (action) {
             "ACTION_PLAY" -> {
-                uriString?.let { playSound(it) }
+                // 2. Check Sound Setting
+                if (settingsPrefs.getBoolean("sound", true)) {
+                    uriString?.let { playSound(it) }
+                }
+                
+                // 3. Check Vibration Setting
+                if (settingsPrefs.getBoolean("vibration", true)) {
+                    startVibration()
+                }
+                
                 registerVolumeReceiver(todoId)
             }
             "ACTION_STOP", "ACTION_DONE" -> {
-                // Cancel notification if ID is provided
                 if (notificationId != -1) {
                     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     manager.cancel(notificationId)
                 }
-                
                 stopSoundAndMute(todoId, action == "ACTION_DONE")
                 stopSelf()
             }
@@ -66,8 +83,37 @@ class SoundService : Service() {
         } catch (e: Exception) { e.printStackTrace() }
     }
 
+    private fun startVibration() {
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+
+        val pattern = longArrayOf(0, 800, 800) // Continuous pattern
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(android.os.VibrationEffect.createWaveform(pattern, 0))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(pattern, 0)
+        }
+    }
+
     private fun stopSoundAndMute(todoId: Int, markCompleted: Boolean) {
         stopMediaPlayer()
+        
+        // Stop vibration
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+        vibrator.cancel()
+
         if (todoId != -1) {
             CoroutineScope(Dispatchers.IO).launch {
                 val db = AppDatabase.getInstance(this@SoundService)
