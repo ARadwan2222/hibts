@@ -83,20 +83,14 @@ class MainActivity : AppCompatActivity() {
             if (isFinishing || isDestroyed) return@setOnClickListener
             try {
                 val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-                when (fragment) {
-                    is YearGoalsFragment -> {
-                        AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
-                    }
-                    is TodoFragment -> {
-                        val dateMillis = fragment.getSelectedDateMillis()
-                        showAddTaskHabitDialog(dateMillis)
-                    }
-                    else -> {
-                        showAddTaskHabitDialog(System.currentTimeMillis())
-                    }
+                if (fragment is YearGoalsFragment) {
+                    AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
+                } else {
+                    val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
+                    showAddTaskHabitDialog(dateMillis)
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                showAddTaskHabitDialog(System.currentTimeMillis())
             }
         }
 
@@ -131,6 +125,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        if (isFinishing || isDestroyed) return
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
