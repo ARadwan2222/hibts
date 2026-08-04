@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val settingsPrefs = getSharedPreferences("settings_prefs", MODE_PRIVATE)
+        val userPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -43,22 +43,22 @@ class MainActivity : AppCompatActivity() {
         val themeName = settingsPrefs.getString("app_theme", "Male")
         val themeId = when(themeName) {
             "Female" -> R.style.Theme_HabitApp_Female
-            "Cats"   -> R.style.Theme_HabitApp_Cats
-            "Dogs"   -> R.style.Theme_HabitApp_Dogs
+            "Cats" -> R.style.Theme_HabitApp_Cats
+            "Dogs" -> R.style.Theme_HabitApp_Dogs
             "Travel" -> R.style.Theme_HabitApp_Travel
             "Nature" -> R.style.Theme_HabitApp_Nature
-            "Ocean"  -> R.style.Theme_HabitApp_Ocean
+            "Ocean" -> R.style.Theme_HabitApp_Ocean
             "Sunset" -> R.style.Theme_HabitApp_Sunset
-            "Space"  -> R.style.Theme_HabitApp_Space
+            "Space" -> R.style.Theme_HabitApp_Space
             "Coffee" -> R.style.Theme_HabitApp_Coffee
-            "Tech"   -> R.style.Theme_HabitApp_Tech
-            "Minimal"-> R.style.Theme_HabitApp_Minimal
+            "Tech" -> R.style.Theme_HabitApp_Tech
+            "Minimal" -> R.style.Theme_HabitApp_Minimal
             "Pastel" -> R.style.Theme_HabitApp_Pastel
-            "Vintage"-> R.style.Theme_HabitApp_Vintage
-            "Gold"   -> R.style.Theme_HabitApp_Gold
-            "Classic"-> R.style.Theme_HabitApp_Classic
-            else     -> {
-                val gender = prefs.getString("user_gender", "Male")
+            "Vintage" -> R.style.Theme_HabitApp_Vintage
+            "Gold" -> R.style.Theme_HabitApp_Gold
+            "Classic" -> R.style.Theme_HabitApp_Classic
+            else -> {
+                val gender = userPrefs.getString("user_gender", "Male")
                 if (gender == "Female") R.style.Theme_HabitApp_Female else R.style.Theme_HabitApp_Male
             }
         }
@@ -80,18 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabAddMain.setOnClickListener {
-            if (isFinishing || isDestroyed) return@setOnClickListener
-            try {
-                val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-                if (fragment is YearGoalsFragment) {
-                    AddGoalBottomSheet.newInstance(-1, -1).show(supportFragmentManager, "AddGoal")
-                } else {
-                    val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-                    showAddTaskHabitDialog(dateMillis)
-                }
-            } catch (e: Exception) {
-                showAddTaskHabitDialog(System.currentTimeMillis())
-            }
+            onFabAddClicked()
         }
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
@@ -108,24 +97,35 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.itemTextColor = android.content.res.ColorStateList.valueOf(0xFF9E9E9E.toInt())
     }
 
+    private fun onFabAddClicked() {
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+        
+        val currentFrag = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        
+        if (currentFrag is YearGoalsFragment) {
+            AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
+        } else {
+            val dateMillis = (currentFrag as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
+            showAddTaskHabitDialog(dateMillis)
+        }
+    }
+
     private fun showAddTaskHabitDialog(dateMillis: Long) {
-        if (isFinishing || isDestroyed) return
         val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
         AlertDialog.Builder(this, R.style.PurpleAlertDialog)
             .setTitle(getString(R.string.add_options_title))
             .setItems(options) { _, which ->
-                try {
-                    if (which == 0) {
-                        AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-                    } else {
-                        AddHabitBottomSheet.newInstance(-1, null, false, dateMillis).show(supportFragmentManager, "AddHabit")
-                    }
-                } catch (e: Exception) { e.printStackTrace() }
+                if (supportFragmentManager.isStateSaved) return@setItems
+                if (which == 0) {
+                    AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+                } else {
+                    AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(supportFragmentManager, "AddHabit")
+                }
             }.show()
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()

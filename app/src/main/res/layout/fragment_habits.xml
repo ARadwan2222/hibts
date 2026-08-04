@@ -127,11 +127,11 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- SCROLLABLE LIST AREA -->
+    <!-- SCROLLABLE CONTENT AREA -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardFocus">
@@ -148,7 +148,7 @@
 
             <TextView android:id="@+id/tvDateHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Date" android:textColor="@color/text_gray" android:textSize="14sp" android:layout_marginStart="8dp" android:layout_marginBottom="4dp" />
 
-            <!-- TASKS (BLUE RESTORED) -->
+            <!-- TASKS (Blue Theme Restored) -->
             <LinearLayout android:id="@+id/layoutTodayTasksHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="2dp">
                 <TextView android:layout_width="32dp" android:layout_height="wrap_content" android:text="📝" android:textSize="20sp" android:gravity="center" />
                 <TextView android:id="@+id/tvTodayTasksTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/today_tasks_label" android:textColor="#2196F3" android:textStyle="bold" android:textSize="16sp" android:layout_marginStart="8dp" />
@@ -157,7 +157,7 @@
             </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerCurrentTasks" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" android:layout_marginTop="2dp" />
 
-            <!-- DAILY HABITS (PURPLE RESTORED) -->
+            <!-- DAILY HABITS (Purple Theme Restored) -->
             <LinearLayout android:id="@+id/layoutDailyHabitsHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical" android:paddingTop="8dp" android:paddingBottom="2dp">
                 <TextView android:layout_width="32dp" android:layout_height="wrap_content" android:text="🔄" android:textSize="20sp" android:gravity="center" />
                 <TextView android:id="@+id/tvDailyHabitsTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/daily_habits_label" android:textColor="@color/brand_purple" android:textStyle="bold" android:textSize="16sp" android:layout_marginStart="8dp" />
@@ -194,11 +194,13 @@
 
             <TextView android:id="@+id/tvProgress" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:gravity="center" android:text="0 / 0" android:textColor="@color/text_gray" android:textSize="18sp" android:textStyle="bold" />
 
-            <!-- Old logic compatibility views -->
+            <!-- Hidden UI Points for Logic (Compatibility) -->
             <com.google.android.material.chip.ChipGroup android:id="@+id/chipGroupFilter" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone">
                 <com.google.android.material.chip.Chip android:id="@+id/chipDay" android:layout_width="0dp" android:layout_height="0dp" />
                 <com.google.android.material.chip.Chip android:id="@+id/chipWeek" android:layout_width="0dp" android:layout_height="0dp" />
             </com.google.android.material.chip.ChipGroup>
+
+            <!-- Compatibility Placeholders (No Duplicate IDs) -->
             <View android:id="@+id/layoutTasksTitle" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
             <View android:id="@+id/layoutHabitsTitle" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
             <View android:id="@+id/layoutWeeklyHeader" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
