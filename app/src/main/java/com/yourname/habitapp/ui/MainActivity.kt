@@ -98,30 +98,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onFabAddClicked() {
-        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
-        
-        val currentFrag = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-        
-        if (currentFrag is YearGoalsFragment) {
-            AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
-        } else {
-            val dateMillis = (currentFrag as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-            showAddTaskHabitDialog(dateMillis)
+        try {
+            val manager = supportFragmentManager
+            if (isFinishing || isDestroyed || manager.isStateSaved) return
+            
+            val fragment = manager.findFragmentById(R.id.fragmentContainer)
+            
+            if (fragment is YearGoalsFragment) {
+                AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
+            } else {
+                // Determine date from TodoFragment if active, else use current time
+                val dateMillis = if (fragment is TodoFragment) {
+                    fragment.getSelectedDateMillis()
+                } else {
+                    System.currentTimeMillis()
+                }
+                
+                showAddTaskHabitDialog(dateMillis)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     private fun showAddTaskHabitDialog(dateMillis: Long) {
-        val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-        AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-            .setTitle(getString(R.string.add_options_title))
-            .setItems(options) { _, which ->
-                if (supportFragmentManager.isStateSaved) return@setItems
-                if (which == 0) {
-                    AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-                } else {
-                    AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(supportFragmentManager, "AddHabit")
+        try {
+            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                .setTitle(getString(R.string.add_options_title))
+                .setItems(options) { _, which ->
+                    val manager = supportFragmentManager
+                    if (manager.isStateSaved) return@setItems
+                    
+                    if (which == 0) {
+                        AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
+                    } else {
+                        AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                    }
                 }
-            }.show()
+                .setNegativeButton(getString(R.string.no), null)
+                .show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun replaceFragment(fragment: Fragment) {

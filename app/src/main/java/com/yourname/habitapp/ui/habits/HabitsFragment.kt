@@ -195,7 +195,12 @@ class HabitsFragment : Fragment() {
         view.findViewById<View>(R.id.layoutMonthlyHabitsHeader)?.setOnClickListener { toggleList(view, R.id.recyclerMonthlyHabits, R.id.ivMonthlyHabitsArrow) }
 
         // Smart Plus Buttons
-        view.findViewById<View>(R.id.btnAddTaskPlus)?.setOnClickListener { AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(parentFragmentManager, "AddTodo") }
+        view.findViewById<View>(R.id.btnAddTaskPlus)?.setOnClickListener { 
+            val manager = parentFragmentManager
+            if (!manager.isStateSaved) {
+                AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(manager, "AddTodo")
+            }
+        }
         view.findViewById<View>(R.id.btnAddHabitPlus)?.setOnClickListener { openAddHabit(HabitFrequency.DAILY) }
         view.findViewById<View>(R.id.btnAddWeeklyPlus)?.setOnClickListener { openAddHabit(HabitFrequency.WEEKLY) }
         view.findViewById<View>(R.id.btnAddMonthlyPlus)?.setOnClickListener { openAddHabit(HabitFrequency.MONTHLY) }
@@ -467,7 +472,12 @@ class HabitsFragment : Fragment() {
             }
         }
     }
-    private fun openAddHabit(freq: HabitFrequency?) { AddHabitBottomSheet.newInstance(-1, freq, false).show(parentFragmentManager, "AddHabit") }
+    private fun openAddHabit(freq: HabitFrequency?) { 
+        val manager = parentFragmentManager
+        if (!manager.isStateSaved) {
+            AddHabitBottomSheet.newInstance(-1, freq, false).show(manager, "AddHabit")
+        }
+    }
     private fun applyThemeDecorations(view: View) {
         val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         val themeName = settingsPrefs.getString("app_theme", "Male")
