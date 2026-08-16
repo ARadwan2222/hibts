@@ -103,14 +103,16 @@ class MainActivity : AppCompatActivity() {
         if (isFinishing || isDestroyed) return
         
         val now = System.currentTimeMillis()
-        if (now - lastClickTime < 600) return
+        if (now - lastClickTime < 500) return
         lastClickTime = now
 
         try {
-            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            val manager = supportFragmentManager
+            val fragment = manager.findFragmentById(R.id.fragmentContainer)
             
             if (fragment is YearGoalsFragment) {
-                AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
+                val sheet = AddGoalBottomSheet.newInstance()
+                sheet.show(manager, "AddGoal")
             } else {
                 val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
                 
@@ -119,15 +121,15 @@ class MainActivity : AppCompatActivity() {
                     .setTitle(getString(R.string.add_options_title))
                     .setItems(options) { _, which ->
                         try {
-                            if (supportFragmentManager.isStateSaved) return@setItems
                             if (which == 0) {
                                 AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
                             } else {
                                 AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(supportFragmentManager, "AddHabit")
                             }
                         } catch (e: Exception) {
-                            e.printStackTrace()
-                            Toast.makeText(this, "Error showing sheet", Toast.LENGTH_SHORT).show()
+                            // Backup show
+                            val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
+                            supportFragmentManager.beginTransaction().add(sheet, "AddChoice").commitAllowingStateLoss()
                         }
                     }
                     .setNegativeButton(getString(R.string.no), null)
@@ -135,12 +137,15 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Action unavailable", Toast.LENGTH_SHORT).show()
+            // Last resort
+            try {
+                AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(supportFragmentManager, "AddTodo")
+            } catch (e2: Exception) {}
         }
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+        if (isFinishing || isDestroyed) return
         try {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
