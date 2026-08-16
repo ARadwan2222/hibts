@@ -2,7 +2,6 @@ package com.yourname.habitapp.ui
 
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -100,55 +99,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onFabAddClicked() {
-        if (isFinishing || isDestroyed) return
-        
         val now = System.currentTimeMillis()
-        if (now - lastClickTime < 600) return
+        if (now - lastClickTime < 500) return
         lastClickTime = now
 
+        if (isFinishing || isDestroyed) return
         val manager = supportFragmentManager
+
         val fragment = manager.findFragmentById(R.id.fragmentContainer)
         
-        if (fragment is YearGoalsFragment) {
-            try {
+        try {
+            if (fragment is YearGoalsFragment) {
                 AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
-            } catch (e: Exception) {
-                manager.beginTransaction().add(AddGoalBottomSheet.newInstance(), "AddGoal").commitAllowingStateLoss()
-            }
-        } else {
-            val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-            
-            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.add_options_title))
-                .setItems(options) { _, which ->
-                    try {
-                        if (which == 0) {
-                            val sheet = AddTodoBottomSheet.newInstance(dateMillis)
-                            sheet.show(manager, "AddTodo")
-                        } else {
-                            val sheet = AddHabitBottomSheet.newInstance(targetDate = dateMillis)
-                            sheet.show(manager, "AddHabit")
-                        }
-                    } catch (e: Exception) {
-                        // Fallback show
-                        val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
-                        manager.beginTransaction().add(sheet, if (which == 0) "AddTodo" else "AddHabit").commitAllowingStateLoss()
+            } else {
+                val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
+                
+                val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+                AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                    .setTitle(getString(R.string.add_options_title))
+                    .setItems(options) { _, which ->
+                        try {
+                            if (which == 0) {
+                                AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
+                            } else {
+                                AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
                     }
-                }
-                .setNegativeButton(getString(R.string.no), null)
-                .show()
-        }
+                    .setNegativeButton(getString(R.string.no), null)
+                    .show()
+            }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
         try {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
-                .commitAllowingStateLoss()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+                .commit()
+        } catch (e: Exception) { e.printStackTrace() }
     }
 }

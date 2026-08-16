@@ -8,16 +8,20 @@
     <!-- Many small faded emojis background -->
     <TextView
         android:id="@+id/tvBgDecorationsGoals"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:alpha="0.08"
         android:gravity="center"
         android:padding="20dp"
         android:lineSpacingExtra="28dp"
         android:text=""
-        android:textSize="14sp"
+        android:textSize="10sp"
         android:clickable="false"
-        android:focusable="false" />
+        android:focusable="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- FIXED HEADER -->
     <View
