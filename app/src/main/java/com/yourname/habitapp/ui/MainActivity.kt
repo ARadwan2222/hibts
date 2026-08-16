@@ -2,6 +2,7 @@ package com.yourname.habitapp.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -20,6 +21,7 @@ import com.yourname.habitapp.ui.profile.ProfileFragment
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var lastClickTime: Long = 0
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -97,51 +99,50 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.itemTextColor = android.content.res.ColorStateList.valueOf(0xFF9E9E9E.toInt())
     }
 
-    private var lastClickTime: Long = 0
-
     private fun onFabAddClicked() {
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - lastClickTime < 1000) return
-        lastClickTime = currentTime
+        if (isFinishing || isDestroyed) return
+        
+        val now = System.currentTimeMillis()
+        if (now - lastClickTime < 600) return
+        lastClickTime = now
 
         val manager = supportFragmentManager
-        if (isFinishing || isDestroyed || manager.isStateSaved) return
-
-        try {
-            val fragment = manager.findFragmentById(R.id.fragmentContainer)
-            
-            if (fragment is YearGoalsFragment) {
+        val fragment = manager.findFragmentById(R.id.fragmentContainer)
+        
+        if (fragment is YearGoalsFragment) {
+            try {
                 AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
-            } else {
-                val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-                
-                val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-                AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                    .setTitle(getString(R.string.add_options_title))
-                    .setItems(options) { _, which ->
-                        val now = System.currentTimeMillis()
-                        if (now - lastClickTime < 1000) return@setItems
-                        lastClickTime = now
-
-                        if (isFinishing || isDestroyed || manager.isStateSaved) return@setItems
-                        try {
-                            if (which == 0) {
-                                AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
-                            } else {
-                                AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
-                            }
-                        } catch (e: Exception) { e.printStackTrace() }
-                    }
-                    .setNegativeButton(getString(R.string.no), null)
-                    .show()
+            } catch (e: Exception) {
+                manager.beginTransaction().add(AddGoalBottomSheet.newInstance(), "AddGoal").commitAllowingStateLoss()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } else {
+            val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
+            
+            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                .setTitle(getString(R.string.add_options_title))
+                .setItems(options) { _, which ->
+                    try {
+                        if (which == 0) {
+                            val sheet = AddTodoBottomSheet.newInstance(dateMillis)
+                            sheet.show(manager, "AddTodo")
+                        } else {
+                            val sheet = AddHabitBottomSheet.newInstance(targetDate = dateMillis)
+                            sheet.show(manager, "AddHabit")
+                        }
+                    } catch (e: Exception) {
+                        // Fallback show
+                        val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
+                        manager.beginTransaction().add(sheet, if (which == 0) "AddTodo" else "AddHabit").commitAllowingStateLoss()
+                    }
+                }
+                .setNegativeButton(getString(R.string.no), null)
+                .show()
         }
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+        if (isFinishing || isDestroyed) return
         try {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)

@@ -196,9 +196,10 @@ class HabitsFragment : Fragment() {
 
         // Smart Plus Buttons
         view.findViewById<View>(R.id.btnAddTaskPlus)?.setOnClickListener { 
-            val manager = parentFragmentManager
-            if (!manager.isStateSaved) {
-                AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(manager, "AddTodo")
+            try {
+                AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(parentFragmentManager, "AddTodo")
+            } catch (e: Exception) {
+                parentFragmentManager.beginTransaction().add(AddTodoBottomSheet.newInstance(System.currentTimeMillis()), "AddTodo").commitAllowingStateLoss()
             }
         }
         view.findViewById<View>(R.id.btnAddHabitPlus)?.setOnClickListener { openAddHabit(HabitFrequency.DAILY) }
@@ -473,9 +474,10 @@ class HabitsFragment : Fragment() {
         }
     }
     private fun openAddHabit(freq: HabitFrequency?) { 
-        val manager = parentFragmentManager
-        if (!manager.isStateSaved) {
-            AddHabitBottomSheet.newInstance(-1, freq, false).show(manager, "AddHabit")
+        try {
+            AddHabitBottomSheet.newInstance(-1, freq, false).show(parentFragmentManager, "AddHabit")
+        } catch (e: Exception) {
+            parentFragmentManager.beginTransaction().add(AddHabitBottomSheet.newInstance(-1, freq, false), "AddHabit").commitAllowingStateLoss()
         }
     }
     private fun applyThemeDecorations(view: View) {
