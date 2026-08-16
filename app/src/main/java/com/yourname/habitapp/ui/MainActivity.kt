@@ -2,6 +2,7 @@ package com.yourname.habitapp.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -99,18 +100,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onFabAddClicked() {
+        if (isFinishing || isDestroyed) return
+        
         val now = System.currentTimeMillis()
-        if (now - lastClickTime < 500) return
+        if (now - lastClickTime < 600) return
         lastClickTime = now
 
-        if (isFinishing || isDestroyed) return
-        val manager = supportFragmentManager
-
-        val fragment = manager.findFragmentById(R.id.fragmentContainer)
-        
         try {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            
             if (fragment is YearGoalsFragment) {
-                AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
+                AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
             } else {
                 val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
                 
@@ -119,17 +119,24 @@ class MainActivity : AppCompatActivity() {
                     .setTitle(getString(R.string.add_options_title))
                     .setItems(options) { _, which ->
                         try {
+                            if (supportFragmentManager.isStateSaved) return@setItems
                             if (which == 0) {
-                                AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
+                                AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
                             } else {
-                                AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                                AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(supportFragmentManager, "AddHabit")
                             }
-                        } catch (e: Exception) { e.printStackTrace() }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            Toast.makeText(this, "Error showing sheet", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     .setNegativeButton(getString(R.string.no), null)
                     .show()
             }
-        } catch (e: Exception) { e.printStackTrace() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Action unavailable", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -137,7 +144,9 @@ class MainActivity : AppCompatActivity() {
         try {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
-                .commit()
-        } catch (e: Exception) { e.printStackTrace() }
+                .commitAllowingStateLoss()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
