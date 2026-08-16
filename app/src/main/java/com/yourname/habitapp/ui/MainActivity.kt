@@ -97,47 +97,44 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.itemTextColor = android.content.res.ColorStateList.valueOf(0xFF9E9E9E.toInt())
     }
 
+    private var lastClickTime: Long = 0
+
     private fun onFabAddClicked() {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime < 1000) return
+        lastClickTime = currentTime
+
+        val manager = supportFragmentManager
+        if (isFinishing || isDestroyed || manager.isStateSaved) return
+
         try {
-            val manager = supportFragmentManager
-            if (isFinishing || isDestroyed || manager.isStateSaved) return
-            
             val fragment = manager.findFragmentById(R.id.fragmentContainer)
             
             if (fragment is YearGoalsFragment) {
                 AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
             } else {
-                // Determine date from TodoFragment if active, else use current time
-                val dateMillis = if (fragment is TodoFragment) {
-                    fragment.getSelectedDateMillis()
-                } else {
-                    System.currentTimeMillis()
-                }
+                val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
                 
-                showAddTaskHabitDialog(dateMillis)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+                val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+                AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                    .setTitle(getString(R.string.add_options_title))
+                    .setItems(options) { _, which ->
+                        val now = System.currentTimeMillis()
+                        if (now - lastClickTime < 1000) return@setItems
+                        lastClickTime = now
 
-    private fun showAddTaskHabitDialog(dateMillis: Long) {
-        try {
-            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.add_options_title))
-                .setItems(options) { _, which ->
-                    val manager = supportFragmentManager
-                    if (manager.isStateSaved) return@setItems
-                    
-                    if (which == 0) {
-                        AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
-                    } else {
-                        AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                        if (isFinishing || isDestroyed || manager.isStateSaved) return@setItems
+                        try {
+                            if (which == 0) {
+                                AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
+                            } else {
+                                AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
                     }
-                }
-                .setNegativeButton(getString(R.string.no), null)
-                .show()
+                    .setNegativeButton(getString(R.string.no), null)
+                    .show()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -145,8 +142,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun replaceFragment(fragment: Fragment) {
         if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .commit()
+        try {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .commitAllowingStateLoss()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

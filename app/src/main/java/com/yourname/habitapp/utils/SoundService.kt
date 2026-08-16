@@ -95,7 +95,8 @@ class SoundService : Service() {
 
             vibrator?.let { v ->
                 if (v.hasVibrator()) {
-                    val pattern = longArrayOf(0, 500, 500)
+                    // Distinct pattern: 0ms delay, 400ms vibrate, 200ms sleep, 400ms vibrate
+                    val pattern = longArrayOf(0, 400, 200, 400)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         v.vibrate(android.os.VibrationEffect.createWaveform(pattern, 0))
                     } else {
@@ -104,7 +105,9 @@ class SoundService : Service() {
                     }
                 }
             }
-        } catch (e: Exception) { e.printStackTrace() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun stopSoundAndMute(todoId: Int, markCompleted: Boolean) {

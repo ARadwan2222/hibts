@@ -86,9 +86,9 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
             ivArrow?.animate()?.rotation(if (isVisible) 0f else 180f)?.setDuration(200)?.start()
         }
 
-        btnFreq.visibility = if (showFrequencyButton) View.VISIBLE else View.GONE
+        btnFreq?.visibility = if (showFrequencyButton || (habitId != -1 && editingHabit?.frequency != HabitFrequency.DAILY)) View.VISIBLE else View.GONE
         if (freqName != null) {
-            btnFreq.text = getFrequencyText(selectedFrequency)
+            btnFreq?.text = getFrequencyText(selectedFrequency)
         }
         updateSpecificDayUI(layoutSpec, btnSpecDay)
 
@@ -96,88 +96,93 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
 
         if (habitId != -1) {
             lifecycleScope.launch {
-                editingHabit = AppDatabase.getInstance(requireContext()).habitDao().getHabitById(habitId)
-                editingHabit?.let {
-                    etName.setText(it.name)
-                    etNotes.setText(it.notes)
-                    selectedCategory = it.category
-                    selectedFrequency = it.frequency
-                    selectedSpecificDay = it.specificDay
-                    tvIcon.text = it.icon
-                    btnCat.text = getCategoryName(it.category)
-                    btnFreq.text = getFrequencyText(it.frequency)
-                    updateSpecificDayUI(layoutSpec, btnSpecDay)
-                    loadSuggestions(chipGroupSugg, etName, tvIcon, it.category)
-                    btnSave.text = getString(R.string.update)
-                    // Color is handled by ?attr/colorPrimary in XML now
-                    // If editing, usually we show frequency if it was not daily
-                    if (it.frequency != HabitFrequency.DAILY) btnFreq.visibility = View.VISIBLE
-                }
-            }
-        }
-
-        btnCat.setOnClickListener {
-            val categories = HabitCategory.entries.toTypedArray()
-            val names = categories.map { getCategoryName(it) }.toTypedArray()
-            AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.select_category))
-                .setItems(names) { _, which ->
-                    selectedCategory = categories[which]
-                    btnCat.text = names[which]
-                    updateIcon(tvIcon, selectedCategory)
-                    loadSuggestions(chipGroupSugg, etName, tvIcon, selectedCategory)
-                }.show()
-        }
-
-        btnFreq.setOnClickListener {
-            val freqs = arrayOf(getString(R.string.daily), getString(R.string.weekly), getString(R.string.monthly))
-            AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-                .setTitle(getString(R.string.habit_frequency))
-                .setItems(freqs) { _, which ->
-                    selectedFrequency = when(which) {
-                        0 -> HabitFrequency.DAILY
-                        1 -> HabitFrequency.WEEKLY
-                        else -> HabitFrequency.MONTHLY
+                try {
+                    editingHabit = AppDatabase.getInstance(requireContext()).habitDao().getHabitById(habitId)
+                    editingHabit?.let {
+                        etName?.setText(it.name)
+                        etNotes?.setText(it.notes)
+                        selectedCategory = it.category
+                        selectedFrequency = it.frequency
+                        selectedSpecificDay = it.specificDay
+                        if (tvIcon != null) tvIcon.text = it.icon
+                        if (btnCat != null) btnCat.text = getCategoryName(it.category)
+                        if (btnFreq != null) btnFreq.text = getFrequencyText(it.frequency)
+                        updateSpecificDayUI(layoutSpec, btnSpecDay)
+                        if (chipGroupSugg != null && etName != null && tvIcon != null) {
+                            loadSuggestions(chipGroupSugg, etName, tvIcon, it.category)
+                        }
+                        btnSave?.text = getString(R.string.update)
+                        if (it.frequency != HabitFrequency.DAILY) btnFreq?.visibility = View.VISIBLE
                     }
-                    btnFreq.text = freqs[which]
-                    selectedSpecificDay = null
-                    updateSpecificDayUI(layoutSpec, btnSpecDay)
-                }.show()
-        }
-
-        btnSpecDay.setOnClickListener {
-            if (selectedFrequency == HabitFrequency.WEEKLY) {
-                val days = arrayOf(
-                    getString(R.string.yes), // Placeholder for weekday names if I had them, but I'll use a better way
-                    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-                )
-                // Actually I should get weekday names properly
-                val weekdayNames = (1..7).map { getDayName(it) }.toTypedArray()
-                AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-                    .setTitle(getString(R.string.select_weekday))
-                    .setItems(weekdayNames) { _, which ->
-                        selectedSpecificDay = which + 1
-                        btnSpecDay.text = weekdayNames[which]
-                    }.show()
-            } else if (selectedFrequency == HabitFrequency.MONTHLY) {
-                val days = (1..31).map { it.toString() }.toTypedArray()
-                AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-                    .setTitle(getString(R.string.select_monthday))
-                    .setItems(days) { _, which ->
-                        selectedSpecificDay = which + 1
-                        btnSpecDay.text = getString(R.string.day_of_month_label).format(which + 1)
-                    }.show()
+                } catch (e: Exception) { e.printStackTrace() }
             }
         }
 
-        btnSave.setOnClickListener {
-            val name = etName.text.toString().trim()
-            val notes = etNotes.text.toString().trim()
-            if (name.isEmpty()) { etName.error = getString(R.string.error_empty_field); return@setOnClickListener }
+        btnCat?.setOnClickListener {
+            try {
+                val categories = HabitCategory.entries.toTypedArray()
+                val names = categories.map { getCategoryName(it) }.toTypedArray()
+                AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+                    .setTitle(getString(R.string.select_category))
+                    .setItems(names) { _, which ->
+                        selectedCategory = categories[which]
+                        btnCat.text = names[which]
+                        if (tvIcon != null) updateIcon(tvIcon, selectedCategory)
+                        if (chipGroupSugg != null && etName != null && tvIcon != null) {
+                            loadSuggestions(chipGroupSugg, etName, tvIcon, selectedCategory)
+                        }
+                    }.show()
+            } catch (e: Exception) { e.printStackTrace() }
+        }
+
+        btnFreq?.setOnClickListener {
+            try {
+                val freqs = arrayOf(getString(R.string.daily), getString(R.string.weekly), getString(R.string.monthly))
+                AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+                    .setTitle(getString(R.string.habit_frequency))
+                    .setItems(freqs) { _, which ->
+                        selectedFrequency = when(which) {
+                            0 -> HabitFrequency.DAILY
+                            1 -> HabitFrequency.WEEKLY
+                            else -> HabitFrequency.MONTHLY
+                        }
+                        btnFreq.text = freqs[which]
+                        selectedSpecificDay = null
+                        if (layoutSpec != null && btnSpecDay != null) updateSpecificDayUI(layoutSpec, btnSpecDay)
+                    }.show()
+            } catch (e: Exception) { e.printStackTrace() }
+        }
+
+        btnSpecDay?.setOnClickListener {
+            try {
+                if (selectedFrequency == HabitFrequency.WEEKLY) {
+                    val weekdayNames = (1..7).map { getDayName(it) }.toTypedArray()
+                    AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+                        .setTitle(getString(R.string.select_weekday))
+                        .setItems(weekdayNames) { _, which ->
+                            selectedSpecificDay = which + 1
+                            btnSpecDay.text = weekdayNames[which]
+                        }.show()
+                } else if (selectedFrequency == HabitFrequency.MONTHLY) {
+                    val days = (1..31).map { it.toString() }.toTypedArray()
+                    AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+                        .setTitle(getString(R.string.select_monthday))
+                        .setItems(days) { _, which ->
+                            selectedSpecificDay = which + 1
+                            btnSpecDay.text = getString(R.string.day_of_month_label).format(which + 1)
+                        }.show()
+                }
+            } catch (e: Exception) { e.printStackTrace() }
+        }
+
+        btnSave?.setOnClickListener {
+            val name = etName?.text?.toString()?.trim() ?: ""
+            val notes = etNotes?.text?.toString()?.trim() ?: ""
+            if (name.isEmpty()) { etName?.error = getString(R.string.error_empty_field); return@setOnClickListener }
 
             val wordCount = name.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
             if (wordCount > 4) {
-                etName.error = getString(R.string.error_max_words)
+                etName?.error = getString(R.string.error_max_words)
                 return@setOnClickListener
             }
 
@@ -192,7 +197,7 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 category = selectedCategory,
                 frequency = selectedFrequency,
                 specificDay = selectedSpecificDay,
-                icon = tvIcon.text.toString(),
+                icon = tvIcon?.text?.toString() ?: "⭐",
                 targetDate = selectedTargetDate
             ) ?: Habit(
                 name = name,
@@ -200,30 +205,32 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 category = selectedCategory,
                 frequency = selectedFrequency,
                 specificDay = selectedSpecificDay,
-                icon = tvIcon.text.toString(),
+                icon = tvIcon?.text?.toString() ?: "⭐",
                 targetDate = selectedTargetDate
             )
 
             lifecycleScope.launch {
-                val dao = AppDatabase.getInstance(requireContext()).habitDao()
-                val allHabits = dao.getAllHabitsSync()
-                val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
-                
-                if (isDuplicate) {
-                    Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
+                try {
+                    val dao = AppDatabase.getInstance(requireContext()).habitDao()
+                    val allHabits = dao.getAllHabitsSync()
+                    val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
+                    
+                    if (isDuplicate) {
+                        Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
 
-                val minOrder = allHabits.minOfOrNull { it.displayOrder } ?: 0
-                val habitToSave = if (editingHabit != null) habit else habit.copy(displayOrder = minOrder - 1)
+                    val minOrder = allHabits.minOfOrNull { it.displayOrder } ?: 0
+                    val habitToSave = if (editingHabit != null) habit else habit.copy(displayOrder = minOrder - 1)
 
-                if (editingHabit != null) dao.updateHabit(habitToSave) else dao.insertHabit(habitToSave)
-                
-                if (editingHabit == null) {
-                    val count = dao.getHabitCount()
-                    AchievementEngine.checkAndUnlock(requireContext(), "HABIT_ADDED", count)
-                }
-                dismiss()
+                    if (editingHabit != null) dao.updateHabit(habitToSave) else dao.insertHabit(habitToSave)
+                    
+                    if (editingHabit == null) {
+                        val count = dao.getHabitCount()
+                        AchievementEngine.checkAndUnlock(requireContext(), "HABIT_ADDED", count)
+                    }
+                    dismiss()
+                } catch (e: Exception) { e.printStackTrace() }
             }
         }
     }
@@ -276,27 +283,28 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun loadSuggestions(group: ChipGroup, et: EditText, tvIcon: TextView, category: HabitCategory) {
-        group.removeAllViews()
-        val suggestions = if (category == HabitCategory.OTHER) {
-            HabitTemplates.ALL_SUGGESTIONS.take(8)
-        } else {
-            HabitTemplates.ALL_SUGGESTIONS.filter { it.category == category }
-        }
-        
-        suggestions.forEach { suggestion ->
-            val chip = Chip(requireContext()).apply {
-                text = "${suggestion.icon} ${suggestion.name}"
-                setOnClickListener {
-                    et.setText(suggestion.name)
-                    tvIcon.text = suggestion.icon
-                    selectedCategory = suggestion.category
-                    // Hide after selection
-                    view?.findViewById<View>(R.id.scrollSuggestions)?.visibility = View.GONE
-                    view?.findViewById<ImageView>(R.id.ivSuggestionsArrow)?.rotation = 0f
-                }
+        try {
+            group.removeAllViews()
+            val suggestions = if (category == HabitCategory.OTHER) {
+                HabitTemplates.ALL_SUGGESTIONS.take(8)
+            } else {
+                HabitTemplates.ALL_SUGGESTIONS.filter { it.category == category }
             }
-            group.addView(chip)
-        }
+            
+            suggestions.forEach { suggestion ->
+                val chip = Chip(requireContext()).apply {
+                    text = "${suggestion.icon} ${suggestion.name}"
+                    setOnClickListener {
+                        et.setText(suggestion.name)
+                        tvIcon.text = suggestion.icon
+                        selectedCategory = suggestion.category
+                        view?.findViewById<View>(R.id.scrollSuggestions)?.visibility = View.GONE
+                        view?.findViewById<ImageView>(R.id.ivSuggestionsArrow)?.rotation = 0f
+                    }
+                }
+                group.addView(chip)
+            }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun updateIcon(tvIcon: TextView, category: HabitCategory) {

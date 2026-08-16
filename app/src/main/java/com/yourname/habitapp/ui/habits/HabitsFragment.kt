@@ -499,8 +499,8 @@ class HabitsFragment : Fragment() {
         
         val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorations)
         if (emojis.isNotEmpty()) {
-            // Repeat emojis many times to fill background with very small font (WhatsApp style)
-            val repeated = (1..300).joinToString(" ") { emojis }
+            // Light background pattern (WhatsApp style)
+            val repeated = (1..100).joinToString(" ") { emojis }
             bgDecorations?.text = repeated
             bgDecorations?.textSize = 10f
         } else {

@@ -66,35 +66,37 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
         val cbReminderStart     = view.findViewById<CheckBox>(R.id.switchReminderStart)
         val cbReminderEnd       = view.findViewById<CheckBox>(R.id.switchReminderEnd)
 
-        // Suggestions Removed
+        // Hide unused templates UI
         btnToggleSugg?.visibility = View.GONE
         chipTemplates?.visibility = View.GONE
+        spinnerCat?.visibility = View.GONE
 
         val etNotes             = view.findViewById<EditText>(R.id.etTodoNotes)
 
         if (editingTodoId != -1) {
             lifecycleScope.launch {
-                val todo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(editingTodoId)
-                todo?.let {
-                    etTitle.setText(it.title)
-                    etNotes.setText(it.notes)
-                    selectedStartTime = it.startTime
-                    selectedEndTime = it.endTime
-                    selectedDate.timeInMillis = it.targetDate
-                    btnSave.text = getString(R.string.update)
-                    // Color is handled by ?attr/colorPrimary in XML now
-                    btnDate.text = formatDate(it.targetDate)
-                    if (it.startTime != null) btnStartTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.start), formatTime(it.startTime))
-                    if (it.endTime != null) btnEndTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.end), formatTime(it.endTime))
-                    cbReminderStart.isChecked = it.reminderStart
-                    cbReminderEnd.isChecked = it.reminderEnd
-                    
-                    when (it.priority) {
-                        Priority.HIGH -> chipGroupPri.check(R.id.chipHigh)
-                        Priority.LOW -> chipGroupPri.check(R.id.chipLow)
-                        else -> chipGroupPri.check(R.id.chipMedium)
+                try {
+                    val todo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(editingTodoId)
+                    todo?.let {
+                        etTitle.setText(it.title)
+                        etNotes.setText(it.notes)
+                        selectedStartTime = it.startTime
+                        selectedEndTime = it.endTime
+                        selectedDate.timeInMillis = it.targetDate
+                        btnSave.text = getString(R.string.update)
+                        btnDate.text = formatDate(it.targetDate)
+                        if (it.startTime != null) btnStartTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.start), formatTime(it.startTime))
+                        if (it.endTime != null) btnEndTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.end), formatTime(it.endTime))
+                        cbReminderStart?.isChecked = it.reminderStart
+                        cbReminderEnd?.isChecked = it.reminderEnd
+                        
+                        when (it.priority) {
+                            Priority.HIGH -> chipGroupPri?.check(R.id.chipHigh)
+                            Priority.LOW -> chipGroupPri?.check(R.id.chipLow)
+                            else -> chipGroupPri?.check(R.id.chipMedium)
+                        }
                     }
-                }
+                } catch (e: Exception) { e.printStackTrace() }
             }
         } else {
             btnDate.text = formatDate(selectedDate.timeInMillis)
@@ -107,14 +109,11 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
             }, selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        val categories = TaskTemplates.ALL_CATEGORIES
-        spinnerCat.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories.map { "${it.icon} ${it.name}" })
-        spinnerCat.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
-                // Template loading removed
-            }
-            override fun onNothingSelected(p: AdapterView<*>?) {}
-        }
+        // Simple adapter setup for safety
+        try {
+            val categories = TaskTemplates.ALL_CATEGORIES
+            spinnerCat?.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories.map { "${it.icon} ${it.name}" })
+        } catch (e: Exception) { e.printStackTrace() }
 
         btnStartTime.setOnClickListener {
             showTimePicker { h, m ->
@@ -141,69 +140,69 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            val priority = when (chipGroupPri.checkedChipId) {
+            val priority = when (chipGroupPri?.checkedChipId) {
                 R.id.chipHigh -> Priority.HIGH
                 R.id.chipLow  -> Priority.LOW
                 else          -> Priority.MEDIUM
             }
 
             lifecycleScope.launch {
-                val db = AppDatabase.getInstance(requireContext())
-                val allTodos = db.todoDao().getAllTodosSync()
-                val isDuplicate = allTodos.any { it.title.trim().equals(title, ignoreCase = true) && it.id != editingTodoId }
-                
-                if (isDuplicate) {
-                    Toast.makeText(requireContext(), "هذه المهمة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
+                try {
+                    val db = AppDatabase.getInstance(requireContext())
+                    val allTodos = db.todoDao().getAllTodosSync()
+                    val isDuplicate = allTodos.any { it.title.trim().equals(title, ignoreCase = true) && it.id != editingTodoId }
+                    
+                    if (isDuplicate) {
+                        Toast.makeText(requireContext(), "هذه المهمة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
 
-                // Calculate duration in minutes if end time is selected
-                val duration = if (selectedStartTime != null && selectedEndTime != null) {
-                    ((selectedEndTime!! - selectedStartTime!!) / (1000 * 60)).toInt()
-                } else 0
+                    val duration = if (selectedStartTime != null && selectedEndTime != null) {
+                        ((selectedEndTime!! - selectedStartTime!!) / (1000 * 60)).toInt()
+                    } else 0
 
-                if (editingTodoId != -1) {
-                    val original = db.todoDao().getTodoById(editingTodoId)
-                    val updated = original?.copy(
-                        title = title,
-                        notes = notes,
-                        priority = priority,
-                        startTime = selectedStartTime,
-                        endTime = selectedEndTime,
-                        durationMinutes = if (duration > 0) duration else original.durationMinutes,
-                        targetDate = selectedDate.timeInMillis,
-                        reminderStart = cbReminderStart.isChecked,
-                        reminderEnd = cbReminderEnd.isChecked
-                    )
-                    updated?.let { 
-                        db.todoDao().update(it)
-                        // Reschedule reminders if time changed
-                        if (it.startTime != null && it.reminderStart) {
-                            TodoReminderScheduler.scheduleTodoReminders(requireContext(), it)
+                    if (editingTodoId != -1) {
+                        val original = db.todoDao().getTodoById(editingTodoId)
+                        val updated = original?.copy(
+                            title = title,
+                            notes = notes,
+                            priority = priority,
+                            startTime = selectedStartTime,
+                            endTime = selectedEndTime,
+                            durationMinutes = if (duration > 0) duration else original.durationMinutes,
+                            targetDate = selectedDate.timeInMillis,
+                            reminderStart = cbReminderStart?.isChecked ?: false,
+                            reminderEnd = cbReminderEnd?.isChecked ?: false
+                        )
+                        updated?.let { 
+                            db.todoDao().update(it)
+                            if (it.startTime != null && it.reminderStart) {
+                                TodoReminderScheduler.scheduleTodoReminders(requireContext(), it)
+                            }
+                        }
+                    } else {
+                        val minOrder = allTodos.minOfOrNull { it.displayOrder } ?: 0
+                        val todo = TodoItem(
+                            title          = title,
+                            notes          = notes,
+                            priority       = priority,
+                            startTime      = selectedStartTime,
+                            targetDate     = selectedDate.timeInMillis,
+                            endTime        = selectedEndTime,
+                            durationMinutes = if (duration > 0) duration else 0,
+                            reminderStart  = cbReminderStart?.isChecked ?: false,
+                            reminderEnd    = cbReminderEnd?.isChecked ?: false,
+                            reminderBefore = 10,
+                            displayOrder   = minOrder - 1,
+                            createdAt      = System.currentTimeMillis()
+                        )
+                        val id = db.todoDao().insert(todo)
+                        if (selectedStartTime != null && (cbReminderStart?.isChecked == true)) {
+                            TodoReminderScheduler.scheduleTodoReminders(requireContext(), todo.copy(id = id.toInt()))
                         }
                     }
-                } else {
-                    val minOrder = allTodos.minOfOrNull { it.displayOrder } ?: 0
-                    val todo = TodoItem(
-                        title          = title,
-                        notes          = notes,
-                        priority       = priority,
-                        startTime      = selectedStartTime,
-                        targetDate     = selectedDate.timeInMillis,
-                        endTime        = selectedEndTime,
-                        durationMinutes = if (duration > 0) duration else 0,
-                        reminderStart  = cbReminderStart.isChecked,
-                        reminderEnd    = cbReminderEnd.isChecked,
-                        reminderBefore = 10,
-                        displayOrder   = minOrder - 1,
-                        createdAt      = System.currentTimeMillis()
-                    )
-                    val id = db.todoDao().insert(todo)
-                    if (selectedStartTime != null && cbReminderStart.isChecked) {
-                        TodoReminderScheduler.scheduleTodoReminders(requireContext(), todo.copy(id = id.toInt()))
-                    }
-                }
-                dismiss()
+                    dismiss()
+                } catch (e: Exception) { e.printStackTrace() }
             }
         }
     }
