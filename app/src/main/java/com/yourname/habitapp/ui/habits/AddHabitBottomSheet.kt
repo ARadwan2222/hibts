@@ -185,7 +185,10 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
         btnSave?.setOnClickListener {
             val name = etName?.text?.toString()?.trim() ?: ""
             val notes = etNotes?.text?.toString()?.trim() ?: ""
-            if (name.isEmpty()) { etName?.error = getString(R.string.error_empty_field); return@setOnClickListener }
+            if (name.isEmpty()) { 
+                etName?.error = getString(R.string.error_empty_field)
+                return@setOnClickListener 
+            }
 
             val wordCount = name.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
             if (wordCount > 4) {
@@ -193,8 +196,9 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
+            // Check if user selected the day for Weekly/Monthly
             if (selectedFrequency != HabitFrequency.DAILY && selectedSpecificDay == null) {
-                Toast.makeText(requireContext(), getString(R.string.select_day), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "يرجى اختيار اليوم المحدد أولاً!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
@@ -220,10 +224,11 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 try {
                     val dao = AppDatabase.getInstance(requireContext()).habitDao()
                     val allHabits = dao.getAllHabitsSync()
-                    val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
                     
+                    // Duplicate check (ignore case)
+                    val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
                     if (isDuplicate) {
-                        Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل! (نفس الاسم)", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
 
@@ -236,8 +241,13 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                         val count = dao.getHabitCount()
                         AchievementEngine.checkAndUnlock(requireContext(), "HABIT_ADDED", count)
                     }
+                    
+                    Toast.makeText(requireContext(), "تم حفظ العادة بنجاح ✅", Toast.LENGTH_SHORT).show()
                     dismiss()
-                } catch (e: Exception) { e.printStackTrace() }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "حدث خطأ أثناء الحفظ: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

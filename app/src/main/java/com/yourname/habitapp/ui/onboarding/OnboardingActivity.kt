@@ -447,29 +447,46 @@ class OnboardingActivity : AppCompatActivity() {
     private fun showDatePicker(btn: Button) {
         try {
             val cal = Calendar.getInstance()
-            // Use a stable, standard Android theme to prevent crashes on non-standard ROMs/Devices
-            val datePickerDialog = DatePickerDialog(
-                this,
-                android.R.style.Theme_DeviceDefault_Light_Dialog,
-                { _, y, m, d ->
-                    val selected = Calendar.getInstance()
-                    selected.set(y, m, d)
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+
+            // Extremely robust DatePickerDialog with manual variable setting
+            val dpd = DatePickerDialog(this, { _, y, m, d ->
+                val selected = Calendar.getInstance()
+                selected.set(y, m, d)
+                
+                val age = year - y
+                if (age in 3..100) {
                     selectedBirthdate = selected.timeInMillis
-                    btn.text = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
-                },
-                cal.get(Calendar.YEAR) - 20,
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            )
-            datePickerDialog.show()
+                    val dateStr = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
+                    btn.text = dateStr
+                    Toast.makeText(this, "تم اختيار التاريخ: $dateStr", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
+                }
+            }, year - 20, month, day)
+            
+            dpd.setTitle(getString(R.string.onboarding_age_hint))
+            dpd.show()
         } catch (e: Exception) {
             e.printStackTrace()
-            // Even simpler fallback
-            val cal = Calendar.getInstance()
-            DatePickerDialog(this, { _, y, m, d ->
-                selectedBirthdate = Calendar.getInstance().apply { set(y, m, d) }.timeInMillis
-                btn.text = "$d/${m + 1}/$y"
-            }, cal.get(Calendar.YEAR) - 20, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+            // Last resort: simple EditText if Dialog fails
+            val input = EditText(this)
+            input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            AlertDialog.Builder(this)
+                .setTitle("أدخل العمر (سنوات)")
+                .setView(input)
+                .setPositiveButton("موافق") { _, _ ->
+                    val ageStr = input.text.toString()
+                    if (ageStr.isNotEmpty()) {
+                        val ageInt = ageStr.toInt()
+                        val dummyCal = Calendar.getInstance()
+                        dummyCal.add(Calendar.YEAR, -ageInt)
+                        selectedBirthdate = dummyCal.timeInMillis
+                        btn.text = "العمر: $ageInt"
+                    }
+                }.show()
         }
     }
 
