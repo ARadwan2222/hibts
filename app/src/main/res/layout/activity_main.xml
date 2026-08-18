@@ -42,7 +42,7 @@
             app:menu="@menu/bottom_nav_menu" />
     </androidx.cardview.widget.CardView>
 
-    <!-- FAB: Moved to the very end and centered with explicit bottom margin -->
+    <!-- FAB: Maximized elevation and explicit z-index to ensure it is always on top -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMain"
         android:layout_width="wrap_content"
@@ -51,8 +51,9 @@
         app:tint="@color/white"
         app:backgroundTint="?attr/colorPrimary"
         app:fabSize="normal"
-        app:elevation="12dp"
-        app:pressedTranslationZ="8dp"
+        android:elevation="30dp"
+        app:elevation="30dp"
+        app:pressedTranslationZ="15dp"
         app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="@id/cardBottomNav"
         app:layout_constraintTop_toTopOf="@id/cardBottomNav"
