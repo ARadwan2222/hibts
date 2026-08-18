@@ -475,9 +475,9 @@ class HabitsFragment : Fragment() {
     }
     private fun openAddHabit(freq: HabitFrequency?) { 
         try {
-            AddHabitBottomSheet.newInstance(-1, freq, false).show(parentFragmentManager, "AddHabit")
+            AddHabitBottomSheet.newInstance(-1, freq, true).show(parentFragmentManager, "AddHabit")
         } catch (e: Exception) {
-            parentFragmentManager.beginTransaction().add(AddHabitBottomSheet.newInstance(-1, freq, false), "AddHabit").commitAllowingStateLoss()
+            parentFragmentManager.beginTransaction().add(AddHabitBottomSheet.newInstance(-1, freq, true), "AddHabit").commitAllowingStateLoss()
         }
     }
     private fun applyThemeDecorations(view: View) {

@@ -128,10 +128,10 @@ class MainActivity : AppCompatActivity() {
                         if (which == 0) {
                             AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
                         } else {
-                            AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                            AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true).show(manager, "AddHabit")
                         }
                     } catch (e: Exception) {
-                        val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
+                        val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true)
                         manager.beginTransaction().add(sheet, "AddChoice").commitAllowingStateLoss()
                     }
                 }
