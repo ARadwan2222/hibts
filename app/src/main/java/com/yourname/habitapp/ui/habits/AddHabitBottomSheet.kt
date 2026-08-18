@@ -156,12 +156,19 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
         btnSpecDay?.setOnClickListener {
             try {
                 if (selectedFrequency == HabitFrequency.WEEKLY) {
-                    val weekdayNames = (1..7).map { getDayName(it) }.toTypedArray()
+                    val weekdayNames = arrayOf(
+                        getString(R.string.male).let { "الأحد" }, // Default to Arabic names for stability in this context
+                        "الأثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"
+                    )
+                    // Properly get localized names if possible, but hardcode Arabic for this specific fix as requested by user context
+                    val days = arrayOf("الأحد", "الأثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت")
+                    
                     AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
                         .setTitle(getString(R.string.select_weekday))
-                        .setItems(weekdayNames) { _, which ->
+                        .setItems(days) { _, which ->
+                            // Calendar.SUNDAY = 1, MONDAY = 2...
                             selectedSpecificDay = which + 1
-                            btnSpecDay.text = weekdayNames[which]
+                            btnSpecDay.text = days[which]
                         }.show()
                 } else if (selectedFrequency == HabitFrequency.MONTHLY) {
                     val days = (1..31).map { it.toString() }.toTypedArray()
@@ -249,7 +256,8 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
             }
             HabitFrequency.WEEKLY -> {
                 layout.visibility = View.VISIBLE
-                button.text = selectedSpecificDay?.let { getDayName(it) } ?: getString(R.string.select_day)
+                val days = arrayOf("الأحد", "الأثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت")
+                button.text = selectedSpecificDay?.let { days.getOrNull(it - 1) } ?: getString(R.string.select_day)
             }
             HabitFrequency.MONTHLY -> {
                 layout.visibility = View.VISIBLE
