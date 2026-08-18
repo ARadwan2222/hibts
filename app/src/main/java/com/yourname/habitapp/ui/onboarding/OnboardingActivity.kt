@@ -444,12 +444,20 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun showDatePicker(btn: Button) {
         val cal = Calendar.getInstance()
-        DatePickerDialog(this, R.style.PurpleAlertDialog, { _, y, m, d ->
-            val selected = Calendar.getInstance().apply { set(y, m, d) }
-            if (cal.get(Calendar.YEAR) - y in 6..100) {
+        // Use default theme (0) for DatePickerDialog to avoid crashes on some devices
+        DatePickerDialog(this, { _, y, m, d ->
+            val selected = Calendar.getInstance().apply { 
+                set(Calendar.YEAR, y)
+                set(Calendar.MONTH, m)
+                set(Calendar.DAY_OF_MONTH, d)
+            }
+            val age = cal.get(Calendar.YEAR) - y
+            if (age in 6..100) {
                 selectedBirthdate = selected.timeInMillis
                 btn.text = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
-            } else Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
+            }
         }, cal.get(Calendar.YEAR) - 20, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
     }
 

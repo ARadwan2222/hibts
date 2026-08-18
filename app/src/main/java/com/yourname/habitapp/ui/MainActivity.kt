@@ -106,41 +106,37 @@ class MainActivity : AppCompatActivity() {
         if (now - lastClickTime < 500) return
         lastClickTime = now
 
-        try {
-            val manager = supportFragmentManager
-            val fragment = manager.findFragmentById(R.id.fragmentContainer)
-            
-            if (fragment is YearGoalsFragment) {
-                val sheet = AddGoalBottomSheet.newInstance()
-                sheet.show(manager, "AddGoal")
-            } else {
-                val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-                
-                val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-                AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                    .setTitle(getString(R.string.add_options_title))
-                    .setItems(options) { _, which ->
-                        try {
-                            if (which == 0) {
-                                AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-                            } else {
-                                AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(supportFragmentManager, "AddHabit")
-                            }
-                        } catch (e: Exception) {
-                            // Backup show
-                            val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
-                            supportFragmentManager.beginTransaction().add(sheet, "AddChoice").commitAllowingStateLoss()
-                        }
-                    }
-                    .setNegativeButton(getString(R.string.no), null)
-                    .show()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // Last resort
+        val manager = supportFragmentManager
+        val fragment = manager.findFragmentById(R.id.fragmentContainer)
+        
+        if (fragment is YearGoalsFragment) {
             try {
-                AddTodoBottomSheet.newInstance(System.currentTimeMillis()).show(supportFragmentManager, "AddTodo")
-            } catch (e2: Exception) {}
+                AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
+            } catch (e: Exception) {
+                // Use commitAllowingStateLoss for safety
+                manager.beginTransaction().add(AddGoalBottomSheet.newInstance(), "AddGoal").commitAllowingStateLoss()
+            }
+        } else {
+            val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
+            
+            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
+            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+                .setTitle(getString(R.string.add_options_title))
+                .setItems(options) { _, which ->
+                    try {
+                        if (which == 0) {
+                            AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
+                        } else {
+                            AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
+                        }
+                    } catch (e: Exception) {
+                        // Fallback show
+                        val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
+                        manager.beginTransaction().add(sheet, "AddChoice").commitAllowingStateLoss()
+                    }
+                }
+                .setNegativeButton(getString(R.string.no), null)
+                .show()
         }
     }
 
