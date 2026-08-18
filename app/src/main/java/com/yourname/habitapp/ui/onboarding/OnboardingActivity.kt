@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import java.text.SimpleDateFormat
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -443,22 +445,38 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun showDatePicker(btn: Button) {
-        val cal = Calendar.getInstance()
-        // Use default theme (0) for DatePickerDialog to avoid crashes on some devices
-        DatePickerDialog(this, { _, y, m, d ->
-            val selected = Calendar.getInstance().apply { 
-                set(Calendar.YEAR, y)
-                set(Calendar.MONTH, m)
-                set(Calendar.DAY_OF_MONTH, d)
+        try {
+            val builder = MaterialDatePicker.Builder.datePicker()
+            builder.setTitleText(getString(R.string.onboarding_age_hint))
+            
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.YEAR, -20)
+            builder.setSelection(calendar.timeInMillis)
+
+            val picker = builder.build()
+            picker.addOnPositiveButtonClickListener { selection ->
+                val cal = Calendar.getInstance()
+                val birthCal = Calendar.getInstance().apply { timeInMillis = selection }
+                val age = cal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR)
+                
+                if (age in 6..100) {
+                    selectedBirthdate = selection
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    btn.text = sdf.format(Date(selection))
+                } else {
+                    Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
+                }
             }
-            val age = cal.get(Calendar.YEAR) - y
-            if (age in 6..100) {
-                selectedBirthdate = selected.timeInMillis
-                btn.text = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
-            } else {
-                Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
-            }
-        }, cal.get(Calendar.YEAR) - 20, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+            picker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Minimal fallback
+            val cal = Calendar.getInstance()
+            DatePickerDialog(this, { _, y, m, d ->
+                selectedBirthdate = Calendar.getInstance().apply { set(y, m, d) }.timeInMillis
+                btn.text = "$d/${m + 1}/$y"
+            }, cal.get(Calendar.YEAR) - 20, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+        }
     }
 
     private fun setupPurposeSpinner(spinner: Spinner) {

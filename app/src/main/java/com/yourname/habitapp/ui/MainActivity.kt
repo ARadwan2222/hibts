@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yourname.habitapp.R
 import com.yourname.habitapp.ui.todo.AddTodoBottomSheet
 import com.yourname.habitapp.ui.habits.AddHabitBottomSheet
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
             
             val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.add_options_title))
                 .setItems(options) { _, which ->
                     try {
@@ -130,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                             AddHabitBottomSheet.newInstance(targetDate = dateMillis).show(manager, "AddHabit")
                         }
                     } catch (e: Exception) {
-                        // Fallback show
                         val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis)
                         manager.beginTransaction().add(sheet, "AddChoice").commitAllowingStateLoss()
                     }
