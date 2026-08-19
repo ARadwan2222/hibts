@@ -102,6 +102,9 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
             btnDate.text = formatDate(selectedDate.timeInMillis)
         }
 
+        // Optimization: Use a postDelayed or background loading for UI elements if needed
+        // For now, ensured that nothing heavy blocks the opening
+
         btnDate.setOnClickListener {
             DatePickerDialog(requireContext(), { _, y, m, d ->
                 selectedDate.set(y, m, d)

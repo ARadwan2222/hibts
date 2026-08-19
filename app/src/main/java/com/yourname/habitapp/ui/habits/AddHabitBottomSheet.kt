@@ -94,7 +94,12 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
         }
         updateSpecificDayUI(layoutSpec, btnSpecDay)
 
-        loadSuggestions(chipGroupSugg, etName, tvIcon, HabitCategory.OTHER)
+        // Optimization: Load suggestions after a short delay to keep the opening instant
+        view.postDelayed({
+            if (isAdded) {
+                loadSuggestions(chipGroupSugg, etName, tvIcon, HabitCategory.OTHER)
+            }
+        }, 100)
 
         if (habitId != -1) {
             lifecycleScope.launch {
