@@ -17,7 +17,9 @@ import com.yourname.habitapp.data.models.HabitCategory
 import com.yourname.habitapp.data.models.HabitFrequency
 import com.yourname.habitapp.utils.AchievementEngine
 import com.yourname.habitapp.utils.HabitTemplates
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -223,30 +225,35 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
             lifecycleScope.launch {
                 try {
                     val dao = AppDatabase.getInstance(requireContext()).habitDao()
-                    val allHabits = dao.getAllHabitsSync()
                     
-                    // Duplicate check (ignore case)
-                    val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
-                    if (isDuplicate) {
-                        Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل! (نفس الاسم)", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
+                    // Optimization: Check duplication and save in IO thread
+                    withContext(Dispatchers.IO) {
+                        val allHabits = dao.getAllHabitsSync()
+                        val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
+                        
+                        if (isDuplicate) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
+                            }
+                            return@withContext
+                        }
 
-                    val minOrder = allHabits.minOfOrNull { it.displayOrder } ?: 0
-                    val habitToSave = if (editingHabit != null) habit else habit.copy(displayOrder = minOrder - 1)
+                        val minOrder = allHabits.minOfOrNull { it.displayOrder } ?: 0
+                        val habitToSave = if (editingHabit != null) habit else habit.copy(displayOrder = minOrder - 1)
 
-                    if (editingHabit != null) dao.updateHabit(habitToSave) else dao.insertHabit(habitToSave)
-                    
-                    if (editingHabit == null) {
-                        val count = dao.getHabitCount()
-                        AchievementEngine.checkAndUnlock(requireContext(), "HABIT_ADDED", count)
+                        if (editingHabit != null) dao.updateHabit(habitToSave) else dao.insertHabit(habitToSave)
+                        
+                        if (editingHabit == null) {
+                            val count = dao.getHabitCount()
+                            AchievementEngine.checkAndUnlock(requireContext(), "HABIT_ADDED", count)
+                        }
                     }
                     
-                    Toast.makeText(requireContext(), "تم حفظ العادة بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "تم الحفظ بنجاح ✅", Toast.LENGTH_SHORT).show()
                     dismiss()
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(requireContext(), "حدث خطأ أثناء الحفظ: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "حدث خطأ أثناء الحفظ", Toast.LENGTH_SHORT).show()
                 }
             }
         }
