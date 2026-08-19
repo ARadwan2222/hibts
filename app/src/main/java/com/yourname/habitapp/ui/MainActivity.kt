@@ -2,9 +2,7 @@ package com.yourname.habitapp.ui
 
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,12 +10,12 @@ import com.yourname.habitapp.R
 import com.yourname.habitapp.ui.todo.AddTodoBottomSheet
 import com.yourname.habitapp.ui.habits.AddHabitBottomSheet
 import com.yourname.habitapp.ui.goals.AddGoalBottomSheet
-import androidx.appcompat.app.AlertDialog
 import com.yourname.habitapp.databinding.ActivityMainBinding
 import com.yourname.habitapp.ui.habits.HabitsFragment
 import com.yourname.habitapp.ui.todo.TodoFragment
 import com.yourname.habitapp.ui.goals.YearGoalsFragment
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.yourname.habitapp.ui.profile.ProfileFragment
 
 class MainActivity : AppCompatActivity() {
@@ -102,11 +100,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onFabAddClicked() {
+        if (isFinishing || isDestroyed) return
+        
         val now = System.currentTimeMillis()
         if (now - lastClickTime < 500) return
         lastClickTime = now
-
-        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
 
         val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         
@@ -114,22 +112,21 @@ class MainActivity : AppCompatActivity() {
             AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
         } else {
             val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-            showModernAddChoiceDialog(dateMillis)
+            showModernChoiceSheet(dateMillis)
         }
     }
 
-    private fun showModernAddChoiceDialog(dateMillis: Long) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_choice, null)
-        val dialog = AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-            .setView(dialogView)
-            .create()
+    private fun showModernChoiceSheet(dateMillis: Long) {
+        val dialog = BottomSheetDialog(this, R.style.Theme_HabitApp) // Use app theme for consistency
+        val view = layoutInflater.inflate(R.layout.dialog_add_choice, null)
+        dialog.setContentView(view)
 
-        dialogView.findViewById<View>(R.id.btnChoiceTask).setOnClickListener {
+        view.findViewById<View>(R.id.btnChoiceTask).setOnClickListener {
             dialog.dismiss()
             AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
         }
 
-        dialogView.findViewById<View>(R.id.btnChoiceHabit).setOnClickListener {
+        view.findViewById<View>(R.id.btnChoiceHabit).setOnClickListener {
             dialog.dismiss()
             AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true).show(supportFragmentManager, "AddHabit")
         }
@@ -138,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+        if (isFinishing || isDestroyed) return
         try {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
