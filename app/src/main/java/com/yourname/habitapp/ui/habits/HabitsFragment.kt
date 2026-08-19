@@ -347,8 +347,19 @@ class HabitsFragment : Fragment() {
             .setMessage(message)
             .setPositiveButton(getString(R.string.delete_confirm_title)) { _, _ ->
                 lifecycleScope.launch {
-                    if (item is TodoItem) db.todoDao().delete(item)
-                    else if (item is Habit) db.habitDao().deleteHabit(item)
+                    try {
+                        if (item is TodoItem) {
+                            db.todoDao().delete(item)
+                        } else if (item is Habit) {
+                            // Fetch fresh instance to ensure correct ID for deletion
+                            val freshHabit = db.habitDao().getHabitById(item.id)
+                            freshHabit?.let { db.habitDao().deleteHabit(it) }
+                        }
+                        Toast.makeText(requireContext(), "تم الحذف بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(requireContext(), "خطأ أثناء الحذف", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .setNegativeButton(getString(R.string.no), null)

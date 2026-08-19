@@ -2,11 +2,12 @@ package com.yourname.habitapp.ui
 
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yourname.habitapp.R
 import com.yourname.habitapp.ui.todo.AddTodoBottomSheet
 import com.yourname.habitapp.ui.habits.AddHabitBottomSheet
@@ -101,53 +102,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onFabAddClicked() {
-        if (isFinishing || isDestroyed) return
-        
         val now = System.currentTimeMillis()
         if (now - lastClickTime < 500) return
         lastClickTime = now
 
-        val manager = supportFragmentManager
-        val fragment = manager.findFragmentById(R.id.fragmentContainer)
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         
         if (fragment is YearGoalsFragment) {
-            try {
-                AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
-            } catch (e: Exception) {
-                // Use commitAllowingStateLoss for safety
-                manager.beginTransaction().add(AddGoalBottomSheet.newInstance(), "AddGoal").commitAllowingStateLoss()
-            }
+            AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
         } else {
             val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-            
-            val options = arrayOf(getString(R.string.new_task), getString(R.string.new_habit))
-            MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.add_options_title))
-                .setItems(options) { _, which ->
-                    try {
-                        if (which == 0) {
-                            AddTodoBottomSheet.newInstance(dateMillis).show(manager, "AddTodo")
-                        } else {
-                            AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true).show(manager, "AddHabit")
-                        }
-                    } catch (e: Exception) {
-                        val sheet = if (which == 0) AddTodoBottomSheet.newInstance(dateMillis) else AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true)
-                        manager.beginTransaction().add(sheet, "AddChoice").commitAllowingStateLoss()
-                    }
-                }
-                .setNegativeButton(getString(R.string.no), null)
-                .show()
+            showModernAddChoiceDialog(dateMillis)
         }
     }
 
+    private fun showModernAddChoiceDialog(dateMillis: Long) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_choice, null)
+        val dialog = AlertDialog.Builder(this, R.style.PurpleAlertDialog)
+            .setView(dialogView)
+            .create()
+
+        dialogView.findViewById<View>(R.id.btnChoiceTask).setOnClickListener {
+            dialog.dismiss()
+            AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+        }
+
+        dialogView.findViewById<View>(R.id.btnChoiceHabit).setOnClickListener {
+            dialog.dismiss()
+            AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true).show(supportFragmentManager, "AddHabit")
+        }
+
+        dialog.show()
+    }
+
     private fun replaceFragment(fragment: Fragment) {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
         try {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .commitAllowingStateLoss()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 }
