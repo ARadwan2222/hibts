@@ -54,6 +54,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔄" android:textSize="80sp" />
                         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/my_habits_onboarding" android:textSize="26sp" android:textStyle="bold" android:textColor="?attr/colorPrimary" android:layout_marginTop="20dp" android:gravity="center" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/habits_onboarding_desc" android:gravity="center" android:textSize="17sp" android:layout_marginTop="12dp" android:paddingHorizontal="16dp" />
+                        <ImageView android:layout_width="match_parent" android:layout_height="120dp" android:src="@drawable/ic_nav_habits" android:alpha="0.3" android:layout_marginTop="16dp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -64,6 +65,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️" android:textSize="80sp" />
                         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/no_missed_tasks_onboarding" android:textSize="26sp" android:textStyle="bold" android:textColor="?attr/colorPrimary" android:layout_marginTop="20dp" android:gravity="center" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/tasks_onboarding_desc" android:gravity="center" android:textSize="17sp" android:layout_marginTop="12dp" android:paddingHorizontal="16dp" />
+                        <ImageView android:layout_width="match_parent" android:layout_height="120dp" android:src="@drawable/ic_nav_todo" android:alpha="0.3" android:layout_marginTop="16dp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -74,6 +76,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🏆" android:textSize="80sp" />
                         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/yearly_goals_onboarding" android:textSize="26sp" android:textStyle="bold" android:textColor="?attr/colorPrimary" android:layout_marginTop="20dp" android:gravity="center" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/goals_onboarding_desc" android:gravity="center" android:textSize="17sp" android:layout_marginTop="12dp" android:paddingHorizontal="16dp" />
+                        <ImageView android:layout_width="match_parent" android:layout_height="120dp" android:src="@drawable/ic_nav_goals" android:alpha="0.3" android:layout_marginTop="16dp" />
                     </LinearLayout>
                 </ViewFlipper>
                 <View android:layout_width="match_parent" android:layout_height="60dp" />
