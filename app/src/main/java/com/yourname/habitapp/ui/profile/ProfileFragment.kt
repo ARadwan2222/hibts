@@ -285,6 +285,40 @@ class ProfileFragment : Fragment() {
             }
             override fun onNothingSelected(p: AdapterView<*>?) {}
         }
+
+        applyThemeDecorations(view)
+    }
+
+    private fun applyThemeDecorations(view: View) {
+        val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        val themeName = settingsPrefs.getString("app_theme", "Male")
+        
+        val emojis = when(themeName) {
+            "Cats" -> "🐱🐾🐈🧶🐟🐁🏠🥛🧶🐈🐈‍⬛🐾"
+            "Dogs" -> "🐶🦴🐕🎾🐾🐩🐕‍🦺🦮🐕🐕🎾🦴"
+            "Travel" -> "✈️🌍🗼🚢🗺️🏨🚉🏖️🎒🚢🗽🗺️"
+            "Nature" -> "🌿🌻🌲🌳🌼🍀🌾🍄🍃🌳🌿🍃🍀"
+            "Ocean" -> "🌊🐬⛵🐙🐚🐳🐋🐟🐠⚓🐋🐚🐙"
+            "Sunset" -> "🌅🌇⭐🌙🔥🌑🌓🌆🌉🔥🌙🌃🌆"
+            "Space" -> "🚀⭐🪐🛸🛰️☄️🌌🔭🔭🚀🪐☄️🛰️"
+            "Coffee" -> "☕🥐🍩🍪🍰☕🧁☕🥯🧁🍰🍩🍪"
+            "Tech" -> "💻📱⌨️🖱️🕹️🖥️📡🔋🔌📱💻🖥️🖱️"
+            "Vintage" -> "🕰️🎞️📻⏳📜📺☎️📽️📷🎞️🕰️📺📻"
+            "Gold" -> "👑💰💎✨🏆🥇🥈🥉💵💎💰✨👑"
+            "Pastel" -> "🌸🍭🎀🦄🎨👗💄💄💎🧸🍭🌸🎀"
+            "Classic" -> "💼⚡🎯🏆👔🔥👞📈🖋️💼🎯🏆👔"
+            else -> ""
+        }
+        
+        val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorationsProfile)
+        if (bgDecorations != null && emojis.isNotEmpty()) {
+            val repeated = (1..600).joinToString(" ") { emojis }
+            bgDecorations.text = repeated
+            bgDecorations.textSize = 7f
+            bgDecorations.alpha = 0.04f
+            bgDecorations.setLineSpacing(45f, 0.7f)
+            bgDecorations.setPadding(40, 40, 40, 40)
+        }
     }
 
     private fun exportDatabase(uri: Uri) {
