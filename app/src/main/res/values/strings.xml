@@ -90,8 +90,8 @@
     <string name="help_page5_title">5. Rewards &amp; XP</string>
     <string name="help_page5_content">Stay motivated by earning rewards:\n\n• <b>XP Points:</b> Earn points for every completed task or habit.\n• <b>Levels:</b> Level up from "Beginner" to "Legend".\n• <b>Achievements:</b> Unlock special trophies for reaching milestones.</string>
 
-    <string name="help_page6_title">6. Customization &amp; Safety</string>
-    <string name="help_page6_content">Make hibts yours:\n\n• <b>Themes:</b> 15 unique themes with background doodle patterns.\n• <b>Custom Tones:</b> Set unique sounds for different events.\n• <b>Data Safety:</b> Use the "Backup" feature regularly to keep your data safe.</string>
+    <string name="help_page6_title">6. Pro Tips &amp; Tricks</string>
+    <string name="help_page6_content">• <b>Manual Order:</b> Long press and drag any item to reorder it.\n• <b>Swipe Actions:</b> Swipe right on any task or habit to delete it quickly.\n• <b>Auto-Date:</b> Adding a task while viewing a specific date in the calendar will automatically set that date.\n• <b>Mute Mode:</b> Click the bell icon on any task to silence its sounds without deleting it.</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="finish">Finish</string>
