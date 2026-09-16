@@ -121,7 +121,10 @@
         7. <b>Limitation of Liability:</b> We strive for 100% application stability. However, we are not liable for any data loss resulting from device failure, accidental deletion, or service interruptions.\n\n
         8. <b>Intellectual Property:</b> The hibts name, logo, and all visual designs are the exclusive property of our development team. You may not reproduce or distribute any part of the app without written consent.\n\n
         9. <b>Termination:</b> We reserve the right to suspend or terminate access to our cloud services for any user who violates these terms.\n\n
-        10. <b>Contact:</b> For inquiries regarding these terms or your data rights, please contact us through the Support section.</string>
+        10. <b>Updates to Terms:</b> We may update these terms occasionally to reflect changes in our services or legal obligations. Continuous use of the app constitutes acceptance of the new terms.\n\n
+        11. <b>Age Verification:</b> By using hibts, you represent that you meet the minimum age requirements stated in section 3.\n\n
+        12. <b>Exporting Data:</b> We provide tools to export your data. It is your responsibility to maintain your own backups for long-term storage.\n\n
+        13. <b>Contact:</b> For inquiries regarding these terms or your data rights, please contact us through the Support section.</string>
     <string name="i_agree_to_terms">I agree to the Terms of Use</string>
     <string name="error_empty_field">This field cannot be empty</string>
     <string name="error_accept_terms">Please accept the Terms of Use to proceed</string>

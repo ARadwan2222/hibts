@@ -144,6 +144,8 @@ class YearGoalsFragment : Fragment() {
         }
 
         val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorationsGoals)
+        val tvThemeIcon = view.findViewById<TextView>(R.id.tvThemeIconHeaderGoals)
+        
         if (bgDecorations != null && emojis.isNotEmpty()) {
             // Very high-density WhatsApp doodle pattern
             val repeated = (1..600).joinToString(" ") { emojis }
@@ -152,8 +154,12 @@ class YearGoalsFragment : Fragment() {
             bgDecorations.alpha = 0.04f
             bgDecorations.setLineSpacing(45f, 0.7f)
             bgDecorations.setPadding(40, 40, 40, 40)
+            
+            // Header icon
+            tvThemeIcon?.text = emojis.take(2)
         } else {
             bgDecorations?.text = ""
+            tvThemeIcon?.text = ""
         }
     }
 
