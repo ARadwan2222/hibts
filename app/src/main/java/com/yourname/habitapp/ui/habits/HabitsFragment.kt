@@ -496,30 +496,31 @@ class HabitsFragment : Fragment() {
         val themeName = settingsPrefs.getString("app_theme", "Male")
         
         val emojis = when(themeName) {
-            "Cats" -> "🐱🐾🐈🧶🐟🐁🏠🥛🧶"
-            "Dogs" -> "🐶🦴🐕🎾🐾🐩🐕‍🦺🦮🐕"
-            "Travel" -> "✈️🌍🗼🚢🗺️🏨🚉🏖️🎒"
-            "Nature" -> "🌿🌻🌲🌳🌼🍀🌾🍄🍃"
-            "Ocean" -> "🌊🐬⛵🐙🐚🐳🐋🐟🐠"
-            "Sunset" -> "🌅🌇⭐🌙🔥🌑🌓🌆🌉"
-            "Space" -> "🚀⭐🪐🛸🛰️☄️🌌🔭🔭"
-            "Coffee" -> "☕🥐🍩🍪🍰☕🧁☕🥯"
-            "Tech" -> "💻📱⌨️🖱️🕹️🖥️📡🔋🔌"
-            "Vintage" -> "🕰️🎞️📻⏳📜📺☎️📽️📷"
-            "Gold" -> "👑💰💎✨🏆🥇🥈🥉💵"
-            "Pastel" -> "🌸🍭🎀🦄🎨👗💄💎🧸"
-            "Classic" -> "💼⚡🎯🏆👔🔥👞📈🖋️"
+            "Cats" -> "🐱🐾🐈🧶🐟🐁🏠🥛🧶🐈🐈‍⬛🐾"
+            "Dogs" -> "🐶🦴🐕🎾🐾🐩🐕‍🦺🦮🐕🐕🎾🦴"
+            "Travel" -> "✈️🌍🗼🚢🗺️🏨🚉🏖️🎒🚢🗽🗺️"
+            "Nature" -> "🌿🌻🌲🌳🌼🍀🌾🍄🍃🌳🌿🍃🍀"
+            "Ocean" -> "🌊🐬⛵🐙🐚🐳🐋🐟🐠⚓🐋🐚🐙"
+            "Sunset" -> "🌅🌇⭐🌙🔥🌑🌓🌆🌉🔥🌙🌃🌆"
+            "Space" -> "🚀⭐🪐🛸🛰️☄️🌌🔭🔭🚀🪐☄️🛰️"
+            "Coffee" -> "☕🥐🍩🍪🍰☕🧁☕🥯🧁🍰🍩🍪"
+            "Tech" -> "💻📱⌨️🖱️🕹️🖥️📡🔋🔌📱💻🖥️🖱️"
+            "Vintage" -> "🕰️🎞️📻⏳📜📺☎️📽️📷🎞️🕰️📺📻"
+            "Gold" -> "👑💰💎✨🏆🥇🥈🥉💵💎💰✨👑"
+            "Pastel" -> "🌸🍭🎀🦄🎨👗💄💎🧸🍭🌸🎀👗"
+            "Classic" -> "💼⚡🎯🏆👔🔥👞📈🖋️💼🎯🏆👔"
             else -> ""
         }
         
         val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorations)
         if (bgDecorations != null && emojis.isNotEmpty()) {
-            // High-density WhatsApp doodle pattern
-            val repeated = (1..500).joinToString(" ") { emojis }
+            // Very high-density WhatsApp doodle pattern
+            val repeated = (1..600).joinToString(" ") { emojis }
             bgDecorations.text = repeated
-            bgDecorations.textSize = 8f
-            bgDecorations.alpha = 0.05f
-            bgDecorations.setLineSpacing(35f, 0.8f)
+            bgDecorations.textSize = 7f
+            bgDecorations.alpha = 0.04f
+            bgDecorations.setLineSpacing(45f, 0.7f)
+            bgDecorations.setPadding(40, 40, 40, 40)
         } else {
             bgDecorations?.text = ""
         }
