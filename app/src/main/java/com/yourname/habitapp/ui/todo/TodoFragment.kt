@@ -376,13 +376,26 @@ class TodoFragment : Fragment() {
     }
 
     private fun confirmDelete(item: Any) {
+        val title = if (item is TodoItem) getString(R.string.delete_task_title) else getString(R.string.delete_habit_title)
+        val message = if (item is TodoItem) getString(R.string.delete_task_msg) else getString(R.string.delete_habit_msg)
+        
         AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
-            .setTitle(getString(R.string.delete_confirm_title))
-            .setMessage(getString(R.string.delete_confirm_msg))
+            .setTitle(title)
+            .setMessage(message)
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 lifecycleScope.launch {
-                    if (item is TodoItem) db.todoDao().delete(item)
-                    else if (item is Habit) db.habitDao().deleteHabit(item)
+                    try {
+                        if (item is TodoItem) {
+                            db.todoDao().delete(item)
+                        } else if (item is Habit) {
+                            // Safe fetch before delete
+                            val freshHabit = db.habitDao().getHabitById(item.id)
+                            freshHabit?.let { db.habitDao().deleteHabit(it) }
+                        }
+                        Toast.makeText(requireContext(), "تم الحذف بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
             .setNegativeButton(getString(R.string.no), null)

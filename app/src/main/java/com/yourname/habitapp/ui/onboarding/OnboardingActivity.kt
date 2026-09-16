@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import java.text.SimpleDateFormat
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,18 +12,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.yourname.habitapp.R
-import com.yourname.habitapp.data.AppDatabase
 import com.yourname.habitapp.ui.MainActivity
 import kotlinx.coroutines.launch
 import java.util.*
@@ -36,11 +29,10 @@ class OnboardingActivity : AppCompatActivity() {
     private var selectedAvatarEmoji = "👤"
     private var selectedImageUri: String? = null
     private var selectedBirthdate: Long? = null
-    private var languageChosen = false
-    private lateinit var gestureDetector: GestureDetector
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
+    private var lastClickTime: Long = 0
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
@@ -59,42 +51,32 @@ class OnboardingActivity : AppCompatActivity() {
             } catch (e: ApiException) {
                 Toast.makeText(this, "Google Error: ${e.statusCode}", Toast.LENGTH_LONG).show()
             }
-        } else {
-            Toast.makeText(this, "Sign-in cancelled (Result: ${result.resultCode})", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        val userPrefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         
-        // Apply Custom Theme
         val themeName = settingsPrefs.getString("app_theme", "Male")
-        val themeId = when(themeName) {
+        setTheme(when(themeName) {
             "Female" -> R.style.Theme_HabitApp_Female
-            "Cats"   -> R.style.Theme_HabitApp_Cats
-            "Dogs"   -> R.style.Theme_HabitApp_Dogs
+            "Cats" -> R.style.Theme_HabitApp_Cats
+            "Dogs" -> R.style.Theme_HabitApp_Dogs
             "Travel" -> R.style.Theme_HabitApp_Travel
             "Nature" -> R.style.Theme_HabitApp_Nature
-            "Ocean"  -> R.style.Theme_HabitApp_Ocean
+            "Ocean" -> R.style.Theme_HabitApp_Ocean
             "Sunset" -> R.style.Theme_HabitApp_Sunset
-            "Space"  -> R.style.Theme_HabitApp_Space
+            "Space" -> R.style.Theme_HabitApp_Space
             "Coffee" -> R.style.Theme_HabitApp_Coffee
-            "Tech"   -> R.style.Theme_HabitApp_Tech
-            "Minimal"-> R.style.Theme_HabitApp_Minimal
+            "Tech" -> R.style.Theme_HabitApp_Tech
+            "Minimal" -> R.style.Theme_HabitApp_Minimal
             "Pastel" -> R.style.Theme_HabitApp_Pastel
-            "Vintage"-> R.style.Theme_HabitApp_Vintage
-            "Gold"   -> R.style.Theme_HabitApp_Gold
-            "Classic"-> R.style.Theme_HabitApp_Classic
-            else     -> R.style.Theme_HabitApp_Male
-        }
-        setTheme(themeId)
-
-        // Apply Dark Mode correctly
-        val isDarkMode = settingsPrefs.getBoolean("dark_mode", false)
-        AppCompatDelegate.setDefaultNightMode(if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
-
-        languageChosen = settingsPrefs.getBoolean("language_chosen", false)
+            "Vintage" -> R.style.Theme_HabitApp_Vintage
+            "Gold" -> R.style.Theme_HabitApp_Gold
+            "Classic" -> R.style.Theme_HabitApp_Classic
+            else -> R.style.Theme_HabitApp_Male
+        })
 
         super.onCreate(savedInstanceState)
         
@@ -107,142 +89,53 @@ class OnboardingActivity : AppCompatActivity() {
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        // Force sign out from Google as well when reaching onboarding to ensure chooser shows up next time
-        googleSignInClient.signOut()
-
-        val onboardingDone = prefs.getBoolean("onboarding_done", false)
-
-        setContentView(R.layout.activity_onboarding)
-
-        // Main Layouts
-        val layoutGuide = findViewById<View>(R.id.layoutGuide)
-        val layoutAuthChoice = findViewById<View>(R.id.layoutAuthChoice)
-        val layoutRegistration = findViewById<View>(R.id.layoutRegistration)
-        val layoutLogin = findViewById<View>(R.id.layoutLogin)
-        val layoutVerification = findViewById<View>(R.id.layoutVerification)
-
+        // Session Check
         val currentUser = auth.currentUser
-        
-        // Auto-login check
-        if (currentUser != null) {
-            if (currentUser.isEmailVerified && onboardingDone) {
-                applyUserTheme(prefs.getString("user_gender", "Male"))
+        if (userPrefs.getBoolean("onboarding_done", false)) {
+            if (currentUser == null || currentUser.isEmailVerified || userPrefs.getString("user_email", "") == "guest@hibts.app") {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
                 return
-            } else if (!currentUser.isEmailVerified) {
-                switchPage(layoutVerification)
-                findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verify_reminder, currentUser.email)
             }
-        } else if (onboardingDone) {
-            // Guest auto-login check
-            applyUserTheme(prefs.getString("user_gender", "Male"))
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-            return
         }
 
-        // Choice Landing Logic
-        findViewById<View>(R.id.btnGoToRegister).setOnClickListener { switchPage(layoutRegistration) }
-        findViewById<View>(R.id.btnGoToLogin).setOnClickListener { switchPage(layoutLogin) }
+        setContentView(R.layout.activity_onboarding)
+
+        // UI Listeners
+        findViewById<View>(R.id.btnGoToRegister).setOnClickListener { switchPage(findViewById(R.id.layoutRegistration)) }
+        findViewById<View>(R.id.btnGoToLogin).setOnClickListener { switchPage(findViewById(R.id.layoutLogin)) }
         findViewById<View>(R.id.btnGoogleSignInChoice).setOnClickListener { 
-            showLoading(true, getString(R.string.sign_in_google))
+            showLoading(true)
             googleSignInLauncher.launch(googleSignInClient.signInIntent) 
         }
         findViewById<View>(R.id.btnGuestLoginLanding).setOnClickListener { handleGuestLogin() }
-
-        // Back Buttons
-        findViewById<View>(R.id.tvBackToLandingFromReg).setOnClickListener { switchPage(layoutAuthChoice) }
-        findViewById<View>(R.id.tvBackToLandingFromLogin).setOnClickListener { switchPage(layoutAuthChoice) }
-        
-        // Shortcuts between Login and Register
-        findViewById<View>(R.id.tvSwitchToLogin).setOnClickListener { switchPage(layoutLogin) }
-        findViewById<View>(R.id.tvSwitchToRegister).setOnClickListener { switchPage(layoutRegistration) }
-
-        // Registration Views
-        val etRegName = findViewById<EditText>(R.id.etRegName)
-        val etRegEmail = findViewById<EditText>(R.id.etRegEmail)
-        val etRegPassword = findViewById<EditText>(R.id.etRegPassword)
-        val rbRegMale = findViewById<RadioButton>(R.id.rbRegMale)
-        val btnRegBirth = findViewById<Button>(R.id.btnRegSelectBirthdate)
-        val spinnerRegPurpose = findViewById<Spinner>(R.id.spinnerRegPurpose)
-        val cbRegTerms = findViewById<CheckBox>(R.id.cbRegTerms)
-
-        btnRegBirth.setOnClickListener { showDatePicker(btnRegBirth) }
-        setupPurposeSpinner(spinnerRegPurpose)
-
-        findViewById<View>(R.id.tvRegTermsLink).setOnClickListener {
-            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                .setTitle(R.string.terms_of_use)
-                .setMessage(android.text.Html.fromHtml(getString(R.string.terms_of_use_text), android.text.Html.FROM_HTML_MODE_LEGACY))
-                .setPositiveButton("OK", null)
-                .show()
+        findViewById<View>(R.id.btnRegSelectBirthdate).setOnClickListener { showDatePicker(it as Button) }
+        findViewById<View>(R.id.btnDoRegister).setOnClickListener { 
+            handleEmailRegister(
+                findViewById(R.id.etRegEmail), findViewById(R.id.etRegPassword),
+                findViewById(R.id.etRegName), findViewById(R.id.rbRegMale),
+                findViewById(R.id.spinnerRegPurpose), findViewById(R.id.cbRegTerms)
+            )
         }
-
-        findViewById<View>(R.id.btnDoRegister).setOnClickListener {
-            handleEmailRegister(etRegEmail, etRegPassword, etRegName, rbRegMale, spinnerRegPurpose, cbRegTerms)
-        }
-
-        // Login Views
-        val etLoginEmail = findViewById<EditText>(R.id.etLoginEmail)
-        val etLoginPassword = findViewById<EditText>(R.id.etLoginPassword)
         findViewById<View>(R.id.btnDoLogin).setOnClickListener {
-            handleEmailLogin(etLoginEmail, etLoginPassword)
+            handleEmailLogin(findViewById(R.id.etLoginEmail), findViewById(R.id.etLoginPassword))
         }
-
-        // Verification logic
-        findViewById<View>(R.id.btnConfirmVerify).setOnClickListener {
-            showLoading(true)
-            val user = auth.currentUser
-            user?.reload()?.addOnCompleteListener {
-                val updated = auth.currentUser
-                if (updated != null && updated.isEmailVerified) {
-                    fetchProfileAndGo(updated.uid, updated.email ?: "")
-                } else {
-                    showLoading(false)
-                    Toast.makeText(this, getString(R.string.verify_reminder, updated?.email ?: ""), Toast.LENGTH_LONG).show()
-                }
-            } ?: showLoading(false)
-        }
-
-        findViewById<View>(R.id.btnResendEmail).setOnClickListener {
-            auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { task ->
-                if (task.isSuccessful) Toast.makeText(this, "✅", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // Guide / ViewFlipper Logic
-        val guideFlipper = findViewById<ViewFlipper>(R.id.guideFlipper)
-        val nextStep = {
-            if (guideFlipper.displayedChild < guideFlipper.childCount - 1) {
-                guideFlipper.setInAnimation(this, R.anim.slide_in_right)
-                guideFlipper.setOutAnimation(this, R.anim.slide_out_left)
-                guideFlipper.showNext()
-            } else {
-                switchPage(layoutAuthChoice)
-            }
-        }
-        findViewById<View>(R.id.btnNextGuide).setOnClickListener { nextStep() }
+        findViewById<View>(R.id.btnConfirmVerify).setOnClickListener { checkVerificationStatus() }
+        findViewById<View>(R.id.btnNextGuide).setOnClickListener { switchPage(findViewById(R.id.layoutAuthChoice)) }
+        findViewById<View>(R.id.tvBackToLandingFromReg).setOnClickListener { switchPage(findViewById(R.id.layoutAuthChoice)) }
+        findViewById<View>(R.id.tvBackToLandingFromLogin).setOnClickListener { switchPage(findViewById(R.id.layoutAuthChoice)) }
         
-        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(e1: MotionEvent?, e2: MotionEvent, vX: Float, vY: Float): Boolean {
-                if (e1 != null && e2.x - e1.x < -100) { nextStep(); return true }
-                return false
-            }
-        })
-        layoutGuide.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event); true }
-
-        // Avatar Container Click
-        findViewById<View>(R.id.layoutAvatarContainer).setOnClickListener {
-            val options = arrayOf("Choose Avatar", "Pick from Gallery")
-            AlertDialog.Builder(this, R.style.PurpleAlertDialog)
-                .setTitle("Select Profile Picture")
-                .setItems(options) { _, which ->
-                    if (which == 0) showAvatarEmojiDialog() else pickImage.launch("image/*")
-                }.show()
+        // Resume Logic: If user is logged in but unverified, force Verification page
+        if (currentUser != null && !currentUser.isEmailVerified && !currentUser.isAnonymous) {
+            switchPage(findViewById(R.id.layoutVerification))
+            findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verify_reminder, currentUser.email)
+        } else {
+            val lastPageId = settingsPrefs.getInt("last_onboarding_page", R.id.layoutGuide)
+            val targetLayout = findViewById<View>(lastPageId) ?: findViewById(R.id.layoutGuide)
+            switchPage(targetLayout)
         }
 
-        // Language Spinner Logic
+        // Lang Spinner
         val spinnerLang = findViewById<Spinner>(R.id.spinnerLanguage)
         val languages = listOf("English", "العربية", "Deutsch")
         spinnerLang.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
@@ -250,276 +143,153 @@ class OnboardingActivity : AppCompatActivity() {
         spinnerLang.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
                 val lang = if (pos == 1) "ar" else if (pos == 2) "de" else "en"
-                if (lang != Locale.getDefault().language) {
-                    getSharedPreferences("settings_prefs", Context.MODE_PRIVATE).edit().putBoolean("language_chosen", true).apply()
-                    updateLocale(lang)
-                }
+                if (lang != Locale.getDefault().language) updateLocale(lang)
             }
             override fun onNothingSelected(p: AdapterView<*>?) {}
         }
-        
-        // Initial visibility check
-        switchPage(layoutGuide)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkVerificationStatus(silent = true)
+    }
+
+    private fun checkVerificationStatus(silent: Boolean = false) {
+        val user = auth.currentUser
+        if (user != null && !user.isEmailVerified && !user.isAnonymous) {
+            if (!silent) showLoading(true)
+            user.reload().addOnCompleteListener {
+                if (auth.currentUser?.isEmailVerified == true) {
+                    fetchProfileAndGo(user.uid, user.email ?: "")
+                } else if (!silent) {
+                    showLoading(false)
+                    Toast.makeText(this, getString(R.string.verify_reminder, user.email), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun showDatePicker(btn: Button) {
+        try {
+            val cal = Calendar.getInstance()
+            DatePickerDialog(this, { _, y, m, d ->
+                val selected = Calendar.getInstance().apply { set(y, m, d) }
+                if (cal.get(Calendar.YEAR) - y in 3..100) {
+                    selectedBirthdate = selected.timeInMillis
+                    btn.text = "$d/${m + 1}/$y"
+                } else {
+                    Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
+                }
+            }, cal.get(Calendar.YEAR) - 20, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun switchPage(target: View) {
-        val pages = listOf(
-            R.id.layoutGuide, R.id.layoutAuthChoice, R.id.layoutRegistration, 
-            R.id.layoutLogin, R.id.layoutVerification
-        )
+        val pages = listOf(R.id.layoutGuide, R.id.layoutAuthChoice, R.id.layoutRegistration, R.id.layoutLogin, R.id.layoutVerification)
         pages.forEach { id -> findViewById<View>(id).visibility = View.GONE }
         target.visibility = View.VISIBLE
-
-        // Language chooser remains visible in ALL welcoming screens as requested
-        val isWelcomingPage = target.id == R.id.layoutGuide || target.id == R.id.layoutAuthChoice || 
-                              target.id == R.id.layoutRegistration || target.id == R.id.layoutLogin
-        findViewById<View>(R.id.layoutLanguageContainer).visibility = if (isWelcomingPage) View.VISIBLE else View.GONE
-
-        // Guide bottom button visibility
-        findViewById<View>(R.id.layoutBottomButtons).visibility = if (target.id == R.id.layoutGuide) View.VISIBLE else View.GONE
+        getSharedPreferences("settings_prefs", Context.MODE_PRIVATE).edit().putInt("last_onboarding_page", target.id).apply()
     }
 
-    private fun showLoading(show: Boolean, text: String? = null) {
-        val overlay = findViewById<View>(R.id.layoutLoadingOverlay)
-        overlay.visibility = if (show) View.VISIBLE else View.GONE
+    private fun showLoading(show: Boolean) {
+        findViewById<View>(R.id.layoutLoadingOverlay).visibility = if (show) View.VISIBLE else View.GONE
     }
 
-    private fun clearLocalData() {
-        val prefsToClear = listOf("user_prefs", "settings_prefs", "habit_prefs", "achievement_prefs")
-        prefsToClear.forEach { getSharedPreferences(it, Context.MODE_PRIVATE).edit().clear().commit() }
-        try { 
-            AppDatabase.closeInstance()
-            deleteDatabase("habit_app_database")
-        } catch (e: Exception) { }
+    private fun handleGuestLogin() {
+        saveLocalAndGo("Guest", "guest@hibts.app", "Male", 0L, "Other", "👤")
     }
 
     private fun handleEmailRegister(etE: EditText, etP: EditText, etN: EditText, rbM: RadioButton, sp: Spinner, cb: CheckBox) {
-        val email = etE.text.toString().trim()
-        val pass = etP.text.toString().trim()
-        val name = etN.text.toString().trim()
-        
-        var hasError = false
-        if (email.isEmpty()) { etE.error = getString(R.string.error_empty_field); hasError = true }
-        if (pass.isEmpty()) { etP.error = getString(R.string.error_empty_field); hasError = true }
-        if (name.isEmpty()) { etN.error = getString(R.string.error_empty_field); hasError = true }
-        if (hasError) return
-
-        if (selectedBirthdate == null) { Toast.makeText(this, R.string.onboarding_age_hint, Toast.LENGTH_SHORT).show(); return }
-        if (!cb.isChecked) { Toast.makeText(this, R.string.error_accept_terms, Toast.LENGTH_SHORT).show(); return }
-
-        showLoading(true, getString(R.string.register))
-
-        lifecycleScope.launch {
-            auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    user?.sendEmailVerification()
-                    val profile = hashMapOf(
-                        "email" to email, "name" to name, "birthdate" to selectedBirthdate,
-                        "gender" to (if (rbM.isChecked) "Male" else "Female"),
-                        "purpose" to sp.selectedItem.toString(), "avatar" to selectedAvatarEmoji
-                    )
-                    db.collection("users").document(user!!.uid).set(profile)
-                        .addOnSuccessListener {
-                            showLoading(false)
-                            switchPage(findViewById(R.id.layoutVerification))
-                            findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verification_sent, email)
-                        }
-                        .addOnFailureListener {
-                            showLoading(false)
-                            Toast.makeText(this@OnboardingActivity, "Profile save failed", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
+        val email = etE.text.toString().trim(); val pass = etP.text.toString().trim(); val name = etN.text.toString().trim()
+        if (email.isEmpty() || pass.isEmpty() || name.isEmpty() || selectedBirthdate == null || !cb.isChecked) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show(); return
+        }
+        showLoading(true)
+        auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val user = auth.currentUser
+                user?.sendEmailVerification()
+                val profile = hashMapOf("name" to name, "gender" to (if (rbM.isChecked) "Male" else "Female"), "birthdate" to selectedBirthdate)
+                db.collection("users").document(user!!.uid).set(profile).addOnSuccessListener {
+                    switchPage(findViewById(R.id.layoutVerification))
+                    findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verification_sent, email)
                     showLoading(false)
-                    Toast.makeText(this@OnboardingActivity, task.exception?.localizedMessage, Toast.LENGTH_LONG).show()
                 }
+            } else {
+                showLoading(false)
+                Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
             }
         }
     }
 
     private fun handleEmailLogin(etE: EditText, etP: EditText) {
-        val email = etE.text.toString().trim()
-        val pass = etP.text.toString().trim()
-        
-        var hasError = false
-        if (email.isEmpty()) { etE.error = getString(R.string.error_empty_field); hasError = true }
-        if (pass.isEmpty()) { etP.error = getString(R.string.error_empty_field); hasError = true }
-        if (hasError) return
-
-        showLoading(true, getString(R.string.login))
-
+        val email = etE.text.toString().trim(); val pass = etP.text.toString().trim()
+        if (email.isEmpty() || pass.isEmpty()) return
+        showLoading(true)
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
-                if (user?.isEmailVerified == true) {
-                    lifecycleScope.launch {
-                        fetchProfileAndGo(user.uid, user.email ?: "")
-                    }
-                } else {
+                if (user?.isEmailVerified == true) fetchProfileAndGo(user.uid, email)
+                else {
                     showLoading(false)
                     switchPage(findViewById(R.id.layoutVerification))
                     findViewById<TextView>(R.id.tvVerifyDesc).text = getString(R.string.verify_reminder, user?.email ?: "")
                 }
             } else {
                 showLoading(false)
-                Toast.makeText(this, task.exception?.localizedMessage, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
             }
-        }
-    }
-
-    private fun handleGuestLogin() {
-        showLoading(true, getString(R.string.guest_login))
-        lifecycleScope.launch {
-            try { FirebaseAuth.getInstance().signOut() } catch (e: Exception) {}
-            saveLocalAndGo(getString(R.string.guest_login), "guest@hibts.app", "Male", 0L, getString(R.string.app_purpose), "👤")
         }
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
-        showLoading(true, getString(R.string.sign_in_google))
+        showLoading(true)
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser!!
-                lifecycleScope.launch {
-                    db.collection("users").document(user.uid).get()
-                        .addOnSuccessListener { doc ->
-                            if (doc.exists()) {
-                                fetchProfileAndGo(user.uid, user.email ?: "")
-                            } else {
-                                val profile = hashMapOf(
-                                    "email" to user.email, "name" to user.displayName, "birthdate" to 0L,
-                                    "gender" to "Male", "purpose" to "", "avatar" to "👤"
-                                )
-                                db.collection("users").document(user.uid).set(profile).addOnSuccessListener {
-                                    saveLocalAndGo(user.displayName ?: "User", user.email ?: "", "Male", 0L, "", "👤")
-                                }.addOnFailureListener { showLoading(false) }
-                            }
+                db.collection("users").document(user.uid).get().addOnSuccessListener { doc ->
+                    if (doc.exists()) fetchProfileAndGo(user.uid, user.email ?: "")
+                    else {
+                        val profile = hashMapOf("name" to user.displayName, "gender" to "Male", "birthdate" to 0L)
+                        db.collection("users").document(user.uid).set(profile).addOnSuccessListener {
+                            saveLocalAndGo(user.displayName ?: "User", user.email ?: "", "Male", 0L, "Other", "👤")
                         }
-                        .addOnFailureListener {
-                            showLoading(false)
-                            Toast.makeText(this@OnboardingActivity, "Profile fetch failed", Toast.LENGTH_SHORT).show()
-                        }
+                    }
                 }
-            } else {
-                showLoading(false)
-                Toast.makeText(this, "Firebase Auth failed", Toast.LENGTH_SHORT).show()
-            }
+            } else showLoading(false)
         }
     }
 
     private fun fetchProfileAndGo(uid: String, email: String) {
         showLoading(true)
         db.collection("users").document(uid).get().addOnSuccessListener { doc ->
-            if (doc.exists()) {
-                FirebaseFirestore.getInstance().collection("backups").document(uid).get()
-                    .addOnSuccessListener { backupDoc ->
-                        if (backupDoc.exists()) {
-                            Toast.makeText(this, "تم استعادة البيانات بنجاح ✅", Toast.LENGTH_SHORT).show()
-                        }
-                        saveLocalAndGo(doc.getString("name") ?: "User", email, doc.getString("gender") ?: "Male", 
-                            doc.getLong("birthdate") ?: 0L, doc.getString("purpose") ?: "", doc.getString("avatar") ?: "👤")
-                    }
-                    .addOnFailureListener {
-                        saveLocalAndGo(doc.getString("name") ?: "User", email, doc.getString("gender") ?: "Male", 
-                            doc.getLong("birthdate") ?: 0L, doc.getString("purpose") ?: "", doc.getString("avatar") ?: "👤")
-                    }
-            } else {
-                showLoading(false)
-                Toast.makeText(this, "No Profile Found", Toast.LENGTH_SHORT).show()
-                switchPage(findViewById(R.id.layoutRegistration))
-            }
+            saveLocalAndGo(doc.getString("name") ?: "User", email, doc.getString("gender") ?: "Male", 
+                doc.getLong("birthdate") ?: 0L, doc.getString("purpose") ?: "Other", doc.getString("avatar") ?: "👤")
         }.addOnFailureListener { showLoading(false) }
     }
 
     private fun saveLocalAndGo(name: String, email: String, gender: String, birthdate: Long, purpose: String, avatar: String) {
         showLoading(false)
-        val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
+        getSharedPreferences("user_prefs", Context.MODE_PRIVATE).edit().apply {
             putString("user_name", name); putString("user_email", email); putLong("user_birthdate", birthdate)
             putString("user_gender", gender); putString("user_purpose", purpose); putString("user_avatar", avatar)
             putBoolean("onboarding_done", true); apply()
         }
-        applyUserTheme(gender)
         startActivity(Intent(this, MainActivity::class.java)); finish()
     }
 
-    private fun showDatePicker(btn: Button) {
-        try {
-            val cal = Calendar.getInstance()
-            val year = cal.get(Calendar.YEAR)
-            val month = cal.get(Calendar.MONTH)
-            val day = cal.get(Calendar.DAY_OF_MONTH)
-
-            // Extremely robust DatePickerDialog with manual variable setting
-            val dpd = DatePickerDialog(this, { _, y, m, d ->
-                val selected = Calendar.getInstance()
-                selected.set(y, m, d)
-                
-                val age = year - y
-                if (age in 3..100) {
-                    selectedBirthdate = selected.timeInMillis
-                    val dateStr = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
-                    btn.text = dateStr
-                    Toast.makeText(this, "تم اختيار التاريخ: $dateStr", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, getString(R.string.age_error), Toast.LENGTH_SHORT).show()
-                }
-            }, year - 20, month, day)
-            
-            dpd.setTitle(getString(R.string.onboarding_age_hint))
-            dpd.show()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // Last resort: simple EditText if Dialog fails
-            val input = EditText(this)
-            input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            AlertDialog.Builder(this)
-                .setTitle("أدخل العمر (سنوات)")
-                .setView(input)
-                .setPositiveButton("موافق") { _, _ ->
-                    val ageStr = input.text.toString()
-                    if (ageStr.isNotEmpty()) {
-                        val ageInt = ageStr.toInt()
-                        val dummyCal = Calendar.getInstance()
-                        dummyCal.add(Calendar.YEAR, -ageInt)
-                        selectedBirthdate = dummyCal.timeInMillis
-                        btn.text = "العمر: $ageInt"
-                    }
-                }.show()
-        }
-    }
-
-    private fun setupPurposeSpinner(spinner: Spinner) {
-        val purposes = listOf(getString(R.string.purpose_work), getString(R.string.purpose_sport), getString(R.string.purpose_health), getString(R.string.purpose_learning), getString(R.string.purpose_other))
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, purposes)
-    }
-
     private fun updateAvatarUI() {
-        val ivP = findViewById<ImageView>(R.id.ivProfilePic)
-        val tvA = findViewById<TextView>(R.id.tvAvatarEmoji)
+        val ivP = findViewById<ImageView>(R.id.ivProfilePic); val tvA = findViewById<TextView>(R.id.tvAvatarEmoji)
         if (selectedImageUri != null) {
             ivP.setImageURI(Uri.parse(selectedImageUri))
             ivP.visibility = View.VISIBLE; tvA.visibility = View.GONE
-        } else {
-            ivP.visibility = View.GONE; tvA.text = selectedAvatarEmoji; tvA.visibility = View.VISIBLE
         }
-    }
-
-    private fun showAvatarEmojiDialog() {
-        val avatars = listOf("👤", "🐱", "🐶", "🦊", "🦁", "🤖", "🚀", "🌈")
-        AlertDialog.Builder(this, R.style.PurpleAlertDialog).setItems(avatars.toTypedArray()) { _, which ->
-            selectedAvatarEmoji = avatars[which]; selectedImageUri = null; updateAvatarUI()
-        }.show()
     }
 
     private fun updateLocale(langCode: String) {
         val locale = Locale(langCode); Locale.setDefault(locale)
         val config = resources.configuration; config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics); recreate()
-    }
-
-    private fun applyUserTheme(gender: String?) {
-        setTheme(if (gender == "Female") R.style.Theme_HabitApp_Female else R.style.Theme_HabitApp_Male)
     }
 }

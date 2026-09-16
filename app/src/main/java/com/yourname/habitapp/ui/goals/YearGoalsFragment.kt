@@ -256,7 +256,14 @@ class YearGoalsFragment : Fragment() {
             .setMessage(getString(R.string.delete_goal_msg))
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 lifecycleScope.launch {
-                    db.yearGoalDao().deleteGoal(goal)
+                    try {
+                        val freshGoal = db.yearGoalDao().getGoalById(goal.id)
+                        freshGoal?.let { db.yearGoalDao().deleteGoal(it) }
+                        Toast.makeText(requireContext(), "تم حذف الهدف بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(requireContext(), "حدث خطأ أثناء الحذف", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .setNegativeButton(getString(R.string.no), null)
