@@ -199,24 +199,28 @@ class TodoFragment : Fragment() {
         val settingsPrefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         val themeName = settingsPrefs.getString("app_theme", "Male")
         val emojis = when(themeName) {
-            "Cats" -> "🐱🐾🐈"
-            "Dogs" -> "🐶🦴🐕"
-            "Travel" -> "✈️🌍🗼"
-            "Nature" -> "🌿🌻🌲"
-            "Ocean" -> "🌊🐬⛵"
-            "Sunset" -> "🌅🌇⭐"
-            "Space" -> "🚀⭐🪐"
-            "Coffee" -> "☕🥐🍩"
-            "Tech" -> "💻📱⌨️"
-            "Vintage" -> "🕰️🎞️⏳"
-            "Gold" -> "👑💰✨"
+            "Cats" -> "🐱🐾🐈🧶🐟"
+            "Dogs" -> "🐶🦴🐕🎾🐾"
+            "Travel" -> "✈️🌍🗼🚢🗺️"
+            "Nature" -> "🌿🌻🌲🌳🌼"
+            "Ocean" -> "🌊🐬⛵🐙🐚"
+            "Sunset" -> "🌅🌇⭐🌙🔥"
+            "Space" -> "🚀⭐🪐🛸🛰️"
+            "Coffee" -> "☕🥐🍩🍪🍰"
+            "Tech" -> "💻📱⌨️🖱️🕹️"
+            "Vintage" -> "🕰️🎞️📻⏳📜"
+            "Gold" -> "👑💰💎✨🏆"
+            "Pastel" -> "🌸🍭🎀🦄🎨"
+            "Classic" -> "💼⚡🎯🏆👔"
             else -> ""
         }
         val bgDecorations = view.findViewById<TextView>(R.id.tvBgDecorationsTodo)
         if (bgDecorations != null && emojis.isNotEmpty()) {
-            val repeated = (1..100).joinToString(" ") { emojis }
+            val repeated = (1..300).joinToString(" ") { emojis }
             bgDecorations.text = repeated
-            bgDecorations.textSize = 10f
+            bgDecorations.textSize = 9f
+            bgDecorations.alpha = 0.06f
+            bgDecorations.setLineSpacing(25f, 1f)
         } else {
             bgDecorations?.text = ""
         }

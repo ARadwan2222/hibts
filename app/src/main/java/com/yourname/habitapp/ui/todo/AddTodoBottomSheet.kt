@@ -133,9 +133,13 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
         }
 
         btnSave.setOnClickListener {
+            if (!isAdded) return@setOnClickListener
             val title = etTitle.text.toString().trim()
             val notes = etNotes.text.toString().trim()
-            if (title.isEmpty()) { etTitle.error = getString(R.string.error_empty_field); return@setOnClickListener }
+            if (title.isEmpty()) { 
+                etTitle.error = getString(R.string.error_empty_field)
+                return@setOnClickListener 
+            }
 
             val wordCount = title.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
             if (wordCount > 4) {
@@ -151,12 +155,13 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
 
             lifecycleScope.launch {
                 try {
-                    val db = AppDatabase.getInstance(requireContext())
+                    val context = context ?: return@launch
+                    val db = AppDatabase.getInstance(context)
                     val allTodos = db.todoDao().getAllTodosSync()
                     val isDuplicate = allTodos.any { it.title.trim().equals(title, ignoreCase = true) && it.id != editingTodoId }
                     
                     if (isDuplicate) {
-                        Toast.makeText(requireContext(), "هذه المهمة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "هذه المهمة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
 
@@ -180,7 +185,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                         updated?.let { 
                             db.todoDao().update(it)
                             if (it.startTime != null && it.reminderStart) {
-                                TodoReminderScheduler.scheduleTodoReminders(requireContext(), it)
+                                TodoReminderScheduler.scheduleTodoReminders(context, it)
                             }
                         }
                     } else {
@@ -201,7 +206,7 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                         )
                         val id = db.todoDao().insert(todo)
                         if (selectedStartTime != null && (cbReminderStart?.isChecked == true)) {
-                            TodoReminderScheduler.scheduleTodoReminders(requireContext(), todo.copy(id = id.toInt()))
+                            TodoReminderScheduler.scheduleTodoReminders(context, todo.copy(id = id.toInt()))
                         }
                     }
                     dismiss()

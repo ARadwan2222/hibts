@@ -75,8 +75,26 @@
     <string name="no_habits_today">No habits today, add a new one!</string>
     <string name="today_habits_tasks">Today\'s Habits &amp; Tasks</string>
     <string name="weekly_habits">Weekly Habits</string>
-    <string name="help_center">Help Center</string>
-    <string name="help_title">What is the difference?</string>
+    <string name="help_page1_title">1. Getting Started</string>
+    <string name="help_page1_content">Welcome to hibts! Your main dashboard is divided into three sections:\n\n• <b>Focus Card:</b> Shows your current or next task with a live timer.\n• <b>Today\'s Tasks:</b> Your one-time to-do list for the day.\n• <b>Daily Habits:</b> Recurring actions to build your lifestyle.</string>
+
+    <string name="help_page2_title">2. Managing Tasks</string>
+    <string name="help_page2_content">Tasks are specific actions. When you add a task, you can set:\n\n• <b>Priority:</b> High (Pink), Medium (Purple), or Low (Blue).\n• <b>Time:</b> Set a start and end time to enable the Focus timer.\n• <b>Reminders:</b> Receive notifications before and after the task.</string>
+
+    <string name="help_page3_title">3. Building Habits</string>
+    <string name="help_page3_content">Habits are about consistency. Use the (+) button to create:\n\n• <b>Daily Habits:</b> Reset every midnight.\n• <b>Weekly/Monthly:</b> Only appear on specific days you choose.\n• <b>Streaks:</b> Complete habits daily to increase your fire streak 🔥!</string>
+
+    <string name="help_page4_title">4. Yearly Goals</string>
+    <string name="help_page4_content">Big dreams require planning. In the Goals tab:\n\n• <b>Break it down:</b> Add "Steps" to each goal.\n• <b>Timeline:</b> Assign goals to specific years or quarters (Q1-Q4).\n• <b>Progress:</b> See your percentage grow as you complete steps.</string>
+
+    <string name="help_page5_title">5. Rewards &amp; XP</string>
+    <string name="help_page5_content">Stay motivated by earning rewards:\n\n• <b>XP Points:</b> Earn points for every completed task or habit.\n• <b>Levels:</b> Level up from "Beginner" to "Legend".\n• <b>Achievements:</b> Unlock special trophies for reaching milestones.</string>
+
+    <string name="help_page6_title">6. Customization &amp; Safety</string>
+    <string name="help_page6_content">Make hibts yours:\n\n• <b>Themes:</b> 15 unique themes with background doodle patterns.\n• <b>Custom Tones:</b> Set unique sounds for different events.\n• <b>Data Safety:</b> Use the "Backup" feature regularly to keep your data safe.</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="finish">Finish</string>
     <string name="tasks_list">📝 Current Tasks</string>
     <string name="daily_habits_title">🔄 Daily Habits</string>
     <string name="long_term_duties">Long-term Duties</string>
@@ -93,7 +111,17 @@
     <string name="logout_confirm">Are you sure you want to logout? Your local preferences will be reset.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="terms_of_use_text"><b>hibts Global Terms of Use &amp; Privacy Policy (GDPR &amp; International Standards)</b>\n\n1. <b>Acceptance:</b> By using hibts, you agree to these terms. hibts is designed to help you track habits and tasks personally.\n\n2. <b>Data Privacy (GDPR):</b> Your privacy is our priority. For users in the EU and globally, all habit and task data is stored <b>locally on your device</b> by default. We do not have access to your private lists unless you manually perform a backup.\n\n3. <b>Data Ownership:</b> You own 100% of your data. You can export it using the Backup feature or delete it permanently using \"Delete All App Data\".\n\n4. <b>User Eligibility:</b> The app is suitable for users aged 13 and above (16+ in EU/EEA under GDPR).\n\n5. <b>No Medical Advice:</b> hibts is a productivity tool. It does not provide medical, mental health, or fitness advice. Consult a professional for such needs.\n\n6. <b>Limitation of Liability:</b> We strive for 100% stability, but we are not liable for data loss due to device failure or accidental deletion. Please use the Backup feature regularly.\n\n7. <b>Termination:</b> You may stop using the service at any time by deleting the app. Deleting the app also deletes local data.</string>
+    <string name="terms_of_use_text"><b>hibts Global Terms of Use &amp; Privacy Policy</b>\n\n
+        1. <b>Acceptance of Terms:</b> By accessing or using hibts, you agree to be bound by these Terms of Use and our Privacy approach. If you do not agree, please do not use the application.\n\n
+        2. <b>Privacy &amp; Data Ownership:</b> Your privacy is our top priority. For all users, including those in the EU (GDPR compliant), all your habit and task data is stored <b>locally on your device</b> by default. We do not have access to your private data unless you explicitly choose to perform a manual backup to our secure cloud storage.\n\n
+        3. <b>User Eligibility:</b> You must be at least 13 years old to use this service. EU/EEA residents must be at least 16 years old to comply with GDPR data processing regulations.\n\n
+        4. <b>Conduct &amp; Usage:</b> You agree to use hibts only for lawful productivity purposes. You are responsible for maintaining the confidentiality of your account credentials.\n\n
+        5. <b>No Medical Advice:</b> hibts is a productivity and self-improvement tool. It is <b>not</b> a medical device. The content and features provided are for informational purposes only and should not replace professional medical or mental health advice.\n\n
+        6. <b>Cloud Sync &amp; Backups:</b> If you enable cloud backups, your data is encrypted during transit and at rest. You can delete your cloud data at any time via the "Delete All App Data" option.\n\n
+        7. <b>Limitation of Liability:</b> We strive for 100% application stability. However, we are not liable for any data loss resulting from device failure, accidental deletion, or service interruptions.\n\n
+        8. <b>Intellectual Property:</b> The hibts name, logo, and all visual designs are the exclusive property of our development team. You may not reproduce or distribute any part of the app without written consent.\n\n
+        9. <b>Termination:</b> We reserve the right to suspend or terminate access to our cloud services for any user who violates these terms.\n\n
+        10. <b>Contact:</b> For inquiries regarding these terms or your data rights, please contact us through the Support section.</string>
     <string name="i_agree_to_terms">I agree to the Terms of Use</string>
     <string name="error_empty_field">This field cannot be empty</string>
     <string name="error_accept_terms">Please accept the Terms of Use to proceed</string>
