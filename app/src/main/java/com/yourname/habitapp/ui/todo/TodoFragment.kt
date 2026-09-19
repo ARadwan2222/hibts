@@ -322,13 +322,18 @@ class TodoFragment : Fragment() {
     }
 
     private fun editItem(item: Any) {
-        if (item is TodoItem) {
-            AddTodoBottomSheet.newInstance(selectedDate.timeInMillis, item.id)
-                .show(parentFragmentManager, "EditTodo")
-        } else if (item is Habit) {
-            AddHabitBottomSheet.newInstance(item.id, item.frequency, item.frequency != HabitFrequency.DAILY)
-                .show(parentFragmentManager, "EditHabit")
-        }
+        val manager = parentFragmentManager
+        if (!isAdded || manager.isStateSaved) return
+        
+        try {
+            if (item is TodoItem) {
+                AddTodoBottomSheet.newInstance(selectedDate.timeInMillis, item.id)
+                    .show(manager, "EditTodo")
+            } else if (item is Habit) {
+                AddHabitBottomSheet.newInstance(item.id, item.frequency, item.frequency != HabitFrequency.DAILY)
+                    .show(manager, "EditHabit")
+            }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun showNotes(item: Any) {

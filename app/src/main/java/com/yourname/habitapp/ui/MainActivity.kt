@@ -100,38 +100,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onFabAddClicked() {
-        if (isFinishing || isDestroyed) return
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
         
         val now = System.currentTimeMillis()
         if (now - lastClickTime < 500) return
         lastClickTime = now
 
-        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-        
-        if (fragment is YearGoalsFragment) {
-            AddGoalBottomSheet.newInstance().show(supportFragmentManager, "AddGoal")
-        } else {
-            val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
-            showModernChoiceSheet(dateMillis)
+        try {
+            val manager = supportFragmentManager
+            val fragment = manager.findFragmentById(R.id.fragmentContainer)
+            
+            if (fragment is YearGoalsFragment) {
+                AddGoalBottomSheet.newInstance().show(manager, "AddGoal")
+            } else {
+                val dateMillis = (fragment as? TodoFragment)?.getSelectedDateMillis() ?: System.currentTimeMillis()
+                showModernChoiceSheet(dateMillis)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     private fun showModernChoiceSheet(dateMillis: Long) {
-        val dialog = BottomSheetDialog(this, R.style.Theme_HabitApp) // Use app theme for consistency
-        val view = layoutInflater.inflate(R.layout.dialog_add_choice, null)
-        dialog.setContentView(view)
+        if (isFinishing || isDestroyed || supportFragmentManager.isStateSaved) return
+        
+        try {
+            val dialog = BottomSheetDialog(this, R.style.Theme_HabitApp)
+            val view = layoutInflater.inflate(R.layout.dialog_add_choice, null)
+            dialog.setContentView(view)
 
-        view.findViewById<View>(R.id.btnChoiceTask).setOnClickListener {
-            dialog.dismiss()
-            AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
-        }
+            view.findViewById<View>(R.id.btnChoiceTask).setOnClickListener {
+                dialog.dismiss()
+                if (!supportFragmentManager.isStateSaved) {
+                    AddTodoBottomSheet.newInstance(dateMillis).show(supportFragmentManager, "AddTodo")
+                }
+            }
 
-        view.findViewById<View>(R.id.btnChoiceHabit).setOnClickListener {
-            dialog.dismiss()
-            AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true).show(supportFragmentManager, "AddHabit")
-        }
+            view.findViewById<View>(R.id.btnChoiceHabit).setOnClickListener {
+                dialog.dismiss()
+                if (!supportFragmentManager.isStateSaved) {
+                    AddHabitBottomSheet.newInstance(targetDate = dateMillis, showFreqBtn = true).show(supportFragmentManager, "AddHabit")
+                }
+            }
 
-        dialog.show()
+            dialog.show()
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun replaceFragment(fragment: Fragment) {
