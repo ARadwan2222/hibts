@@ -190,6 +190,9 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
         }
 
         btnSave?.setOnClickListener {
+            if (!isAdded) return@setOnClickListener
+            val context = context ?: return@setOnClickListener
+            
             val name = etName?.text?.toString()?.trim() ?: ""
             val notes = etNotes?.text?.toString()?.trim() ?: ""
             if (name.isEmpty()) { 
@@ -203,9 +206,8 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            // Check if user selected the day for Weekly/Monthly
             if (selectedFrequency != HabitFrequency.DAILY && selectedSpecificDay == null) {
-                Toast.makeText(requireContext(), "يرجى اختيار اليوم المحدد أولاً!", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "يرجى اختيار اليوم المحدد أولاً!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
@@ -229,16 +231,15 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
 
             lifecycleScope.launch {
                 try {
-                    val dao = AppDatabase.getInstance(requireContext()).habitDao()
+                    val dao = AppDatabase.getInstance(context).habitDao()
                     
-                    // Optimization: Check duplication and save in IO thread
                     withContext(Dispatchers.IO) {
                         val allHabits = dao.getAllHabitsSync()
                         val isDuplicate = allHabits.any { it.name.trim().equals(name, ignoreCase = true) && it.id != (editingHabit?.id ?: -1) }
                         
                         if (isDuplicate) {
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), "هذه العادة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "هذه العادة موجودة بالفعل!", Toast.LENGTH_SHORT).show()
                             }
                             return@withContext
                         }
@@ -250,15 +251,15 @@ class AddHabitBottomSheet : BottomSheetDialogFragment() {
                         
                         if (editingHabit == null) {
                             val count = dao.getHabitCount()
-                            AchievementEngine.checkAndUnlock(requireContext(), "HABIT_ADDED", count)
+                            AchievementEngine.checkAndUnlock(context, "HABIT_ADDED", count)
                         }
                     }
                     
-                    Toast.makeText(requireContext(), "تم الحفظ بنجاح ✅", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "تم الحفظ بنجاح ✅", Toast.LENGTH_SHORT).show()
                     dismiss()
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(requireContext(), "حدث خطأ أثناء الحفظ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "حدث خطأ أثناء الحفظ", Toast.LENGTH_SHORT).show()
                 }
             }
         }
