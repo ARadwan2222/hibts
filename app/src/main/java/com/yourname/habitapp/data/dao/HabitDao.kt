@@ -49,6 +49,9 @@ interface HabitDao {
     @Delete
     suspend fun deleteHabit(habit: Habit)
 
+    @Query("DELETE FROM habits WHERE id = :id")
+    suspend fun deleteHabitById(id: Int)
+
     // إعادة تعيين الإتمام بناءً على التكرار
     @Query("UPDATE habits SET isCompletedToday = 0 WHERE frequency = 'DAILY'")
     suspend fun resetDailyHabits()

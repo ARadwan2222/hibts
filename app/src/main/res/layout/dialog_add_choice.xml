@@ -4,49 +4,49 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="28dp"
     android:background="@drawable/bg_floating_card">
 
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="45dp"
+        android:layout_height="5dp"
         android:layout_gravity="center_horizontal"
-        android:background="@color/gray_light"
-        android:layout_marginBottom="16dp" />
+        android:background="#E0E0E0"
+        android:layout_marginBottom="20dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_options_title"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
         android:textColor="?attr/colorPrimary"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="28dp" />
 
-    <!-- Modern Card: New Task -->
+    <!-- Choice Card: Task -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/btnChoiceTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="2dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#E0E0E0"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1.5dp"
+        app:strokeColor="#F0F0F0"
         android:clickable="true"
-        android:focusable="true"
-        app:rippleColor="?attr/colorPrimary">
+        android:focusable="true">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:padding="16dp">
+            android:padding="18dp"
+            android:background="#052196F3"> <!-- Very light blue hint -->
             <TextView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:text="📝"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 android:gravity="center"
                 android:background="@drawable/bg_item_circle"
                 android:backgroundTint="#E3F2FD" />
@@ -55,49 +55,50 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginStart="16dp">
+                android:layout_marginStart="18dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/new_task"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_dark" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add a one-time achievement"
+                    android:text="Achieve a specific goal today"
                     android:textSize="12sp"
-                    android:textColor="@color/text_gray" />
+                    android:textColor="@color/text_gray"
+                    android:layout_marginTop="2dp" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <View android:layout_width="match_parent" android:layout_height="12dp" />
+    <View android:layout_width="match_parent" android:layout_height="16dp" />
 
-    <!-- Modern Card: New Habit -->
+    <!-- Choice Card: Habit -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/btnChoiceHabit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="2dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#E0E0E0"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1.5dp"
+        app:strokeColor="#F0F0F0"
         android:clickable="true"
-        android:focusable="true"
-        app:rippleColor="?attr/colorPrimary">
+        android:focusable="true">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:padding="16dp">
+            android:padding="18dp"
+            android:background="#056C5CE7"> <!-- Very light purple hint -->
             <TextView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:text="🔄"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 android:gravity="center"
                 android:background="@drawable/bg_item_circle"
                 android:backgroundTint="#F3E5F5" />
@@ -106,20 +107,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginStart="16dp">
+                android:layout_marginStart="18dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/new_habit"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_dark" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Build a repetitive lifestyle"
+                    android:text="Build a lasting lifestyle routine"
                     android:textSize="12sp"
-                    android:textColor="@color/text_gray" />
+                    android:textColor="@color/text_gray"
+                    android:layout_marginTop="2dp" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

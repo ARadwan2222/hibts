@@ -30,6 +30,7 @@ object NotificationHelper {
         manager.createNotificationChannel(channel)
     }
 
+    // ONLY Todo/Tasks trigger audio sound alerts
     fun showTodoStartNotification(context: Context, todoId: Int, title: String) {
         show(context, todoId * 10 + 1, getChannelId(context), "🚀 حان وقت المهمة!", title, todoId)
         startSoundService(context, todoId, "tone_start_task")
@@ -46,96 +47,110 @@ object NotificationHelper {
     }
 
     private fun startSoundService(context: Context, todoId: Int, toneKey: String) {
-        val settingsPrefs = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        
-        // Use "notifications" key (consistent with Profile settings)
-        if (!settingsPrefs.getBoolean("notifications", true)) return
+        try {
+            val settingsPrefs = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+            
+            // Use "notifications" key (consistent with Profile settings)
+            if (!settingsPrefs.getBoolean("notifications", true)) return
 
-        val customToneUriString = settingsPrefs.getString(toneKey, null)
-        val toneUri = if (customToneUriString != null) customToneUriString 
-                      else if (toneKey == "tone_start_task") android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString()
-                      else android.provider.Settings.System.DEFAULT_RINGTONE_URI.toString()
+            val customToneUriString = settingsPrefs.getString(toneKey, null)
+            val toneUri = if (customToneUriString != null) customToneUriString 
+                          else if (toneKey == "tone_start_task") android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString()
+                          else android.provider.Settings.System.DEFAULT_RINGTONE_URI.toString()
 
-        val intent = Intent(context, SoundService::class.java).apply {
-            action = "ACTION_PLAY"
-            putExtra("TODO_ID", todoId)
-            putExtra("TONE_URI", toneUri)
+            val intent = Intent(context, SoundService::class.java).apply {
+                action = "ACTION_PLAY"
+                putExtra("TODO_ID", todoId)
+                putExtra("TONE_URI", toneUri)
+            }
+            context.startService(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        context.startService(intent)
     }
 
     fun stopAllSounds(context: Context, todoId: Int = -1) {
-        val intent = Intent(context, SoundService::class.java).apply {
-            action = "ACTION_STOP"
-            putExtra("TODO_ID", todoId)
+        try {
+            val intent = Intent(context, SoundService::class.java).apply {
+                action = "ACTION_STOP"
+                putExtra("TODO_ID", todoId)
+            }
+            context.startService(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        context.startService(intent)
     }
 
     private fun show(context: Context, id: Int, channelId: String, title: String, message: String, todoId: Int) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        try {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            val pendingIntent = PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+            // DIRECT SERVICE CALL for Done
+            val doneIntent = Intent(context, SoundService::class.java).apply { 
+                action = "ACTION_DONE"
+                putExtra("NOTIFICATION_ID", id)
+                putExtra("TODO_ID", todoId)
+            }
+            val donePendingIntent = PendingIntent.getService(context, id + 10000, doneIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+            // DIRECT SERVICE CALL for Dismiss (Swipe)
+            val deleteIntent = Intent(context, SoundService::class.java).apply { 
+                action = "ACTION_STOP" 
+                putExtra("NOTIFICATION_ID", id)
+                putExtra("TODO_ID", todoId)
+            }
+            val deletePendingIntent = PendingIntent.getService(context, id + 20000, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .setFullScreenIntent(pendingIntent, true)
+                .setContentIntent(pendingIntent)
+                .setDeleteIntent(deletePendingIntent) 
+                .addAction(0, "تم", donePendingIntent)
+
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(id, builder.build())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        val pendingIntent = PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-        // DIRECT SERVICE CALL for Done
-        val doneIntent = Intent(context, SoundService::class.java).apply { 
-            action = "ACTION_DONE"
-            putExtra("NOTIFICATION_ID", id)
-            putExtra("TODO_ID", todoId)
-        }
-        val donePendingIntent = PendingIntent.getService(context, id + 10000, doneIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-        // DIRECT SERVICE CALL for Dismiss (Swipe)
-        val deleteIntent = Intent(context, SoundService::class.java).apply { 
-            action = "ACTION_STOP" 
-            putExtra("NOTIFICATION_ID", id)
-            putExtra("TODO_ID", todoId)
-        }
-        val deletePendingIntent = PendingIntent.getService(context, id + 20000, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setAutoCancel(true)
-            .setFullScreenIntent(pendingIntent, true)
-            .setContentIntent(pendingIntent)
-            .setDeleteIntent(deletePendingIntent) 
-            .addAction(0, "تم", donePendingIntent)
-
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(id, builder.build())
     }
 
-    // Placeholders with actual tone support
+    // Habits MUST NOT play audio/sound alerts
     fun showHabitCompleteNotification(context: Context, name: String, streak: Int) {
         show(context, 200, getChannelId(context), "🔥 عادة مكتملة!", "أحسنت! واصل الاستمرار في $name", -1)
-        startSoundService(context, -1, "tone_habit")
+        // No sound service start for habits
     }
 
     fun showAchievementNotification(context: Context, title: String, info: String) {
         show(context, 300, getChannelId(context), "🏆 إنجاز جديد!", "$title: $info", -1)
-        startSoundService(context, -1, "tone_achievement")
     }
 
     fun showBirthdayNotification(context: Context) {
         show(context, 400, getChannelId(context), "🎂 عيد ميلاد سعيد!", "نتمنى لك عاماً مليئاً بالإنجازات", -1)
-        startSoundService(context, -1, "tone_birthday")
     }
 
     fun showYearGoalNotification(context: Context, title: String) {
         show(context, 500, getChannelId(context), "🎯 تذكير بالهدف", "لا تنسى هدفك السنوي: $title", -1)
-        startSoundService(context, -1, "tone_year_goal")
     }
 
     fun showStreakMilestoneNotification(c: Context, n: String, s: Int) {}
     fun showDailyReminderNotification(c: Context, count: Int) {}
+    
     fun cancelNotification(context: Context, id: Int) {
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(id)
-        stopAllSounds(context)
+        try {
+            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(id)
+            stopAllSounds(context)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

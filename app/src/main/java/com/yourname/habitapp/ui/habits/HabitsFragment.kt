@@ -339,26 +339,25 @@ class HabitsFragment : Fragment() {
     }
 
     private fun showDeleteConfirmation(item: Any) {
+        val ctx = context ?: return
         val title = if (item is TodoItem) getString(R.string.delete_task_title) else getString(R.string.delete_habit_title)
         val message = if (item is TodoItem) getString(R.string.delete_task_msg) else getString(R.string.delete_habit_msg)
         
-        AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+        AlertDialog.Builder(ctx, R.style.PurpleAlertDialog)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(getString(R.string.delete_confirm_title)) { _, _ ->
                 lifecycleScope.launch {
                     try {
+                        val currentCtx = context ?: return@launch
                         if (item is TodoItem) {
-                            db.todoDao().delete(item)
+                            db.todoDao().deleteById(item.id)
                         } else if (item is Habit) {
-                            // Fetch fresh instance to ensure correct ID for deletion
-                            val freshHabit = db.habitDao().getHabitById(item.id)
-                            freshHabit?.let { db.habitDao().deleteHabit(it) }
+                            db.habitDao().deleteHabitById(item.id)
                         }
-                        Toast.makeText(requireContext(), "تم الحذف بنجاح ✅", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(currentCtx, "تم الحذف بنجاح ✅", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        Toast.makeText(requireContext(), "خطأ أثناء الحذف", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -475,12 +474,17 @@ class HabitsFragment : Fragment() {
 
     private fun onHabitCompleted(habit: Habit) {
         lifecycleScope.launch {
-            val newC = !habit.isCompletedToday
-            val newS = if (newC) habit.streak + 1 else Math.max(0, habit.streak - 1)
-            val timestamp = if (newC) System.currentTimeMillis() else null
-            db.habitDao().updateHabitStreak(habit.id, newC, newS, Math.max(habit.longestStreak, newS), timestamp)
-            if (newC) {
-                com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), habit.name.hashCode())
+            try {
+                val ctx = context ?: return@launch
+                val newC = !habit.isCompletedToday
+                val newS = if (newC) habit.streak + 1 else (habit.streak - 1).coerceAtLeast(0)
+                val timestamp = if (newC) System.currentTimeMillis() else null
+                db.habitDao().updateHabitStreak(habit.id, newC, newS, Math.max(habit.longestStreak, newS), timestamp)
+                if (newC) {
+                    com.yourname.habitapp.utils.NotificationHelper.cancelNotification(ctx, habit.name.hashCode())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

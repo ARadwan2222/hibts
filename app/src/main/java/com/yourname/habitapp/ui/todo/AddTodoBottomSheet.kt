@@ -9,13 +9,11 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.yourname.habitapp.R
 import com.yourname.habitapp.data.AppDatabase
 import com.yourname.habitapp.data.models.Priority
 import com.yourname.habitapp.data.models.TodoItem
-import com.yourname.habitapp.utils.TaskTemplates
 import com.yourname.habitapp.utils.TodoReminderScheduler
 import kotlinx.coroutines.launch
 import java.util.*
@@ -54,39 +52,34 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val etTitle             = view.findViewById<EditText>(R.id.etTodoTitle)
-        val chipGroupPri        = view.findViewById<ChipGroup>(R.id.chipGroupPriority)
-        val btnStartTime        = view.findViewById<Button>(R.id.btnStartTime)
-        val btnEndTime          = view.findViewById<Button>(R.id.btnEndTime)
-        val btnDate             = view.findViewById<Button>(R.id.btnDate)
-        val btnSave             = view.findViewById<Button>(R.id.btnSaveTodo)
-        val spinnerCat          = view.findViewById<Spinner>(R.id.spinnerCategory)
-        val chipTemplates       = view.findViewById<ChipGroup>(R.id.chipGroupTemplates)
-        val btnToggleSugg       = view.findViewById<ImageButton>(R.id.btnToggleSuggestions)
-        val cbReminderStart     = view.findViewById<CheckBox>(R.id.switchReminderStart)
-        val cbReminderEnd       = view.findViewById<CheckBox>(R.id.switchReminderEnd)
+        val etTitle         = view.findViewById<EditText>(R.id.etTodoTitle)
+        val chipGroupPri    = view.findViewById<ChipGroup>(R.id.chipGroupPriority)
+        val btnStartTime    = view.findViewById<Button>(R.id.btnStartTime)
+        val btnEndTime      = view.findViewById<Button>(R.id.btnEndTime)
+        val btnDate         = view.findViewById<Button>(R.id.btnDate)
+        val btnSave         = view.findViewById<Button>(R.id.btnSaveTodo)
+        val cbReminderStart = view.findViewById<CheckBox>(R.id.switchReminderStart)
+        val cbReminderEnd   = view.findViewById<CheckBox>(R.id.switchReminderEnd)
+        val etNotes         = view.findViewById<EditText>(R.id.etTodoNotes)
 
-        // Hide unused templates UI
-        btnToggleSugg?.visibility = View.GONE
-        chipTemplates?.visibility = View.GONE
-        spinnerCat?.visibility = View.GONE
-
-        val etNotes             = view.findViewById<EditText>(R.id.etTodoNotes)
+        // Set default selection to Medium priority
+        chipGroupPri?.check(R.id.chipMedium)
 
         if (editingTodoId != -1) {
             lifecycleScope.launch {
                 try {
-                    val todo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(editingTodoId)
+                    val ctx = context ?: return@launch
+                    val todo = AppDatabase.getInstance(ctx).todoDao().getTodoById(editingTodoId)
                     todo?.let {
-                        etTitle.setText(it.title)
-                        etNotes.setText(it.notes)
+                        etTitle?.setText(it.title)
+                        etNotes?.setText(it.notes)
                         selectedStartTime = it.startTime
                         selectedEndTime = it.endTime
                         selectedDate.timeInMillis = it.targetDate
-                        btnSave.text = getString(R.string.update)
-                        btnDate.text = formatDate(it.targetDate)
-                        if (it.startTime != null) btnStartTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.start), formatTime(it.startTime))
-                        if (it.endTime != null) btnEndTime.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.end), formatTime(it.endTime))
+                        btnSave?.text = getString(R.string.update)
+                        btnDate?.text = formatDate(it.targetDate)
+                        if (it.startTime != null) btnStartTime?.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.start), formatTime(it.startTime))
+                        if (it.endTime != null) btnEndTime?.text = String.format(Locale.getDefault(), "%s: %s", getString(R.string.end), formatTime(it.endTime))
                         cbReminderStart?.isChecked = it.reminderStart
                         cbReminderEnd?.isChecked = it.reminderEnd
                         
@@ -99,51 +92,62 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                 } catch (e: Exception) { e.printStackTrace() }
             }
         } else {
-            btnDate.text = formatDate(selectedDate.timeInMillis)
+            btnDate?.text = formatDate(selectedDate.timeInMillis)
         }
 
-        // Optimization: Use a postDelayed or background loading for UI elements if needed
-        // For now, ensured that nothing heavy blocks the opening
+        // Date Picker Button
+        btnDate?.setOnClickListener {
+            try {
+                val ctx = context ?: return@setOnClickListener
+                DatePickerDialog(ctx, { _, y, m, d ->
+                    selectedDate.set(y, m, d)
+                    btnDate.text = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
 
-        btnDate.setOnClickListener {
-            DatePickerDialog(requireContext(), { _, y, m, d ->
-                selectedDate.set(y, m, d)
-                btnDate.text = String.format(Locale.getDefault(), "%02d/%02d/%d", d, m + 1, y)
-            }, selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH)).show()
+                    selectedStartTime?.let {
+                        val cal = Calendar.getInstance().apply { timeInMillis = it }
+                        selectedStartTime = getTimestamp(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE))
+                    }
+                    selectedEndTime?.let {
+                        val cal = Calendar.getInstance().apply { timeInMillis = it }
+                        selectedEndTime = getTimestamp(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE))
+                    }
+                }, selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH)).show()
+            } catch (e: Exception) { e.printStackTrace() }
         }
 
-        // Simple adapter setup for safety
-        try {
-            val categories = TaskTemplates.ALL_CATEGORIES
-            spinnerCat?.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories.map { "${it.icon} ${it.name}" })
-        } catch (e: Exception) { e.printStackTrace() }
-
-        btnStartTime.setOnClickListener {
-            showTimePicker { h, m ->
-                selectedStartTime = getTimestamp(h, m)
-                btnStartTime.text = String.format(Locale.getDefault(), getString(R.string.start) + ": %02d:%02d", h, m)
-            }
+        // Start Time Button
+        btnStartTime?.setOnClickListener {
+            try {
+                showTimePicker { h, m ->
+                    selectedStartTime = getTimestamp(h, m)
+                    btnStartTime.text = String.format(Locale.getDefault(), "%s: %02d:%02d", getString(R.string.start), h, m)
+                }
+            } catch (e: Exception) { e.printStackTrace() }
         }
 
-        btnEndTime.setOnClickListener {
-            showTimePicker { h, m ->
-                selectedEndTime = getTimestamp(h, m)
-                btnEndTime.text = String.format(Locale.getDefault(), getString(R.string.end) + ": %02d:%02d", h, m)
-            }
+        // End Time Button
+        btnEndTime?.setOnClickListener {
+            try {
+                showTimePicker { h, m ->
+                    selectedEndTime = getTimestamp(h, m)
+                    btnEndTime.text = String.format(Locale.getDefault(), "%s: %02d:%02d", getString(R.string.end), h, m)
+                }
+            } catch (e: Exception) { e.printStackTrace() }
         }
 
-        btnSave.setOnClickListener {
+        // Save / Submit Button
+        btnSave?.setOnClickListener {
             if (!isAdded) return@setOnClickListener
-            val title = etTitle.text.toString().trim()
-            val notes = etNotes.text.toString().trim()
+            val title = etTitle?.text?.toString()?.trim() ?: ""
+            val notes = etNotes?.text?.toString()?.trim() ?: ""
             if (title.isEmpty()) { 
-                etTitle.error = getString(R.string.error_empty_field)
+                etTitle?.error = getString(R.string.error_empty_field)
                 return@setOnClickListener 
             }
 
             val wordCount = title.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
             if (wordCount > 4) {
-                etTitle.error = getString(R.string.error_max_words)
+                etTitle?.error = getString(R.string.error_max_words)
                 return@setOnClickListener
             }
 
@@ -209,15 +213,20 @@ class AddTodoBottomSheet : BottomSheetDialogFragment() {
                             TodoReminderScheduler.scheduleTodoReminders(context, todo.copy(id = id.toInt()))
                         }
                     }
+                    Toast.makeText(context, "تم الحفظ بنجاح ✅", Toast.LENGTH_SHORT).show()
                     dismiss()
-                } catch (e: Exception) { e.printStackTrace() }
+                } catch (e: Exception) { 
+                    e.printStackTrace()
+                    context?.let { Toast.makeText(it, "حدث خطأ أثناء الحفظ", Toast.LENGTH_SHORT).show() }
+                }
             }
         }
     }
 
     private fun showTimePicker(onTime: (Int, Int) -> Unit) {
+        val ctx = context ?: return
         val cal = Calendar.getInstance()
-        TimePickerDialog(requireContext(), { _, h, m -> onTime(h, m) },
+        TimePickerDialog(ctx, { _, h, m -> onTime(h, m) },
             cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false).show()
     }
 

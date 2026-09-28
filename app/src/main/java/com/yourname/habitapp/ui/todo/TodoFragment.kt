@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,12 +61,12 @@ class TodoFragment : Fragment() {
         btnNotifications?.setOnClickListener {
             val isMuted = settingsPrefs.getBoolean("mute_notifications", false)
             val nextMute = !isMuted
-            settingsPrefs.edit().putBoolean("mute_notifications", nextMute).apply()
+            settingsPrefs.edit { putBoolean("mute_notifications", nextMute) }
             
             if (nextMute) com.yourname.habitapp.utils.NotificationHelper.stopAllSounds(requireContext())
             
             val msg = if (nextMute) "تم كتم التنبيهات 🔇" else "تم تفعيل التنبيهات 🔔"
-            android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             
             val bellIcon = if (nextMute) R.drawable.ic_notification_off else R.drawable.ic_notification
             (it as? ImageButton)?.setImageResource(bellIcon)
@@ -112,9 +113,7 @@ class TodoFragment : Fragment() {
                     viewHolder?.itemView?.let {
                         it.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
                         it.elevation = 40f
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                            it.foreground = android.graphics.drawable.ColorDrawable(0x4D000000) // 30% Darker
-                        }
+                        it.foreground = android.graphics.drawable.ColorDrawable(0x4D000000) // 30% Darker
                     }
                 }
             }
@@ -125,9 +124,7 @@ class TodoFragment : Fragment() {
                     it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
                     it.elevation = 2f
                     it.isPressed = false
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        it.foreground = null
-                    }
+                    it.foreground = null
                 }
 
                 if (fromPosition != -1 && toPosition != -1 && fromPosition != toPosition) {
@@ -384,34 +381,39 @@ class TodoFragment : Fragment() {
 
     private fun onHabitToggle(habit: Habit) {
         lifecycleScope.launch {
-            val newCompleted = !habit.isCompletedToday
-            val newStreak = if (newCompleted) habit.streak + 1 else Math.max(0, habit.streak - 1)
-            val timestamp = if (newCompleted) System.currentTimeMillis() else null
-            db.habitDao().updateHabitStreak(habit.id, newCompleted, newStreak, Math.max(habit.longestStreak, newStreak), timestamp)
-            if (newCompleted) {
-                com.yourname.habitapp.utils.NotificationHelper.cancelNotification(requireContext(), habit.name.hashCode())
+            try {
+                val ctx = context ?: return@launch
+                val newCompleted = !habit.isCompletedToday
+                val newStreak = if (newCompleted) habit.streak + 1 else (habit.streak - 1).coerceAtLeast(0)
+                val timestamp = if (newCompleted) System.currentTimeMillis() else null
+                db.habitDao().updateHabitStreak(habit.id, newCompleted, newStreak, Math.max(habit.longestStreak, newStreak), timestamp)
+                if (newCompleted) {
+                    com.yourname.habitapp.utils.NotificationHelper.cancelNotification(ctx, habit.name.hashCode())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
     private fun confirmDelete(item: Any) {
+        val ctx = context ?: return
         val title = if (item is TodoItem) getString(R.string.delete_task_title) else getString(R.string.delete_habit_title)
         val message = if (item is TodoItem) getString(R.string.delete_task_msg) else getString(R.string.delete_habit_msg)
         
-        AlertDialog.Builder(requireContext(), R.style.PurpleAlertDialog)
+        AlertDialog.Builder(ctx, R.style.PurpleAlertDialog)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 lifecycleScope.launch {
                     try {
+                        val currentCtx = context ?: return@launch
                         if (item is TodoItem) {
-                            db.todoDao().delete(item)
+                            db.todoDao().deleteById(item.id)
                         } else if (item is Habit) {
-                            // Safe fetch before delete
-                            val freshHabit = db.habitDao().getHabitById(item.id)
-                            freshHabit?.let { db.habitDao().deleteHabit(it) }
+                            db.habitDao().deleteHabitById(item.id)
                         }
-                        Toast.makeText(requireContext(), "تم الحذف بنجاح ✅", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(currentCtx, "تم الحذف بنجاح ✅", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

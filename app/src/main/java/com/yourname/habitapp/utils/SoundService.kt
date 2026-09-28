@@ -25,41 +25,49 @@ class SoundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        
-        // 1. Check Global Notifications Setting
-        if (!settingsPrefs.getBoolean("notifications", true)) {
-            stopSelf()
-            return START_NOT_STICKY
-        }
-
-        val action = intent?.action
-        val todoId = intent?.getIntExtra("TODO_ID", -1) ?: -1
-        val notificationId = intent?.getIntExtra("NOTIFICATION_ID", -1) ?: -1
-        val uriString = intent?.getStringExtra("TONE_URI")
-
-        when (action) {
-            "ACTION_PLAY" -> {
-                // 2. Check Sound Setting
-                if (settingsPrefs.getBoolean("sound", true)) {
-                    uriString?.let { playSound(it) }
-                }
-                
-                // 3. Check Vibration Setting
-                if (settingsPrefs.getBoolean("vibration", true)) {
-                    startVibration()
-                }
-                
-                registerVolumeReceiver(todoId)
-            }
-            "ACTION_STOP", "ACTION_DONE" -> {
-                if (notificationId != -1) {
-                    val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    manager.cancel(notificationId)
-                }
-                stopSoundAndMute(todoId, action == "ACTION_DONE")
+        try {
+            val settingsPrefs = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+            
+            // Check Global Notifications Setting
+            if (!settingsPrefs.getBoolean("notifications", true)) {
                 stopSelf()
+                return START_NOT_STICKY
             }
+
+            val action = intent?.action
+            val todoId = intent?.getIntExtra("TODO_ID", -1) ?: -1
+            val notificationId = intent?.getIntExtra("NOTIFICATION_ID", -1) ?: -1
+            val uriString = intent?.getStringExtra("TONE_URI")
+
+            when (action) {
+                "ACTION_PLAY" -> {
+                    // Sound Setting
+                    if (settingsPrefs.getBoolean("sound", true)) {
+                        uriString?.let { playSound(it) }
+                    }
+                    
+                    // Vibration Setting
+                    if (settingsPrefs.getBoolean("vibration", true)) {
+                        startVibration()
+                    }
+                    
+                    registerVolumeReceiver(todoId)
+                }
+                "ACTION_STOP", "ACTION_DONE" -> {
+                    if (notificationId != -1) {
+                        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        manager.cancel(notificationId)
+                    }
+                    stopSoundAndMute(todoId, action == "ACTION_DONE")
+                    stopSelf()
+                }
+                else -> {
+                    stopSelf()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            stopSelf()
         }
         return START_NOT_STICKY
     }
@@ -95,7 +103,6 @@ class SoundService : Service() {
 
             vibrator?.let { v ->
                 if (v.hasVibrator()) {
-                    // Distinct pattern: 0ms delay, 400ms vibrate, 200ms sleep, 400ms vibrate
                     val pattern = longArrayOf(0, 400, 200, 400)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         v.vibrate(android.os.VibrationEffect.createWaveform(pattern, 0))
@@ -113,7 +120,6 @@ class SoundService : Service() {
     private fun stopSoundAndMute(todoId: Int, markCompleted: Boolean) {
         stopMediaPlayer()
         
-        // Stop vibration safely
         try {
             val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
@@ -127,45 +133,62 @@ class SoundService : Service() {
 
         if (todoId != -1) {
             CoroutineScope(Dispatchers.IO).launch {
-                val db = AppDatabase.getInstance(this@SoundService)
-                val todo = db.todoDao().getTodoById(todoId)
-                todo?.let { 
-                    db.todoDao().update(it.copy(
-                        isMuted = true,
-                        isCompleted = if (markCompleted) true else it.isCompleted
-                    )) 
+                try {
+                    val db = AppDatabase.getInstance(this@SoundService)
+                    val todo = db.todoDao().getTodoById(todoId)
+                    todo?.let { 
+                        db.todoDao().update(it.copy(
+                            isMuted = true,
+                            isCompleted = if (markCompleted) true else it.isCompleted
+                        )) 
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }
     }
 
     private fun stopMediaPlayer() {
-        mediaPlayer?.apply {
-            try { if (isPlaying) stop() } catch (e: Exception) {}
-            release()
+        try {
+            mediaPlayer?.apply {
+                if (isPlaying) stop()
+                release()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            mediaPlayer = null
         }
-        mediaPlayer = null
     }
 
     private fun registerVolumeReceiver(todoId: Int) {
-        if (volumeReceiver != null) return
-        volumeReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                stopSoundAndMute(todoId, false)
-                stopSelf()
+        try {
+            if (volumeReceiver != null) return
+            volumeReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    stopSoundAndMute(todoId, false)
+                    stopSelf()
+                }
             }
-        }
-        val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(volumeReceiver, filter, Context.RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(volumeReceiver, filter)
+            val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(volumeReceiver, filter, Context.RECEIVER_EXPORTED)
+            } else {
+                registerReceiver(volumeReceiver, filter)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     override fun onDestroy() {
-        stopMediaPlayer()
-        volumeReceiver?.let { try { unregisterReceiver(it) } catch (e: Exception) {} }
+        try {
+            stopMediaPlayer()
+            volumeReceiver?.let { try { unregisterReceiver(it) } catch (e: Exception) {} }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         super.onDestroy()
     }
 }

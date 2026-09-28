@@ -13,7 +13,6 @@
         android:background="@drawable/bg_floating_card"
         android:elevation="16dp">
 
-        <!-- Handle Bar -->
         <View
             android:layout_width="40dp"
             android:layout_height="4dp"
@@ -22,7 +21,6 @@
             android:background="@color/gray_light" />
 
         <TextView
-            android:id="@+id/tvSheetTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/new_habit"
@@ -49,7 +47,6 @@
             android:layout_height="1dp"
             android:background="@color/gray_light" />
 
-        <!-- Suggestions Toggle -->
         <LinearLayout
             android:id="@+id/layoutSuggestionsToggle"
             android:layout_width="match_parent"
@@ -63,7 +60,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Show Suggestions"
+                android:text="Discover Suggestions"
                 android:textSize="12sp"
                 android:textColor="?attr/colorPrimary" />
             <ImageView
@@ -88,28 +85,27 @@
                 app:singleLine="true" />
         </HorizontalScrollView>
 
-        <!-- Category & Icon Selection -->
+        <!-- Category Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:gravity="center_vertical">
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSelectCategory"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:text="@string/select_category"
-                android:textSize="13sp"
-                style="@style/Widget.Material3.Button.TonalButton"
-                app:cornerRadius="12dp" />
-
+                android:textSize="14sp"
+                app:icon="@drawable/ic_nav_tasks_grid"
+                app:cornerRadius="16dp" />
             <TextView
                 android:id="@+id/tvSelectedIcon"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:background="@drawable/bg_item_circle"
                 android:text="⭐"
                 android:textSize="24sp"
@@ -117,20 +113,20 @@
                 android:layout_marginStart="12dp" />
         </LinearLayout>
 
-        <!-- Frequency Selection -->
+        <!-- Frequency Row -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSelectFrequency"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="56dp"
             android:layout_marginTop="12dp"
             android:text="@string/frequency"
-            android:textSize="13sp"
-            style="@style/Widget.Material3.Button.TonalButton"
-            app:cornerRadius="12dp"
+            android:textSize="14sp"
             app:icon="@drawable/ic_nav_habits"
-            app:iconSize="18dp" />
+            app:cornerRadius="16dp"
+            android:visibility="gone" />
 
-        <!-- Specific Day Selection -->
+        <!-- Specific Day Selection (Highlighted when visible) -->
         <LinearLayout
             android:id="@+id/layoutSpecificDay"
             android:layout_width="match_parent"
@@ -140,12 +136,15 @@
             android:visibility="gone">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSelectSpecificDay"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:text="@string/select_day"
-                android:textSize="13sp"
                 style="@style/Widget.Material3.Button.OutlinedButton"
-                app:cornerRadius="12dp" />
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/select_day"
+                android:textSize="14sp"
+                app:icon="@drawable/ic_calendar"
+                app:strokeColor="?attr/colorPrimary"
+                app:strokeWidth="2dp"
+                app:cornerRadius="16dp" />
         </LinearLayout>
 
         <!-- Notes -->
@@ -153,10 +152,10 @@
             android:id="@+id/etHabitNotes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:hint="@string/notes_label"
             android:background="@drawable/bg_habit_item"
-            android:padding="12dp"
+            android:padding="16dp"
             android:textSize="14sp"
             android:minLines="2"
             android:gravity="top"
@@ -165,13 +164,15 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveHabit"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="60dp"
             android:text="@string/save"
             android:textSize="16sp"
+            android:textStyle="bold"
             android:layout_marginTop="32dp"
             android:backgroundTint="?attr/colorPrimary"
             android:textColor="@color/white"
-            app:cornerRadius="16dp" />
+            app:cornerRadius="18dp"
+            app:elevation="4dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
